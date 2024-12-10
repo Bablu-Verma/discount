@@ -1,6 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
+import ContactForm from "./_contact_form";
 
 export default function ContactUs() {
   return (
@@ -44,51 +45,7 @@ export default function ContactUs() {
               
               </div>
             </div>
-            <div className="col-span-3">
-              <div className="grid grid-cols-3 gap-5 w-full mb-1 ">
-                <div className="mb-5">
-                  <label className="block mb-2 text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-primary"
-                    placeholder="Your Email"
-                  />
-                </div>
-                <div className="mb-5">
-                  <label className="block mb-2 text-sm font-medium text-gray-700">
-                    Phone
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-primary"
-                    placeholder="Phone Number"
-                  />
-                </div>
-                <div className="mb-5">
-                  <label className="block mb-2 text-sm font-medium text-gray-700">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-primary"
-                    placeholder="Subject"
-                  />
-                </div>
-              </div>
-              <textarea
-                id="message"
-                name="message"
-                className="w-full px-3 py-2 text-sm border min-h-60 border-gray-300 rounded-md focus:outline-none focus:border-primary"
-                placeholder="Your Message"
-              ></textarea>
-              <div className="flex justify-end w-full mt-4">
-                <button className="bg-primary text-white text-base font-medium duration-200 p-1.5 min-w-[150px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl">
-                  Submit
-                </button>
-              </div>
-            </div>
+           <ContactForm />
           </div>
         </div>
         <BottomToTop />

@@ -1,4 +1,4 @@
-import { generateJwtToken, verifyHashPassword } from "@/helpers/smallFunction";
+import { generateJwtToken, verifyHashPassword } from "@/helpers/server/server_function";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
 import { NextRequest, NextResponse } from "next/server";

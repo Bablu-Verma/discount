@@ -1,6 +1,6 @@
 "use client";
 
-import { getClientCookie, parse_json_string, setClientCookie } from "@/helpers/smallFunction";
+import { getClientCookie, parse_json_string, setClientCookie } from "@/helpers/client/client_function";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const isBrowser = typeof window !== "undefined";

@@ -11,11 +11,44 @@ import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
 import SubFooter from "@/components/SubFooter";
 import TimeCount from "@/components/TimeCount";
+import { getServerToken } from "@/helpers/server/server_function";
+
+import { home_api } from "@/utils/api_url";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 
+const GetData = async (token:string) => {
+  try {
+    let { data } = await axios.post(
+      home_api,
+      {},
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+ 
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError) { 
+      console.error("Error registering user", error.response?.data.message);
+      toast.error(error.response?.data.message);
+    } else {
+      console.error("Unknown error", error);
+    }
+  }
+};
 
+export default async function  Home() {
 
-export default function Home() {
+  const token = await getServerToken()
+  const page_data = await GetData(token)
+
+  console.log(page_data)
+
   return (
     <>
     <TopHeader />

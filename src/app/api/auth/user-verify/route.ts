@@ -3,7 +3,7 @@ import {
   createHashPassword,
   generateJwtToken,
   generateOTP,
-} from "@/helpers/smallFunction";
+} from "@/helpers/server/server_function";
 import { authenticateUser } from "@/lib/authenticate";
 
 import dbConnect from "@/lib/dbConnect";

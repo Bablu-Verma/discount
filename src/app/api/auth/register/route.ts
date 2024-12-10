@@ -1,6 +1,6 @@
 
 import { user_verify_email } from "@/email/user_verify";
-import { createExpiryTime, createHashPassword, generateJwtToken, generateOTP } from "@/helpers/smallFunction";
+import { createExpiryTime, createHashPassword, generateJwtToken, generateOTP } from "@/helpers/server/server_function";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
-import ReduxProvider from "@/redux-store/app_provider";
+import ReduxProvider from "@/redux-store/provider_";
+
 
 
 export const metadata: Metadata = {
@@ -30,9 +31,9 @@ export default function RootLayout({
       </head>
       <body className="font-roboto antialiased">
        <Toaster  position="top-right" />
-        
+        <ReduxProvider>
           {children}
-       
+        </ReduxProvider>
       </body>
     </html>
    

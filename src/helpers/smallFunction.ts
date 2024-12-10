@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 
@@ -9,7 +9,7 @@ export function generateOTP(): string {
 }
 
 
-// HashPassword 
+// HashPassword  
 const saltRounds = 10;
 export async function createHashPassword(password: string): Promise<string> {
   try {
@@ -53,8 +53,6 @@ interface Payload {
 export const generateJwtToken = (payload: Payload, expiresIn: string = '1h'): string => {
   return jwt.sign(payload, SECRET_KEY, { expiresIn });
 };
-
-
 
 
 export function setClientCookie(cookie_name:string, cookie_value:string, duration_in_minutes:number) {

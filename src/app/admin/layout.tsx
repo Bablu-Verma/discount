@@ -1,4 +1,7 @@
 import React, { ReactNode } from 'react'
+import AdminProvider from './admin_provider';
+
+
 
 
 interface LayoutProps {
@@ -6,8 +9,9 @@ interface LayoutProps {
   }
   
 const AdminLayout:React.FC<LayoutProps> = ({ children }) => {
+
   return (
-    <div>{children}</div>
+    <AdminProvider>{children}</AdminProvider>
   )
 }
 

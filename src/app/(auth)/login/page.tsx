@@ -24,6 +24,7 @@ const Login = () => {
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const dispatch = useDispatch()
 
   const SubmitData = (): void => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,15 +74,16 @@ const Login = () => {
       });
 
       console.log("user login successfully:", data);
-      toast.success("user login successfully!");
+      toast.success("Login success!");
 
 
-      // dispatch(login({ data.user, userToken }));
+      dispatch(login({ user: data.user, token: data.token }));
 
 
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
+
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error login user", error.response?.data.message);

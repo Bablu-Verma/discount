@@ -3,16 +3,25 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux-store/redux_store";
+
+
 
 const MainHeader = () => {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
-
+  const user_data = useSelector((state: RootState) => state.user);
   const pathname = usePathname();
-  const userlogin = true;
+
+  const userlogin = user_data.token? true : false;
+  const isAdmin = user_data.user?.role === "admin"? true : false;
 
   const showtoggle = () => {
     setToggleMenu(!toggleMenu);
   };
+
+  console.log(user_data)
+  
 
   return (
     <nav className="border-b-2 border-gray-200">
@@ -24,15 +33,15 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               className="font-medium duration-200 px-2 text-primary hover:text-gray-900"
-              href=""
+              href="/"
             >
               Home
             </Link>
           </li>
           <li className="mx-1 relative">
-            <span className="absolute bottom-4 right-[-4px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
+            {/* <span className="absolute bottom-4 right-[-4px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
               New
-            </span>
+            </span> */}
             <Link
               href="/campaign"
               className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
@@ -42,7 +51,7 @@ const MainHeader = () => {
           </li>
           <li className="mx-1">
             <Link
-              href=""
+              href="/contact-us"
               className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
             >
               Contact
@@ -50,7 +59,7 @@ const MainHeader = () => {
           </li>
           <li className="mx-1">
             <Link
-              href=""
+              href="about"
               className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
             >
               About
@@ -59,7 +68,7 @@ const MainHeader = () => {
           {userlogin && (
             <li className="mx-1">
               <Link
-                href=""
+                href="/profile-edit"
                 className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
               >
                 profile
@@ -99,7 +108,7 @@ const MainHeader = () => {
           </Link>
           {userlogin ? (
             <Link
-              href=""
+              href="/cart"
               className="select-none text-gray-600 p-1 relative group"
             >
               <span className="absolute bottom-5 left-7 text-[11px] py-[1px] px-[4px] text-white rounded bg-green-700">
@@ -170,15 +179,15 @@ const MainHeader = () => {
                 <li className="mx-1 my-1 hover:pl-2 duration-150">
                   <Link
                     className="text-gray-700 font-normal pl-2  block"
-                    href=""
+                    href="/"
                   >
                     Home
                   </Link>
                 </li>
                 <li className="mx-1 my-1 relative hover:pl-2 duration-150">
-                  <span className="absolute bottom-3 left-[90px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
+                  {/* <span className="absolute bottom-3 left-[90px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
                     New
-                  </span>
+                  </span> */}
                   <Link
                     href=""
                     className="text-gray-700 font-normal pl-2  block"

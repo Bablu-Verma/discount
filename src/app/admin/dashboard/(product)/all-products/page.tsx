@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import SelectInput from "../../_admin_components/SelectInput";
-import { productData } from "../../../../utils/data.js";
-import PaginationControls from "../../_admin_components/PaginationControls";
+
 import Link from "next/link";
+import SelectInput from "@/app/admin/_admin_components/SelectInput";
+import PaginationControls from "@/app/admin/_admin_components/PaginationControls";
+import {productData} from "@/utils/data"
 
 const ProductList = () => {
   const [selectedMonth, setSelectedMonth] = useState("");

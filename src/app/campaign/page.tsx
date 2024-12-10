@@ -1,18 +1,16 @@
-"use client"
+
 
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import ProductCard from "@/components/small_card/ProductCard";
-import Image from "next/image";
-import React, { useState } from "react";
+
+import React from "react";
 import Filter from "./_filter";
 
 const Campaign = () => {
   
-
-
   const fleah_data = [
     {
       id: 1,
@@ -54,7 +52,7 @@ const Campaign = () => {
       <MainHeader />
       <main className="">
         <section className="max-w-[1400px] mx-auto mt-14 mb-16 p-2 xl:p-0">
-          <div className="md:grid grid-cols-8">
+          <div className="md:grid grid-cols-8 gap-8">
            <Filter />
             <div className="col-span-6">
               <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">

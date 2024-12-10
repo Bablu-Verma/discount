@@ -87,6 +87,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     let Payload = {
       email,
+      role: findUser.role,
+      user_id: findUser._id,
     };
 
     const JwtToken = await generateJwtToken(Payload, "15d");
@@ -100,7 +102,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     delete userData.email_verified;
     delete userData.phone_verified;
     delete userData.verify_code;
-    delete userData.__v
+    delete userData.__v;
+    delete userData.deleted_user;
   
 
 

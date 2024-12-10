@@ -13,14 +13,12 @@ const MainHeader = () => {
   const user_data = useSelector((state: RootState) => state.user);
   const pathname = usePathname();
 
+
   const userlogin = user_data.token? true : false;
-  const isAdmin = user_data.user?.role === "admin"? true : false;
 
   const showtoggle = () => {
     setToggleMenu(!toggleMenu);
   };
-
-  console.log(user_data)
   
 
   return (
@@ -32,19 +30,19 @@ const MainHeader = () => {
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">
             <Link
-              className="font-medium duration-200 px-2 text-primary hover:text-gray-900"
+              className={`${pathname == '/'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
               href="/"
             >
               Home
             </Link>
           </li>
           <li className="mx-1 relative">
-            {/* <span className="absolute bottom-4 right-[-4px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
-              New
-            </span> */}
+            <span className="absolute bottom-4 right-[-4px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
+              Offer
+            </span>
             <Link
               href="/campaign"
-              className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
+              className={`${pathname == '/campaign'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Campaign
             </Link>
@@ -52,7 +50,7 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="/contact-us"
-              className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
+              className={`${pathname == '/contact-us'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Contact
             </Link>
@@ -60,7 +58,7 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="about"
-              className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
+              className={`${pathname == '/about'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               About
             </Link>
@@ -69,7 +67,7 @@ const MainHeader = () => {
             <li className="mx-1">
               <Link
                 href="/profile-edit"
-                className="text-gray-700 font-medium duration-200 px-2 hover:text-gray-900"
+                className={`${pathname == '/profile-edit'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
               >
                 profile
               </Link>

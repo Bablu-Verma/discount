@@ -216,8 +216,8 @@ const Signup = () => {
                   <label htmlFor="site_policy_conditions" className="select-none cursor-pointer text-sm">
                     I agree to the site's
                   </label>
-                  <Link href="#" className="text-blue-400 hover:underline pl-1 inline-block text-sm">Terms & Conditions </Link> ,
-                  <Link href="#" className="text-blue-400 hover:underline pl-1 inline-block text-sm"> Privacy Policy</Link>
+                  <Link href="/terms_conditions" className="text-blue-400 hover:underline pl-1 inline-block text-sm">Terms & Conditions </Link> ,
+                  <Link href="/privacy_policy" className="text-blue-400 hover:underline pl-1 inline-block text-sm"> Privacy Policy</Link>
                 </div>
               </div>
               <div className="flex flex-col gap-2 my-10 ">

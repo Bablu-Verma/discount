@@ -50,3 +50,6 @@
 @keyframes loder_{
   100%{background-position: left}
 }
+input:checked {
+  background-color: #d85134;
+}

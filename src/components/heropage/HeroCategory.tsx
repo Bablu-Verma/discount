@@ -7,7 +7,7 @@ const HeroCategory = () => {
       <ul>
         <li className="py-1">
           <Link
-            href=""
+            href="/category/jhg"
             className="text-gray-700 font-normal duration-200 hover:text-gray-900 hover:pl-2 hover:font-medium"
           >
             Woman's Fashion
@@ -61,12 +61,13 @@ const HeroCategory = () => {
             Health & Beauty
           </Link>
         </li>
+       
         <li className="py-1">
           <Link
-            href=""
-            className="text-gray-700 font-normal duration-200 hover:text-gray-900 hover:pl-2 hover:font-medium"
+            href="/category"
+            className="text-primary font-normal duration-200 hover:text-gray-900 hover:pl-2 hover:font-medium"
           >
-            Groceries
+          <i className="fa-solid fa-angle-right"></i> All Category
           </Link>
         </li>
       </ul>

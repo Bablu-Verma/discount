@@ -7,3 +7,8 @@ export const login_api = main_url + '/auth/login'
 export const contact_form_api = main_url + '/contactus/add'
 export const home_api = main_url + '/home'
 export const edit_profile_api = main_url + '/user/edit'
+
+// category Api 
+export const category_list_api = main_url + '/category/list'
+export const category_add_api = main_url + '/category/add'
+export const category_details_api = main_url + '/category/details'

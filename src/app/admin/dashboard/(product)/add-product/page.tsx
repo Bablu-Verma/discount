@@ -1,7 +1,8 @@
 "use client";
 
+import TextEditor from "@/app/admin/_admin_components/TextEditor";
 import React, { useState } from "react";
-import TextEditor from "../../_admin_components/TextEditor";
+
 
 const AddProduct = () => {
   const [editor1Value, setEditor1Value] = useState<string>("");

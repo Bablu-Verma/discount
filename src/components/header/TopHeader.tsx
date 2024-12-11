@@ -7,19 +7,14 @@ const TopHeader = () => {
     <div
       className="max-w-[1400px] m-auto flex justify-between capitalize items-center"
     >
-      <p className="text-white w-[90%] text-center text-sm">
+      <p className="text-white w-full text-center text-sm">
         Summer Sale for all swim suits and free delivery - off 50%!
         <Link
           href=""
-          className="ml-3 underline text-sm text-white hover:text-blue-500 font-medium"
-          >Shop Now</Link>
+          className="ml-3 underline text-sm text-white hover:text-primary font-medium"
+          >Click Now</Link>
       </p>
-      <select
-        className="outline-none border-none text-sm rounded px-6 text-white bg-black pointer"
-      >
-        <option value="en">English</option>
-        <option value="hi">Hindi</option>
-      </select>
+      
     </div>
   </section>
   )

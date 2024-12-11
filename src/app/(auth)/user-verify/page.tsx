@@ -46,8 +46,6 @@ const UserVerify = () => {
         }
       );
 
-      console.log(data);
-
       const UserRegisterInfo = {
         token: data.token,
         email: data.user.email,

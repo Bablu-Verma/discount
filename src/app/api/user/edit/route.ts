@@ -3,6 +3,8 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
 import { authenticateUser } from "@/lib/authenticate";
 
+
+
 export async function POST(req: Request) {
   await dbConnect();
 
@@ -26,33 +28,59 @@ export async function POST(req: Request) {
     }
 
     // Extract updated data from request body
-    const requestData = await req.json();
-    const { name, profile, phone, subscribe_email, address, dob, gender } = requestData;
+    const requestData = await req.formData();
 
-    // Validate required fields
-    if (!name || !address || !dob || !gender) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Name, address, date of birth, and gender are required to update your profile.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    let name = requestData.get("name");
+    // let profile = requestData.get("profile");
+    let phone = requestData.get("phone");
+    let dob = requestData.get("dob");
+    let gender = requestData.get("gender");
 
-    // Build the update object with only the fields that have been provided
+
+    
     const updateFields: any = {};
 
-    if (name) updateFields.name = name;
-    if (profile) updateFields.profile = profile;
-    if (phone) updateFields.phone = phone;
-    if (subscribe_email) updateFields.subscribe_email = subscribe_email;
-    if (address) updateFields.address = address;
+    if (name) {
+      if (typeof name === 'string' && name.length <= 2) {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "Enter a valid name",
+          }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }else{
+        updateFields.name = name;
+      }
+      
+    }
+    if (phone){
+      if (typeof phone === 'string' && phone.trim().length == 10) {
+        updateFields.phone = phone;
+      } else {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "Enter a valid phone number",
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+    }
+
+
+
+    // if (profile) updateFields.profile = profile;
     if (dob) updateFields.dob = dob;
     if (gender) updateFields.gender = gender;
 

@@ -27,6 +27,7 @@ export interface User {
 const ProfileLayout: React.FC<LayoutProps> =  ({ children }) => {
   const user_data = useSelector((state: RootState) => state.user.user) as User | null;
 
+
   const dispatch = useDispatch();
   const pathname = usePathname();
 

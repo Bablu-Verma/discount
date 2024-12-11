@@ -1,4 +1,5 @@
 import BottomToTop from "@/components/BottomToTop";
+
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
@@ -7,6 +8,7 @@ import Featured from "@/components/heropage/Featured";
 
 import Hero from "@/components/heropage/Hero";
 import BestSalling from "@/components/homepage/BestSelling";
+import HomeBlog from "@/components/homepage/HomeBlog";
 import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
 import SubFooter from "@/components/SubFooter";
@@ -98,7 +100,19 @@ export default async function  Home() {
       >
        <MainHeading title="New Arrival"/>
       </div>
-      <Featured />
+      <Featured /> 
+
+    
+
+      <SubHeading title="Blog" />
+      <div
+        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+      >
+       <MainHeading title="Read Our Blog"/>
+      </div>
+      <HomeBlog />
+
+      
       <SubFooter />
       <BottomToTop />
     </main>

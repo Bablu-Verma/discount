@@ -6,17 +6,27 @@ interface IUser extends Document {
   profile?: string;
   password: string;
   phone?: string;
-  subscribe_email?: string; 
+  subscribe_email?: string;
   accept_terms_conditions_privacy_policy: boolean;
   email_verified: boolean;
   phone_verified: boolean;
   verify_code_expiry: Date;
   verify_code: string;
   role: string;
-  address: string;
-  dob: Date;
-  gender: string;
+  dob?: Date;
+  gender?: string;
   deleted_user: boolean;
+  address?: {
+    house_no?: string;
+    landmark?: string;
+    street?: string;
+    area?: string;
+    city_village?: string;
+    state?: string;
+    pincode?: string;
+    country?: string;
+    deleted_address?: boolean;
+  };
 }
 
 const UserSchema = new Schema<IUser>(
@@ -37,42 +47,32 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, "Password is required"],
-     
     },
     phone: {
       type: String,
-      
     },
     subscribe_email: {
-      type:String, 
-     
+      type: String,
     },
     accept_terms_conditions_privacy_policy: {
       type: Boolean,
-     
+      required: true,
     },
     email_verified: {
       type: Boolean,
       default: false,
-      
     },
     phone_verified: {
       type: Boolean,
       default: false,
-   
     },
     verify_code: {
       type: String,
-     
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "data_editor", "blog_editor"],
       default: "user",
-      
-    },
-    address: {
-      type: String,
     },
     dob: {
       type: Date,
@@ -84,7 +84,60 @@ const UserSchema = new Schema<IUser>(
     deleted_user: {
       type: Boolean,
       default: false,
-    }
+    },
+    address: {
+      house_no: {
+        type: String,
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      landmark: {
+        type: String,
+        minlength: 1,
+        maxlength: 150,
+        trim: true,
+      },
+      street: {
+        type: String,
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      area: {
+        type: String,
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      city_village: {
+        type: String,
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      state: {
+        type: String,
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      pincode: {
+        type: String,
+        match: /^[0-9]{5,6}$/,
+      },
+      country: {
+        type: String,
+        default: "India",
+        minlength: 1,
+        maxlength: 100,
+        trim: true,
+      },
+      deleted_address: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   { timestamps: true }
 );

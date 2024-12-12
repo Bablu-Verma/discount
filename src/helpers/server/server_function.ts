@@ -2,9 +2,6 @@ import { cookies } from "next/headers";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-
-
-
 export async function getServerToken() {
 
     const cookieStore = await cookies();
@@ -21,12 +18,6 @@ export async function getServerToken() {
   
     return USER_TOKEN;
   }
-
-
-
-
-
-
 export function generateOTP(): string {
     const otp: number = Math.floor(1000 + Math.random() * 9000);
     return otp.toString();

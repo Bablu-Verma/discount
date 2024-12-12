@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { IUser } from "@/common_type";
 
 interface IFormData {
   name: string;
@@ -18,16 +19,6 @@ interface IFormData {
   gender: string;
 }
 
-interface IUser {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  dob: string;
-  gender: string;
-  profileImage: string | null;
-  token: string;
-}
 
 const ProfileEdit = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -43,8 +34,6 @@ const ProfileEdit = () => {
     dob: new Date(),
     gender: "",
   });
-
-  console.log(user);
 
   const [loading, setLoading] = useState(false);
 
@@ -137,11 +126,11 @@ const ProfileEdit = () => {
                 src={
                   formData.profileImage
                     ? URL.createObjectURL(formData.profileImage)
-                    : user?.profileImage ||
+                    : user?.profile ||
                       "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"
                 }
                 alt="Profile"
-                className="max-w-[100px] rounded-full"
+                className="max-w-[100px] max-h-[100px] rounded-full"
               />
             </label>
             <input

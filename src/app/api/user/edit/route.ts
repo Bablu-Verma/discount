@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
 import { authenticateUser } from "@/lib/authenticate";
-
-
+import { upload_image } from "@/helpers/server/upload_image";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -31,17 +30,15 @@ export async function POST(req: Request) {
     const requestData = await req.formData();
 
     let name = requestData.get("name");
-    // let profile = requestData.get("profile");
+    let profile = requestData.get("profile");
     let phone = requestData.get("phone");
     let dob = requestData.get("dob");
     let gender = requestData.get("gender");
 
-
-    
     const updateFields: any = {};
 
     if (name) {
-      if (typeof name === 'string' && name.length <= 2) {
+      if (typeof name === "string" && name.length <= 2) {
         return new NextResponse(
           JSON.stringify({
             success: false,
@@ -54,13 +51,12 @@ export async function POST(req: Request) {
             },
           }
         );
-      }else{
+      } else {
         updateFields.name = name;
       }
-      
     }
-    if (phone){
-      if (typeof phone === 'string' && phone.trim().length == 10) {
+    if (phone) {
+      if (typeof phone === "string" && phone.trim().length == 10) {
         updateFields.phone = phone;
       } else {
         return new NextResponse(
@@ -78,17 +74,29 @@ export async function POST(req: Request) {
       }
     }
 
+    if (profile instanceof File) {
+      const { success, message, url } = await upload_image(
+        profile,
+        "user_profile"
+      );
 
+      if (success) {
+        console.log("Image uploaded successfully:", url);
+        updateFields.profile = url;
+      } else {
+        console.error("Image upload failed:", message);
+      }
+    } else {
+      console.error("Invalid profile value. Expected a File.");
+    }
 
-    // if (profile) updateFields.profile = profile;
     if (dob) updateFields.dob = dob;
     if (gender) updateFields.gender = gender;
 
-   
     const updatedUser = await UserModel.findOneAndUpdate(
-      { email: user?.email },  
+      { email: user?.email },
       updateFields,
-      { new: true } 
+      { new: true }
     );
 
     if (!updatedUser) {
@@ -110,7 +118,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         success: true,
         message: "Profile updated successfully.",
-        data: updatedUser, 
+        data: updatedUser,
       }),
       {
         status: 200,

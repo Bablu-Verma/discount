@@ -1,14 +1,26 @@
 "use client";
 
-import TextEditor from "@/app/admin/_admin_components/TextEditor";
+
 import React, { useState } from "react";
+
+import dynamic from "next/dynamic";
+import { useSelector } from "react-redux";
+
+
+const TextEditor = dynamic(() => import("@/app/admin/_admin_components/TextEditor"), { ssr: false });
+
 
 
 const AddProduct = () => {
-  const [editor1Value, setEditor1Value] = useState<string>("");
+  
   const [isBannerActive, setIsBannerActive] = useState(false);
   const [images, setImages] = useState<FileList | null>(null);
   const [error, setError] = useState<string>("");
+
+  const editorContent = useSelector((state: any) => state.editor.content);
+
+  console.log(editorContent)
+
 
   const handleBannerToggle = () => {
     setIsBannerActive(!isBannerActive);
@@ -41,6 +53,8 @@ const AddProduct = () => {
       />
     ));
   };
+
+
 
   return (
     <>
@@ -145,7 +159,7 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <label
               htmlFor="category"
               className="block text-sm font-medium text-gray-700"
@@ -165,7 +179,7 @@ const AddProduct = () => {
               <option value="beauty">Beauty & Health</option>
               <option value="sports">Sports</option>
             </select>
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -178,7 +192,7 @@ const AddProduct = () => {
                   name="product_status"
                   value="active"
                   className="text-blue-500 focus:ring-2 focus:ring-blue-500"
-                  checked
+                  
                 />
                 <span className="ml-2 text-gray-700">Active</span>
               </label>
@@ -238,6 +252,7 @@ const AddProduct = () => {
             </label>
 
             <TextEditor />
+
           </div>
 
           <div>

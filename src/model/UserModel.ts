@@ -88,20 +88,14 @@ const UserSchema = new Schema<IUser>(
     address: {
       house_no: {
         type: String,
-        minlength: 1,
-        maxlength: 100,
         trim: true,
       },
       landmark: {
         type: String,
-        minlength: 1,
-        maxlength: 150,
         trim: true,
       },
       street: {
         type: String,
-        minlength: 1,
-        maxlength: 100,
         trim: true,
       },
       area: {
@@ -112,14 +106,10 @@ const UserSchema = new Schema<IUser>(
       },
       city_village: {
         type: String,
-        minlength: 1,
-        maxlength: 100,
         trim: true,
       },
       state: {
         type: String,
-        minlength: 1,
-        maxlength: 100,
         trim: true,
       },
       pincode: {
@@ -129,8 +119,6 @@ const UserSchema = new Schema<IUser>(
       country: {
         type: String,
         default: "India",
-        minlength: 1,
-        maxlength: 100,
         trim: true,
       },
       deleted_address: {

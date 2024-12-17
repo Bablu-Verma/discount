@@ -1,5 +1,6 @@
 "use client";
 
+import { IUserAddress } from "@/common_type";
 import { RootState } from "@/redux-store/redux_store";
 import { edit_user_address_api, user_profile_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
@@ -29,9 +30,19 @@ const UserAddress: React.FC = () => {
     pincode: "",
     country: "",
   });
+
   const [loading, setLoading] = useState(false);
   const token = useSelector((state: RootState) => state.user.token);
- const [user_address, setUser_address]=useState({})
+  const [user_address, setUser_address] = useState<IUserAddress>({
+    house_no: "",
+    landmark: "",
+    street: "",
+    area: "",
+    city_village: "",
+    state: "",
+    pincode: "",
+    country: "",
+  });
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +100,7 @@ const UserAddress: React.FC = () => {
           },
         }
       );
-      console.log(data);
+
       toast.success(data.message);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -106,48 +117,49 @@ const UserAddress: React.FC = () => {
   const cancle_ = () => {
     window.location.reload();
   };
-  
 
+  const getaddress = async () => {
+    try {
+      const { data } = await axios.post(
+        user_profile_api,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  const getaddress = async ()=>{
-   try {
-    const { data } = await axios.post(
-      user_profile_api,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log(data.data)
-   } catch (error) {
-     if (error instanceof AxiosError) {
+      setUser_address(data.data.address);
+    } catch (error) {
+      if (error instanceof AxiosError) {
         console.error("Error user", error.response?.data.message);
         toast.error(error.response?.data.message);
       } else {
         console.error("Unknown error", error);
       }
-   }
+    }
+  };
 
-  }
+  useEffect(() => {
+    getaddress();
+  }, []);
 
-  useEffect(()=>{
-    getaddress()
-  },[])
-
-
-
-
-
-
-
-
-
-
-
+  useEffect(() => {
+    if (user_address) {
+      setFormData({
+        house_no: user_address.house_no || "",
+        landmark: user_address.landmark || "",
+        street: user_address.street || "",
+        area: user_address.area || "",
+        city_village: user_address.city_village || "",
+        state: user_address.state || "",
+        pincode: user_address.pincode || "",
+        country: user_address.country || "",
+      });
+    }
+  }, [user_address]);
 
   return (
     <>

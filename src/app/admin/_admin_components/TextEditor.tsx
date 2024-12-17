@@ -1,41 +1,55 @@
-import React, { useRef } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
-import 'draft-js/dist/Draft.css';
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import JoditEditor from "jodit-react";
+import { debounce } from "lodash";
+import { setEditorData } from "@/redux-store/slice/editorSlice";
+import { useDispatch } from "react-redux";
 
 const TextEditor: React.FC = () => {
-  
-  const editorRef = useRef<Editor | null>(null); 
+  const [content, setContent] = useState<string>("");
+  const [show_editor, setShow_editor] = useState<boolean>(false);
+  const editor = useRef<any>(null);
 
-  const log = () => {
-    if (editorRef.current) {
-      // console.log(editorRef.current.getContent());
-    }
+  const dispatch = useDispatch();
+
+  const config = {
+    readonly: false,
+    height: 500,
+    placeholder: "Start typing...",
   };
+
+
+  const handleChange = useCallback((newContent: string) => {
+    setContent(newContent);
+  }, []);
+
+  useEffect(()=>{
+    dispatch(setEditorData(content)); 
+  },[content])
+
+
+  
 
   return (
     <>
-      <Editor
-        apiKey="ejii3vx2wp3j6gk3z43r7la91tsrd09cn1g7yhua5zxm39j2"
-        onInit={(_evt, editor) => {
-          // editorRef.current = editor; 
-        }}
-        initialValue="<p>Welcome</p>"
-        init={{
-          height: 500,
-          menubar: false,
-          plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-          ],
-          toolbar: 'undo redo | blocks | ' +
-            'bold italic forecolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-        }}
-      />
-      <button onClick={log}>Log editor content</button>
+      <div className="text-editor border-2 border-red-300 min-h-[350px]">
+        <JoditEditor
+          config={config}
+          ref={editor}
+          value={content}
+          onBlur={(newContent) => handleChange(newContent)}
+        />
+      </div>
+      <button
+        type="button"
+        className="text-lg text-blue-600 hover:underline inline-block mt-4"
+        onClick={() => setShow_editor(!show_editor)}
+      >
+        {show_editor ? "Hide Code" : "Show Code"}
+      </button>
+
+      {show_editor && (
+        <div className="max-w-[100%] my-4 p-4 border-2 "> {content} </div>
+      )}
     </>
   );
 };

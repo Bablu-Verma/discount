@@ -5,16 +5,25 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
+import Image from "next/image";
+import { IUser } from "@/common_type";
+
 
 
 
 const MainHeader = () => {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
-  const user_data = useSelector((state: RootState) => state.user);
+  const token_ = useSelector((state: RootState) => state.user.token);
   const pathname = usePathname();
+ const user = useSelector(
+    (state: RootState) => state.user.user
+  ) as IUser | null;
+
+  const userlogin = token_? true : false;
 
 
-  const userlogin = user_data.token? true : false;
+  console.log(user)
+
 
   const showtoggle = () => {
     setToggleMenu(!toggleMenu);
@@ -63,16 +72,7 @@ const MainHeader = () => {
               About
             </Link>
           </li>
-          {userlogin && (
-            <li className="mx-1">
-              <Link
-                href="/profile-edit"
-                className={`${pathname == '/profile-edit'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
-              >
-                profile
-              </Link>
-            </li>
-          )}
+         
         </ul>
 
         <div className="flex justify-center items-center">
@@ -105,6 +105,8 @@ const MainHeader = () => {
             <i className="fa-regular fa-heart text-xl"></i>
           </Link>
           {userlogin ? (
+            <>
+            
             <Link
               href="/cart"
               className="select-none text-gray-600 p-1 relative group"
@@ -114,6 +116,20 @@ const MainHeader = () => {
               </span>
               <i className="fa-solid fa-cart-shopping text-xl group-hover:text-primary duration-150"></i>
             </Link>
+            <Link
+                href="/profile-edit"
+                className={` font-medium duration-200  ml-8 shadow cursor-pointer hover:opacity-80`}
+              >
+              <Image
+                src={user?.profile || "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"} 
+                alt={user?.email || "User profile"} 
+                height={100}
+                width={100}
+                className="w-9 h-9 rounded-full"
+              />
+              </Link>
+            </>
+           
           ) : (
             <Link
               href="/login"

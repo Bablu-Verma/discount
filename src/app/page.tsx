@@ -20,7 +20,7 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
 
-const GetData = async (token:string) => {
+export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
       home_api,
@@ -49,13 +49,11 @@ export default async function  Home() {
   const token = await getServerToken()
   const page_data = await GetData(token)
 
-  console.log(page_data)
-
   return (
     <>
     <TopHeader />
     <MainHeader />
-    <Hero />
+    <Hero home_category={page_data.data.category}/>
     <main>
       <SubHeading title="Today's" />
       <div
@@ -71,7 +69,7 @@ export default async function  Home() {
       >
        <MainHeading title="Browse by category"/>
       </div>
-      <HomeCategories />
+      <HomeCategories category={page_data.data.category} />
   
       <SubHeading title="This Month" />
       <div

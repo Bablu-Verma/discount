@@ -6,45 +6,54 @@ import Image from "next/image";
 import React from "react";
 import { MainHeading, SubHeading } from "@/components/Heading";
 import BestSalling from "@/components/homepage/BestSelling";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { category_details_api } from "@/utils/api_url";
 import { getServerToken } from "@/helpers/server/server_function";
+import toast from "react-hot-toast";
 
 
 interface CategoryDetailsProps {
-params : {slug: string};
+  params : {id: string};
 }
 
-export async function fetchData(token: String, slug: String) {
+export const GetData = async (token:string, slug:string) => {
   try {
-    const { data } = await axios.post(
-      category_details_api,{
-        slug: slug,
+    let { data } = await axios.post(
+      category_details_api,
+      {
+        slug:slug
       },
-      { headers: { 
-        'Authorization': `Bearer ${token}`,
-        "Content-Type": "application/json" 
-      } 
-    }
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
     );
-    if (!data.success) {
-      throw new Error(data.message || "Failed to fetch data");
-    }
-
+ 
     return data.data;
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
+    if (error instanceof AxiosError) { 
+      console.error("Error registering user", error.response?.data.message);
+      toast.error(error.response?.data.message);
+    } else {
+      console.error("Unknown error", error);
+    }
   }
-}
+};
+
 
 const CategoryDetail = async ({params}: CategoryDetailsProps) => {
   const token = await getServerToken();
   const awaitslug = await params;
-  const slug = awaitslug.slug
+  const slug = awaitslug.id
 
-  const page_data = await fetchData(token, slug);
-  console.log("token",page_data);
+  console.log("token ",token)
+
+  console.log("awaitslug",awaitslug)
+
+  const page_data = await GetData(token, slug);
+  console.log("page_data",page_data);
 
   return (
     <>
@@ -68,9 +77,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             <h1 className="text-xl text-secondary font-medium  mb-3">
               {page_data.name}
             </h1>
-
-            <div className="pt-4 text-sm">
-           {page_data.description}
+            <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: page_data.description }}>
             </div>
           </div>
 

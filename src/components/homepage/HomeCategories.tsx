@@ -2,65 +2,19 @@
 
 import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay, Pagination, A11y } from "swiper/modules";
 
 import CategorieCard from "../small_card/CategorieCard";
+import { ICategory } from "@/model/CategoryModel";
 
-const HomeCategories = () => {
+
+interface CategoryProps {
+  category: ICategory[];
+}
+
+const HomeCategories: React.FC<CategoryProps> = ({category}) => {
 
 
   const swiperRef = useRef<any>(null);
-
-  const fleah_data = [
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-  ];
 
   return (
     <>
@@ -94,9 +48,9 @@ const HomeCategories = () => {
           onSlideChange={() => console.log("slide change")}
           className="home_flash_"
         >
-          {fleah_data.map((item, i) => (
+          {category.map((item, i) => (
             <SwiperSlide key={i}>
-              <CategorieCard />
+              <CategorieCard item={item}/>
             </SwiperSlide>
           ))}
         </Swiper>

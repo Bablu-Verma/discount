@@ -19,9 +19,6 @@ const AddProduct = () => {
 
   const editorContent = useSelector((state: any) => state.editor.content);
 
-  console.log(editorContent)
-
-
   const handleBannerToggle = () => {
     setIsBannerActive(!isBannerActive);
   };

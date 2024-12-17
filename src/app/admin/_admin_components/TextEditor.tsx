@@ -2,15 +2,16 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import JoditEditor from "jodit-react";
 import { debounce } from "lodash";
 import { setEditorData } from "@/redux-store/slice/editorSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const TextEditor: React.FC = () => {
   const [content, setContent] = useState<string>("");
   const [show_editor, setShow_editor] = useState<boolean>(false);
   const editor = useRef<any>(null);
 
-  const dispatch = useDispatch();
+  const editorContent = useSelector((state: any) => state.editor.content);
 
+  const dispatch = useDispatch();
   const config = {
     readonly: false,
     height: 500,
@@ -25,9 +26,6 @@ const TextEditor: React.FC = () => {
   useEffect(()=>{
     dispatch(setEditorData(content)); 
   },[content])
-
-
-  
 
   return (
     <>
@@ -48,7 +46,7 @@ const TextEditor: React.FC = () => {
       </button>
 
       {show_editor && (
-        <div className="max-w-[100%] my-4 p-4 border-2 "> {content} </div>
+        <div className="max-w-[100%] my-4 p-4 border-2 "> {editorContent} </div>
       )}
     </>
   );

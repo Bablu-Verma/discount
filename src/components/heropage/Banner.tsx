@@ -41,8 +41,8 @@ const Banner = () => {
         loop={true}
         modules={[Autoplay,Pagination, A11y]}
         pagination={{ clickable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+        onSwiper={(swiper) => ''}
+        onSlideChange={() => ''}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,

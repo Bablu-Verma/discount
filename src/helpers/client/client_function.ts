@@ -43,4 +43,11 @@ export function setClientCookie(cookie_name:string, cookie_value:string, duratio
     return null; 
   }
   
-  
+  export const generateSlug = (text: string): string => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };

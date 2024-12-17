@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
 import { authenticateUser } from "@/lib/authenticate";
 import { isAdmin } from "@/lib/checkUserRole";  // This function checks if the user is an admin
+import { upload_image } from "@/helpers/server/upload_image";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -47,8 +48,14 @@ export async function POST(req: Request) {
     }
 
     // Extract category data from the request body
-    const requestData = await req.json();
-    const { name, description, slug, img, font_awesome_class, status } = requestData;
+    const requestData = await req.formData();
+
+    let name = requestData.get("name");
+    let description = requestData.get("description");
+    let slug = requestData.get("slug");
+    let img = requestData.get("img");
+    let font_awesome_class = requestData.get("font_awesome_class");
+    let status = requestData.get("status");
 
     // Validate required fields
     if (!name || !description || !slug || !img || !font_awesome_class) {
@@ -86,12 +93,29 @@ export async function POST(req: Request) {
       );
     }
 
+    let image_url;
+      if (img instanceof File) {
+          const { success, message, url } = await upload_image(
+            img,
+            "site_category"
+          );
+    
+          if (success) {
+            console.log("Image uploaded successfully:", url);
+            image_url = url;
+          } else {
+            console.error("Image upload failed:", message);
+          }
+        } else {
+          console.error("Invalid image value. Expected a File.");
+        }
+
     // Create a new category
     const newCategory = new CategoryModel({
       name,
       description,
       slug,
-      img,
+      img:image_url,
       font_awesome_class,
       status,
     });

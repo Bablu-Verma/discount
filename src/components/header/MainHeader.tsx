@@ -22,9 +22,6 @@ const MainHeader = () => {
   const userlogin = token_? true : false;
 
 
-  console.log(user)
-
-
   const showtoggle = () => {
     setToggleMenu(!toggleMenu);
   };

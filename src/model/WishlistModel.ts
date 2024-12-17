@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IWishlist extends Document {
+interface IWishlist {
   user_id: mongoose.Schema.Types.ObjectId; 
   campaigns: mongoose.Schema.Types.ObjectId[]; 
 }

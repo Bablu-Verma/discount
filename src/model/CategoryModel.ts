@@ -1,12 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
-interface ICategory {
+export interface ICategory {
   name: string; 
   description: string; 
   slug: string; 
   status: boolean;
   img: string;
-  font_awesome_class: string;  // Font Awesome class for category icon
+  font_awesome_class: string; 
   deleted_category:boolean;
 }
 

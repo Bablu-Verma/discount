@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   images: {
-    domains: ["i.imgur.com", 'res.cloudinary.com'], 
+    domains: ["i.imgur.com", 'res.cloudinary.com','cdn-icons-png.flaticon.com'], 
   },
 };
 

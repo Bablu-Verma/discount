@@ -54,7 +54,7 @@ const HomeBlog = () => {
 
       <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-4 gap-3 md:gap-6">
         {fleah_data.map((item, i) => (
-         <BlogCard />
+         <BlogCard key={i}/>
         ))}
       </div>
     </div>

@@ -33,9 +33,11 @@ const CampaignDetail = () => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1400px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
-          <div className="md:grid md:grid-cols-2 gap-5">
-            <div></div>
+        <section className="max-w-[800px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
+          
+            <div className="mb-10">
+              <img src="https://i.imgur.com/x8AGeNt.jpeg" alt="blog-img" className="w-full"/>
+            </div>
             <div>
               <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
                 Toys R Us Fastlane 3D Super Transparent Car 360 Mechanical
@@ -55,7 +57,7 @@ const CampaignDetail = () => {
                 AA batteries (Not Included).
               </div>
             </div>
-          </div>
+      
         </section>
         <BottomToTop />
       </main>

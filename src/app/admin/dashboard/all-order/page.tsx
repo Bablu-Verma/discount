@@ -7,7 +7,7 @@ import SelectInput from "@/app/admin/_admin_components/SelectInput";
 import PaginationControls from "@/app/admin/_admin_components/PaginationControls";
 import {productData} from "@/utils/data"
 
-const ProductList = () => {
+const AllStore = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
 
   const [entries, setEntries] = useState<string>("10");
@@ -178,4 +178,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default AllStore;

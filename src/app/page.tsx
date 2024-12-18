@@ -49,11 +49,12 @@ export default async function  Home() {
   const token = await getServerToken()
   const page_data = await GetData(token)
 
+  console.log(page_data.data)
   return (
     <>
     <TopHeader />
     <MainHeader />
-    <Hero home_category={page_data.data.category}/>
+    <Hero home_category={page_data.data.category} banner={page_data.data.banner}/>
     <main>
       <SubHeading title="Today's" />
       <div
@@ -77,7 +78,7 @@ export default async function  Home() {
       >
        <MainHeading title="Best Selling Products"/>
       </div>
-      <BestSalling />
+      <BestSalling  best_product={page_data.data.hot}/>
       <div className="max-w-[1400px] mx-auto mt-14">
         <a href="" className="overflow-hidden min-h-[300px] inline-block w-full bg-[url('https://www.bajajmall.in/content/dam/emistoremarketplace/index/10-10-22/geetanjali/mobile-phones-diwali-page/big-banner/desk/MCLP_Row5_1_BigBanner_Desk_vivoT15G_PDP_B2B.jpg')] bg-no-repeat bg-cover">
           {/* <img src="https://www.bajajmall.in/content/dam/emistoremarketplace/index/10-10-22/geetanjali/mobile-phones-diwali-page/big-banner/desk/MCLP_Row5_1_BigBanner_Desk_vivoT15G_PDP_B2B.jpg" alt="" className="w-full" /> */}
@@ -90,7 +91,7 @@ export default async function  Home() {
       >
        <MainHeading title="Explore Our Products"/>
       </div>
-      <BestSalling />
+      {/* <BestSalling /> */}
 
       <SubHeading title="Featured" />
       <div

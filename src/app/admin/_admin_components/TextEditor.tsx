@@ -29,7 +29,7 @@ const TextEditor: React.FC = () => {
 
   return (
     <>
-      <div className="text-editor border-2 border-red-300 min-h-[350px]">
+      <div className="text-editor border-2 border-gray-200 min-h-[350px]">
         <JoditEditor
           config={config}
           ref={editor}

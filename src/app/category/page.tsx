@@ -39,7 +39,6 @@ export default async function Category() {
    const token = await getServerToken()
     const page_data = await GetData(token)
 
-
   return (
     <>
     <TopHeader />

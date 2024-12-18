@@ -3,42 +3,13 @@
 import React from "react";
 
 import ProductCard from "../small_card/ProductCard";
+import { ICampaign } from "@/model/CampaignModel";
 
-const BestSalling = () => {
-  const fleah_data = [
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-  ];
+interface SellingProps {
+  best_product:ICampaign[]
+}
+const BestSalling:React.FC<SellingProps > = ({best_product}) => {
+  
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 pt-2 mb-4 relative">
@@ -52,8 +23,8 @@ const BestSalling = () => {
       </div>
 
       <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-4 gap-3 md:gap-6">
-        {fleah_data.map((item, i) => (
-          <ProductCard key={i} />
+        {best_product?.map((item, i) => (
+          <ProductCard card_data={item} key={i} />
         ))}
       </div>
     </div>

@@ -5,7 +5,7 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 
 // Define the interface for the Campaign model
-interface ICampaign  {
+export interface ICampaign  {
   title: string;
   price: string;
   offer_price: string;
@@ -25,11 +25,13 @@ interface ICampaign  {
   end_date: Date; 
   slug: string; 
   discount_percentage: number; 
-  tags: Array<string>; 
+  tags: string; 
   meta_title: string; 
   meta_description: string; 
   meta_keywords: string; 
-  deleted_campaign:boolean
+  deleted_campaign:boolean,
+  brand: string,
+  banner:boolean
 }
 
 const CampaignSchema = new Schema<ICampaign>(
@@ -42,15 +44,18 @@ const CampaignSchema = new Schema<ICampaign>(
       type: String,
       required: [true, "Price is required"],
     },
-    offer_price: {
-      type: String,
-      required: [true, "Offer price is required"],
-    },
     cashback: {
       type: String,
       required: [true, "Cashback is required"],
     },
-   
+    offer_price: {
+      type: String,
+      required: [true, "Offer price is required"],
+    },
+    brand:{
+      type: String,
+      required: [true, "Brand is required"],
+    },
     category: {
       type: String,
       required: [true, "Category is required"],
@@ -75,11 +80,7 @@ const CampaignSchema = new Schema<ICampaign>(
       type: Boolean,
       default: false,
     },
-    active: {
-      type: Boolean,
-      default: false,
-      required: [true, "Active status is required"],
-    },
+   
     tc: {
       type: String,
       required: [true, "Terms and conditions are required"],
@@ -88,30 +89,13 @@ const CampaignSchema = new Schema<ICampaign>(
       type: Date,
       default: Date.now,
     },
-    review: {
-      type: Number,
-      default: 0,
-    },
-    start_date: {
-      type: Date,
-      required: [true, "Start date is required"],
-    },
-    end_date: {
-      type: Date,
-      required: [true, "End date is required"],
-    },
     slug: {
       type: String,
       required: [true, "Slug is required"],
       unique: true,
     },
-    discount_percentage: {
-      type: Number,
-      default: 0,
-    },
     tags: {
-      type: [String],
-      default: [],
+      type: String,
     },
     meta_title: {
       type: String,
@@ -125,7 +109,20 @@ const CampaignSchema = new Schema<ICampaign>(
       type: String,
       required: [true, "Meta keywords are required"],
     },
+
     campaign_id: { type: Number },
+
+    banner:{
+      default: false,
+      type: Boolean ,
+    },
+
+    active: {
+      type: Boolean,
+      default: false,
+      required: [true, "Active status is required"],
+    },
+    
     deleted_campaign: { 
       default: false,
       type: Boolean 

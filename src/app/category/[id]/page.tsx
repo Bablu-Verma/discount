@@ -65,7 +65,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             <span>Home</span> / <span>Category</span> / <span>{page_data.name}</span>
           </div>
           <div className="mt-8 text-center items-center">
-            <div className="h-48 w-48 rounded-full overflow-hidden justify-center items-center flex shadow-lg m-auto mb-10 bg-[url('')]">
+            <div className="h-48 w-48 rounded-full overflow-hidden justify-center items-center flex shadow-lg m-auto mb-10]">
               <Image
                 src={page_data.img}
                 alt="WvzprEv"

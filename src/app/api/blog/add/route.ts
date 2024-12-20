@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import { authenticateUser } from "@/lib/authenticate"; 
 import BlogModel from "@/model/BlogModal";
 import { isAdmin } from "@/lib/checkUserRole";
+import { generateSlug } from "@/helpers/client/client_function";
 
 
 const validateField = (field: string, fieldName: string) => {
@@ -66,7 +67,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const slug = Array.isArray(title) ? title.join('-').toLowerCase().replace(/\s+/g, '-') : title.toString().toLowerCase().replace(/\s+/g, '-');
+    const slug = generateSlug(title);
 
     const existingBlog = await BlogModel.findOne({ slug });
 
@@ -82,7 +83,7 @@ export async function POST(req: Request) {
 
     const newBlogQuery = new BlogModel({
       title,
-      slug:"hgfhgfhg",
+      slug,
       short_desc,
       category,
       blogType,

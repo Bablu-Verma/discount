@@ -1,11 +1,9 @@
 import BottomToTop from "@/components/BottomToTop";
-
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import { MainHeading, SubHeading } from "@/components/Heading";
 import Featured from "@/components/heropage/Featured";
-
 import Hero from "@/components/heropage/Hero";
 import BestSalling from "@/components/homepage/BestSelling";
 import HomeBlog from "@/components/homepage/HomeBlog";
@@ -14,7 +12,6 @@ import HomeFlash from "@/components/homepage/HomeFlash";
 import SubFooter from "@/components/SubFooter";
 import TimeCount from "@/components/TimeCount";
 import { getServerToken } from "@/helpers/server/server_function";
-
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -24,7 +21,6 @@ export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
       home_api,
-      {},
       {
         headers: {
           Authorization: token,
@@ -49,7 +45,7 @@ export default async function  Home() {
   const token = await getServerToken()
   const page_data = await GetData(token)
 
-  console.log(page_data.data)
+  // console.log(page_data.data)
   return (
     <>
     <TopHeader />
@@ -109,7 +105,7 @@ export default async function  Home() {
       >
        <MainHeading title="Read Our Blog"/>
       </div>
-      <HomeBlog />
+      <HomeBlog blogs={page_data.data.blogs}/>
 
       
       <SubFooter />

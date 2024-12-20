@@ -114,9 +114,9 @@ const Filter__ = () => {
       </div>
       <div className="mt-5">
         <p className="text-base mb-2 text-secondary capitalize">Categpry</p>
-        {category.map((item) => {
+        {category.map((item, i) => {
           return (
-            <div>
+            <div key={i}>
               <input type="checkbox" id={item.value} name={item.value} />
               <label htmlFor={item.value} className="ml-2 text-sm text-dark capitalize">
                 {item.label}

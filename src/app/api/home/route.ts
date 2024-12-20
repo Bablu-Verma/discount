@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
 import CategoryModel from "@/model/CategoryModel";
+import BlogModel from "@/model/BlogModal";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -13,6 +14,7 @@ export async function POST(req: Request) {
     const hotCampaigns = await CampaignModel.find({hot:true}).limit(10);
     const featuredCampaigns = await CampaignModel.find({featured:true}).limit(10);
     const category = await CategoryModel.find({})
+    const newBlogs = await BlogModel.find({}).limit(4).sort({ createdAt: -1 });
 
    
     return new NextResponse(
@@ -25,6 +27,7 @@ export async function POST(req: Request) {
           new: newCampaigns,
           hot: hotCampaigns,
           featured: featuredCampaigns,
+          blogs: newBlogs
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

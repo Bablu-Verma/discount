@@ -7,43 +7,35 @@ import React from "react";
 import Filter from "./_filter";
 import BlogCard from "@/components/small_card/BlogCard";
 import Image from "next/image";
+import axios from "axios";
+import { get_All_blogs } from "@/utils/api_url";
 
-const AllBlog = () => {
-  
-  const fleah_data = [
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-  ];
+
+export interface IBlogCard {
+  title: string;
+  slug: string;
+  image: string;
+  short_desc: string;
+  createdAt: string;
+  readTime: string;
+}
+
+const fetchData = async () => {
+  try {
+    const { data } = await axios.get(get_All_blogs);
+    if (!data.success) {
+      throw new Error("Failed to fetch data");
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const AllBlog = async () => {
+  const fetchBlogData = await fetchData();
+ const blogs: IBlogCard[] = await fetchBlogData.data;
+ const pagination = await fetchBlogData.pagination;
 
   return (
     <>
@@ -68,8 +60,8 @@ const AllBlog = () => {
             <Filter />
             <div className="col-span-6">
               <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">
-                {fleah_data.map((item, i) => (
-                  <BlogCard />
+                {blogs.map((item, i) => (
+                  <BlogCard item={item} key={i}/>
                 ))}
               </div>
             </div>

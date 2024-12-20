@@ -1,27 +1,35 @@
 "use client";
-import React, { useState } from "react";
+
+import { ICategory } from "@/model/CategoryModel";
+import { RootState } from "@/redux-store/redux_store";
+import { defaultFilterData, resetFilters, setFilterData } from "@/redux-store/slice/ProductFilterSlice";
+import { category_list_api } from "@/utils/api_url";
+import axios, { AxiosError } from "axios";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Range } from "react-range";
+import { useDispatch, useSelector } from "react-redux";
 
 const Filter = () => {
-  const [showfilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
 
   return (
     <>
       <div className="col-span-2 hidden md:block">
         <h1 className="text-lg text-secondary">Filters</h1>
-        <Filter__ />
+        <FilterContent />
       </div>
       <div className="relative md:hidden">
         <div className="md:hidden absolute top-[-42px] z-20 flex gap-3 items-center">
           <button
-            onClick={() => setShowFilter(!showfilter)}
+            onClick={() => setShowFilter(!showFilter)}
             className="h-10 w-10 rounded-full shadow-md flex justify-center items-center"
           >
             <i className="fa-solid fa-filter text-2xl text-primary hover:opacity-100 opacity-90"></i>
           </button>
           <span className="text-base text-secondary">Filters</span>
         </div>
-        {showfilter && (
+        {showFilter && (
           <div
             style={{ background: "rgba(0, 0, 0, 0.3)" }}
             className="w-full fixed z-20 h-screen top-0 left-0"
@@ -29,12 +37,12 @@ const Filter = () => {
             <div className="h-screen w-[60%] min-w-[320px] bg-white relative p-2 pt-4">
               <p className="text-lg text-secondary">Filters</p>
               <button
-                onClick={() => setShowFilter(!showfilter)}
+                onClick={() => setShowFilter(!showFilter)}
                 className="absolute top-4 right-4 opacity-70 hover:opacity-100"
               >
                 <i className="fa-solid fa-xmark text-2xl text-secondary"></i>
               </button>
-              <Filter__ />
+              <FilterContent />
             </div>
           </div>
         )}
@@ -45,195 +53,235 @@ const Filter = () => {
 
 export default Filter;
 
-const Filter__ = () => {
-  const [filters, setFilters] = useState({
-    credit_card: false,
-    category: false,
-    hot: false,
-    new: false,
-    featured: false,
-    active: false,
-  });
+const FilterContent = () => {
+  const [filterData, setFilterDataState] = useState(defaultFilterData);
 
-  const category = [
-    {
-      label: "Electronics",
-      value: "electronics",
-      id: 1,
-    },
-    {
-      label: "Electronics",
-      value: "electronics",
-      id: 1,
-    },
-    {
-      label: "Electronics",
-      value: "electronics",
-      id: 1,
-    },
-    {
-      label: "Electronics",
-      value: "electronics",
-      id: 1,
-    },
-    {
-      label: "Electronics",
-      value: "electronics",
-      id: 1,
-    },
-  ];
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const token = useSelector((state: RootState) => state.user.token);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const dispatch = useDispatch();
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.post(
+        category_list_api,
+        {},
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCategories(data.data || []);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message || "Failed to fetch categories");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Handlers
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
-    setFilters((prev) => ({
+    setFilterDataState((prev) => ({
       ...prev,
-      [name]: checked,
+      categories: checked
+        ? [...prev.categories, name]
+        : prev.categories.filter((category) => category !== name),
     }));
+  };
+
+  const handleTrendChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+    setFilterDataState((prev) => ({
+      ...prev,
+      trends: checked
+        ? [...prev.trends, name]
+        : prev.trends.filter((trend) => trend !== name),
+    }));
+  };
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFilterDataState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRangeChange = (values: number[]) => {
+    setFilterDataState((prev) => ({ ...prev, amount: values }));
+  };
+
+  const handleClearFilters = () => {
+    setFilterDataState(defaultFilterData);
+    dispatch(resetFilters());
+  };
+
+  const handleApplyFilters = () => {
+    dispatch(setFilterData(filterData));
   };
 
   return (
     <div className="space-y-4">
+      {/* Category Filters */}
       <div className="mt-5">
-        <p className="text-base mb-2 text-secondary capitalize">Type</p>
-        <div >
-          <input
-            type="checkbox"
-            id="credit_card"
-            name="credit_card"
-          />
-          <label htmlFor="credit_card" className="ml-2 text-sm text-dark capitalize">
-            Credit Card
-          </label>
-        </div>
-        <div>
-          <input type="checkbox" id="incurance" name="incurance" />
-          <label htmlFor="incurance" className="ml-2 text-sm text-dark capitalize">
-            Incurance
-          </label>
-        </div>
+        <p className="text-base mb-2 text-secondary capitalize">Category</p>
+        {categories.map((item, index) => (
+          <div key={index}>
+            <input
+              type="checkbox"
+              id={item.slug}
+              name={item.slug}
+              onChange={handleCategoryChange}
+              checked={filterData.categories.includes(item.slug)}
+            />
+            <label htmlFor={item.slug} className="ml-2 text-sm text-dark capitalize">
+              {item.name}
+            </label>
+          </div>
+        ))}
       </div>
-      <div className="mt-5">
-        <p className="text-base mb-2 text-secondary capitalize">Categpry</p>
-        {category.map((item) => {
-          return (
-            <div>
-              <input type="checkbox" id={item.value} name={item.value} />
-              <label htmlFor={item.value} className="ml-2 text-sm text-dark capitalize">
-                {item.label}
-              </label>
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-5">
-        <p className="text-base mb-2 text-secondary capitalize">Short</p>
-        <div className="mb-3">
-          <input type="radio" id="lh" name="price_" value="lh" />
-          <label htmlFor="lh" className="ml-2 text-sm text-dark capitalize">Low to Heigh Price</label>
-          <br />
-          <input type="radio" id="hl" name="price_" value="hl" />
-          <label htmlFor="hl" className="ml-2 text-sm text-dark capitalize">Heigh to Low Price</label>
-        </div>
 
-        <div>
-          <input type="radio" id="az" name="order_" value="az" />
-          <label htmlFor="az" className="ml-2 text-sm text-dark capitalize">A to Z</label>
-          <br />
-          <input type="radio" id="za" name="order_" value="za" />
-          <label htmlFor="za" className="ml-2 text-sm text-dark capitalize">Z to A</label>
-        </div>
-      </div>
+      {/* Sorting Filters */}
       <div className="mt-5">
-        <p className="text-base mb-2 text-secondary capitalize">Trand</p>
-        <div>
+        <p className="text-base mb-2 text-secondary capitalize">Sort</p>
+        <div className="mb-3">
           <input
-            type="checkbox"
-            id="credit_card"
-            name="credit_card"
-            checked={filters.credit_card}
-            onChange={handleChange}
+            type="radio"
+            id="low_high"
+            name="price"
+            value="low_high"
+            onChange={handleSortChange}
+            checked={filterData.price === "low_high"}
           />
-          <label  htmlFor="credit_card" className="ml-2 text-sm text-dark capitalize">
-            Hot
+          <label htmlFor="low_high" className="ml-2 text-sm text-dark capitalize">
+            Low to High Price
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="high_low"
+            name="price"
+            value="high_low"
+            onChange={handleSortChange}
+            checked={filterData.price === "high_low"}
+          />
+          <label htmlFor="high_low" className="ml-2 text-sm text-dark capitalize">
+            High to Low Price
           </label>
         </div>
         <div>
           <input
-            type="checkbox"
-            id="credit_card"
-            name="credit_card"
-            checked={filters.credit_card}
-            onChange={handleChange}
+            type="radio"
+            id="a_to_z"
+            name="order"
+            value="a_to_z"
+            onChange={handleSortChange}
+            checked={filterData.order === "a_to_z"}
           />
-          <label htmlFor="credit_card" className="ml-2 text-sm text-dark capitalize">
-            New
+          <label htmlFor="a_to_z" className="ml-2 text-sm text-dark capitalize">
+            A to Z
           </label>
-        </div>
-        <div>
+          <br />
           <input
-            type="checkbox"
-            id="credit_card"
-            name="credit_card"
-            checked={filters.credit_card}
-            onChange={handleChange}
+            type="radio"
+            id="z_to_a"
+            name="order"
+            value="z_to_a"
+            onChange={handleSortChange}
+            checked={filterData.order === "z_to_a"}
           />
-          <label htmlFor="credit_card" className="ml-2 text-sm text-dark capitalize">
-          featured
+          <label htmlFor="z_to_a" className="ml-2 text-sm text-dark capitalize">
+            Z to A
           </label>
         </div>
       </div>
-      <Range_ />
-      
+
+      <div className="mt-5">
+        <p className="text-base mb-2 text-secondary capitalize">Trend</p>
+        {["hot", "new", "featured"].map((filterKey) => (
+          <div key={filterKey}>
+            <input
+              type="checkbox"
+              id={filterKey}
+              name={filterKey}
+              checked={filterData.trends.includes(filterKey)}
+              onChange={handleTrendChange}
+            />
+            <label htmlFor={filterKey} className="ml-2 text-sm text-dark capitalize">
+              {filterKey}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      {/* Range Filter */}
+      <div className="max-w-[220px] mt-5">
+        <p className="text-base mb-2 text-secondary capitalize">Amount</p>
+        <span className="text-secondary text-xl inline-block mb-3">
+          ₹{filterData.amount[0]} - ₹{filterData.amount[1]}
+        </span>
+        <Range
+          step={100}
+          min={0}
+          max={10000000}
+          values={filterData.amount}
+          onChange={handleRangeChange}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "6px",
+                width: "100%",
+                backgroundColor: "#212121",
+                borderRadius: "10px",
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "16px",
+                width: "16px",
+                backgroundColor: "#d85134",
+                borderRadius: "50%",
+              }}
+            />
+          )}
+        />
+      </div>
+      <div style={{marginTop:"30px"}} className=""></div>
+      <hr className="divide-x-2"/>
+      <div style={{marginTop:"30px"}} className=""></div>
+      <div className="flex justify-around items-center mt-5">
+        <button
+          className="text-sm bg-red-300 py-1 px-5 rounded-md"
+          type="button"
+          onClick={handleClearFilters}
+        >
+          Clear
+        </button>
+        <button
+          className="text-sm bg-blue-300 py-1 px-5 rounded-md"
+          type="button"
+          onClick={handleApplyFilters}
+        >
+          Apply
+        </button>
+      </div>
     </div>
   );
 };
 
 
-const Range_: React.FC = () => {
-  const [values, setValues] = React.useState([50]);
-  return (
-    <div className="max-w-[220px] mt-5 ">
-        <p className="text-base mb-2 text-secondary capitalize">Amount</p>
-        <span className="text-secondary text-xl inline-block mb-3">
-        ₹{values}
-        </span>
-        <Range
-      label="Select your value"
-      step={0.1}
-      min={0}
-      max={100}
-      values={values}
-      onChange={(values) => setValues(values)}
-      renderTrack={({ props, children }) => (
-        <div
-          {...props}
-          style={{
-            ...props.style,
-            height: "6px",
-            width: "100%",
-            backgroundColor:'#212121' ,
-            borderRadius: "10px",
-            
-          }}
-        >
-          {children}
-        </div>
-      )}
-      renderThumb={({ props }) => (
-        <div
-          {...props}
-          key={props.key}
-          style={{
-            ...props.style,
-            height: "16px",
-            borderRadius: "10px",
-            width: "16px",
-            backgroundColor: "#d85134",
-          }}
-        />
-      )}
-    />
-      </div>
-   
-  );
-};
+

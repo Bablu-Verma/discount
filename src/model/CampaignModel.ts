@@ -16,6 +16,8 @@ export interface ICampaign  {
   img: Array<string>;
   new: boolean;
   featured: boolean;
+  add_poster:boolean;
+  arrival:boolean;
   hot: boolean;
   active: boolean;
   tc: string; 
@@ -69,6 +71,14 @@ const CampaignSchema = new Schema<ICampaign>(
       required: [true, "Images are required"],
     },
     new: {
+      type: Boolean,
+      default: false,
+    },
+    add_poster:{
+      type: Boolean,
+      default: false,
+    },
+    arrival:{
       type: Boolean,
       default: false,
     },

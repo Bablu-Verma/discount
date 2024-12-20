@@ -12,8 +12,14 @@ import HomeFlash from "@/components/homepage/HomeFlash";
 import SubFooter from "@/components/SubFooter";
 import TimeCount from "@/components/TimeCount";
 import { getServerToken } from "@/helpers/server/server_function";
+
+import { ICampaign } from "@/model/CampaignModel";
+
+
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
+import Image from "next/image";
+import Link from "next/link";
 import toast from "react-hot-toast";
 
 
@@ -45,7 +51,6 @@ export default async function  Home() {
   const token = await getServerToken()
   const page_data = await GetData(token)
 
-  // console.log(page_data.data)
   return (
     <>
     <TopHeader />
@@ -59,7 +64,7 @@ export default async function  Home() {
        <MainHeading title="Flash Sales" />
        <TimeCount />
       </div>
-      <HomeFlash />
+      <HomeFlash featured={page_data.data.featured} />
       <SubHeading title="Categories" />
       <div
         className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
@@ -74,20 +79,33 @@ export default async function  Home() {
       >
        <MainHeading title="Best Selling Products"/>
       </div>
-      <BestSalling  best_product={page_data.data.hot}/>
+      <BestSalling  best_product={page_data.data.new}/>
       <div className="max-w-[1400px] mx-auto mt-14">
-        <a href="" className="overflow-hidden min-h-[300px] inline-block w-full bg-[url('https://www.bajajmall.in/content/dam/emistoremarketplace/index/10-10-22/geetanjali/mobile-phones-diwali-page/big-banner/desk/MCLP_Row5_1_BigBanner_Desk_vivoT15G_PDP_B2B.jpg')] bg-no-repeat bg-cover">
-          {/* <img src="https://www.bajajmall.in/content/dam/emistoremarketplace/index/10-10-22/geetanjali/mobile-phones-diwali-page/big-banner/desk/MCLP_Row5_1_BigBanner_Desk_vivoT15G_PDP_B2B.jpg" alt="" className="w-full" /> */}
-        </a>
+        {
+       page_data.data && page_data.data.poster.map((item:ICampaign)=>{
+            return (
+              <Link href={`/campaign/${item.slug}`}> 
+              <Image 
+               src={item?.img[0]}
+               className="w-full h-[220px] md:h-[300px] rounded-t-md"
+               height={200}
+               width={200}
+               sizes="100vw"
+               alt="shose"
+              />
+              </Link>
+            )
+          })
+        }
+
       </div>
-     
       <SubHeading title="Our Product" />
       <div
         className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Explore Our Products"/>
       </div>
-      {/* <BestSalling /> */}
+      <BestSalling  best_product={page_data.data.hot}/>
 
       <SubHeading title="Featured" />
       <div
@@ -95,10 +113,7 @@ export default async function  Home() {
       >
        <MainHeading title="New Arrival"/>
       </div>
-      <Featured /> 
-
-    
-
+      <Featured arrival={page_data.data.arrival} /> 
       <SubHeading title="Blog" />
       <div
         className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"

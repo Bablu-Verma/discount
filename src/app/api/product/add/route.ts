@@ -69,7 +69,8 @@ export async function POST(req: Request) {
     const new_p = requestData.get('new_p')
     const featured_p = requestData.get('featured_p')
     const hot_p = requestData.get('hot_p')
-
+    const add_poster = requestData.get('add_poster')
+    const arrival = requestData.get('arrival')
 
     if (!imgFiles.length) {
       return new NextResponse(
@@ -107,7 +108,6 @@ export async function POST(req: Request) {
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
    
-   
 
     campaignData.title = product_name;
     campaignData.price = Number(price);
@@ -119,18 +119,20 @@ export async function POST(req: Request) {
     campaignData.active = product_status === "active" ? true : false;
     campaignData.tc = terms;
     campaignData.cashback = Number(cashback);
-    campaignData.banner_active = banner_status === "active" ? true : false;
+    campaignData.banner  = banner_status === "active" ? true : false;
     campaignData.hot = hot_p == "true" ? true : false;
-    campaignData.featured_p = featured_p == "true" ? true : false;
-    campaignData.new_p = new_p == "true" ? true : false;
+    campaignData.featured  = featured_p == "true" ? true : false;
+    campaignData.new = new_p  == "true" ? true : false;
     campaignData.slug = slug;
     campaignData.meta_title = meta_title;
     campaignData.meta_description = meta_description;
     campaignData.meta_keywords = meta_keywords;
     campaignData.tags = tags;
+    campaignData.add_poster= add_poster == "true" ? true : false;
+    campaignData.arrival= arrival == "true" ? true : false;
 
 
-    console.log(campaignData)
+
    
     const campaign = new CampaignModel(campaignData);
     await campaign.save();

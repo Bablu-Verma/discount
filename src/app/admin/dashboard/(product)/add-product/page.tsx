@@ -27,6 +27,8 @@ interface IFormData {
   new_p: string;
   featured_p: string;
   tags:string;
+  add_poster:string;
+  arrival:string;
   slug_url_name:string;
 }
 
@@ -55,6 +57,8 @@ const AddProduct = () => {
     new_p: "",
     featured_p: "",
     tags:'',
+    add_poster:'',
+    arrival:'',
     slug_url_name:''
   });
 
@@ -207,9 +211,6 @@ const AddProduct = () => {
       formPayload.append("description", editorContent);
       const slug_url = generateSlug(form_data.slug_url_name)
       formPayload.append("slug_url", slug_url);
-
-      console.log(form_data);
-      console.log("Form payload submitted:", formPayload);
 
       
       setLoading(true);
@@ -395,7 +396,7 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Hot Capmaign
@@ -434,7 +435,7 @@ const AddProduct = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Product Status
+                Flash Product
               </label>
               <div className="flex items-center space-x-4">
                 <label className="flex items-center">
@@ -449,9 +450,43 @@ const AddProduct = () => {
                 </label>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+              Add Poster
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="add_poster"
+                    value="active"
+                    onChange={handleChange}
+                    className="text-blue-500 "
+                  />
+                  <span className="ml-2 text-gray-700">Active</span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-3">
+          <div>
+              <label className="block text-sm font-medium text-gray-700">
+              New Arrival
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="arrival"
+                    value="active"
+                    onChange={handleChange}
+                    className="text-blue-500 "
+                  />
+                  <span className="ml-2 text-gray-700">Active</span>
+                </label>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Is Banner Deal
@@ -550,7 +585,6 @@ const AddProduct = () => {
               </label>
               <input
                 type="text"
-                
                 name="meta_title"
                 value={form_data.meta_title}
                 onChange={handleChange}

@@ -15,7 +15,5 @@ export const category_details_api = main_url + '/category/details'
 export const edit_user_address_api = main_url + '/user-address/edit'
 export const user_profile_api = main_url + '/user/profile'
 export const add_product = main_url + '/product/add'
-
-
-// blogs 
 export const get_All_blogs = main_url + '/blog'
+export const product_list_ = main_url + '/product/get-all'

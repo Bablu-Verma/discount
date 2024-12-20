@@ -4,47 +4,43 @@ import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
-import ProductCard from "@/components/small_card/ProductCard";
-
 import React from "react";
-import Filter from "./_filter";
+import CampaignClient from "./_campaign_client";
+import { getServerToken } from "@/helpers/server/server_function";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { product_list_ } from "@/utils/api_url";
 
-const Campaign = () => {
+
+export const GetData = async (token:string) => {
+  try {
+    let { data } = await axios.post(
+      product_list_,
+      {},
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+ 
+    return data.data;
+  } catch (error) {
+    if (error instanceof AxiosError) { 
+      console.error("Error registering user", error.response?.data.message);
+      toast.error(error.response?.data.message);
+    } else {
+      console.error("Unknown error", error);
+    }
+  }
+};
+
+
+const Campaign = async () => {
   
-  const fleah_data = [
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-  ];
+    const token = await getServerToken()
+    const page_data = await GetData(token)
 
   return (
     <>
@@ -52,18 +48,8 @@ const Campaign = () => {
       <MainHeader />
       <main className="">
         <section className="max-w-[1400px] mx-auto mt-14 mb-16 p-2 xl:p-0">
-          <div className="md:grid grid-cols-8 gap-8">
-           <Filter />
-            <div className="col-span-6">
-              <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">
-                {fleah_data.map((item, i) => (
-                  <ProductCard />
-                ))}
-              </div>
-            </div>
-          </div>
+          <CampaignClient product_={page_data} />
         </section>
-
         <BottomToTop />
       </main>
       <Footer />
@@ -73,6 +59,3 @@ const Campaign = () => {
 
 export default Campaign;
 
-// https://www.shutterstock.com/image-vector/colorful-game-controller-icon-vector-600nw-2489844309.jpg
-// https://www.shutterstock.com/image-vector/joystick-gamepad-game-console-controller-600nw-2137131861.jpg
-// https://banner2.cleanpng.com/20231111/ibg/transparent-cartoon-characters-colorful-cartoon-style-video-game-controller-1711023988390.webp

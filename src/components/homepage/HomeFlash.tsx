@@ -3,64 +3,17 @@
 import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ProductCard from "../small_card/ProductCard";
+import ProductCardTwo from "../small_card/ProductCardTwo";
+import ProductCardThree from "../small_card/ProductCardThree";
+import { ICampaign } from "@/model/CampaignModel";
 
+interface IfleasProp {
+  featured: ICampaign[]
+}
 
-const Flash = () => {
+const Flash:React.FC<IfleasProp> = ({featured}) => {
   const swiperRef = useRef<any>(null);
 
-  //  console.log(deviceWidth)
-
-
-  const fleah_data = [
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-    {
-      id: 1,
-      image: "/images/flash/flash1.jpg",
-      title: "Flash Sale: Off 50% on All Swimsuits",
-      description:
-        "Summer Sale for all swim suits and free delivery - off 50%!",
-      link: "/flash-sale",
-    },
-  ];
 
   return (
     <>
@@ -75,18 +28,18 @@ const Flash = () => {
         </div>
         <Swiper
           spaceBetween={20}
-          slidesPerView={1.3}
+          slidesPerView={1}
           breakpoints={{
             520: {
-              slidesPerView: 2.2,
+              slidesPerView: 1,
               
             },
             768: {
-              slidesPerView: 3,
+              slidesPerView: 2,
               
             },
             1024: {
-              slidesPerView: 4,
+              slidesPerView: 2,
             
             },
           }}
@@ -95,9 +48,10 @@ const Flash = () => {
           onSlideChange={() => console.log("slide change")}
           className="home_flash_"
         >
-          {fleah_data.map((item, i) => (
+          {featured.map((item, i) => (
             <SwiperSlide key={i}>
-              <ProductCard />
+              <ProductCardTwo card_data={item}/>
+              {/* <ProductCardThree card_data={item}/> */}
             </SwiperSlide>
           ))}
         </Swiper>

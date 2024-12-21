@@ -62,7 +62,7 @@ export default async function  Home() {
         className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Flash Sales" />
-       <TimeCount />
+       {/* <TimeCount /> */}
       </div>
       <HomeFlash featured={page_data.data.featured} />
       <SubHeading title="Categories" />

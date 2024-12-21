@@ -26,10 +26,11 @@ interface IFormData {
   meta_keywords: string;
   new_p: string;
   featured_p: string;
-  tags:string;
-  add_poster:string;
-  arrival:string;
-  slug_url_name:string;
+  tags: string;
+  add_poster: string;
+  arrival: string;
+  slug_url_name: string;
+  flash_time:Date | null;
 }
 
 const AddProduct = () => {
@@ -56,11 +57,13 @@ const AddProduct = () => {
     meta_keywords: "",
     new_p: "",
     featured_p: "",
-    tags:'',
-    add_poster:'',
-    arrival:'',
-    slug_url_name:''
+    tags: "",
+    add_poster: "",
+    arrival: "",
+    slug_url_name: "",
+    flash_time: null,
   });
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -138,7 +141,10 @@ const AddProduct = () => {
           return { ...prev, [target.name]: target.checked };
         } else if (target.type === "file") {
           return { ...prev, [target.name]: target.files };
-        } else {
+        } else if (target.name === "flash_time") {
+          return { ...prev, [target.name]: new Date(target.value) };
+        }
+        else {
           return { ...prev, [target.name]: target.value };
         }
       } else if (
@@ -149,8 +155,6 @@ const AddProduct = () => {
       }
       return prev;
     });
-
-  
   };
 
 
@@ -158,8 +162,6 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     try {
-      
-
       const requiredFields = [
         "product_name",
         "brand_name",
@@ -173,7 +175,7 @@ const AddProduct = () => {
         "meta_title",
         "meta_description",
         "meta_keywords",
-        "tags"
+        "tags",
       ];
 
       for (const field of requiredFields) {
@@ -209,12 +211,11 @@ const AddProduct = () => {
         }
       });
       formPayload.append("description", editorContent);
-      const slug_url = generateSlug(form_data.slug_url_name)
+      const slug_url = generateSlug(form_data.slug_url_name);
       formPayload.append("slug_url", slug_url);
 
-      
       setLoading(true);
-      
+
       const { data } = await axios.post(add_product, formPayload, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -224,21 +225,20 @@ const AddProduct = () => {
 
       // console.log("data==>", data);
 
-       toast.success("Product added successfully!");
-       setTimeout(()=>{
-        window.location.reload()
-       },4000)
-     
+      toast.success("Product added successfully!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 4000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "An error occurred");
       } else {
         console.error("Unexpected error:", error);
       }
-    } finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   const isFileList = (value: unknown): value is FileList => {
     return value instanceof FileList;
@@ -435,13 +435,13 @@ const AddProduct = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Flash Product
+                New Arrival
               </label>
               <div className="flex items-center space-x-4">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    name="featured_p"
+                    name="arrival"
                     value="active"
                     onChange={handleChange}
                     className="text-blue-500 "
@@ -452,7 +452,7 @@ const AddProduct = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-              Add Poster
+                Add Poster
               </label>
               <div className="flex items-center space-x-4">
                 <label className="flex items-center">
@@ -470,23 +470,6 @@ const AddProduct = () => {
           </div>
 
           <div className="grid grid-cols-3">
-          <div>
-              <label className="block text-sm font-medium text-gray-700">
-              New Arrival
-              </label>
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="arrival"
-                    value="active"
-                    onChange={handleChange}
-                    className="text-blue-500 "
-                  />
-                  <span className="ml-2 text-gray-700">Active</span>
-                </label>
-              </div>
-            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Is Banner Deal
@@ -544,6 +527,38 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
+          <div className="grid grid-cols-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Flash Product
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="featured_p"
+                    value="active"
+                    onChange={handleChange}
+                    className="text-blue-500 "
+                  />
+                  <span className="ml-2 text-gray-700">Active</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                If select Fleah Product, Add Expire time also
+              </label>
+              <input
+                type="datetime-local"
+                name="flash_time"
+                value={form_data.flash_time ? form_data.flash_time.toISOString().split('T')[0] : ''}
+                onChange={handleChange}
+                placeholder="Expire time"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+              />
+            </div>
+          </div>
 
           <div>
             <label
@@ -574,13 +589,9 @@ const AddProduct = () => {
             ></textarea>
           </div>
 
-
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <label
-                
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Meta Title
               </label>
               <input
@@ -594,15 +605,11 @@ const AddProduct = () => {
             </div>
 
             <div>
-              <label
-              
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Meta keywords
               </label>
               <input
                 type="text"
-              
                 name="meta_keywords"
                 value={form_data.meta_keywords}
                 onChange={handleChange}
@@ -630,23 +637,21 @@ const AddProduct = () => {
             ></textarea>
           </div>
           <div>
-              <label
-                htmlFor="cashback"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Tags
-              </label>
-              <input
-                type="text"
-               
-                name="tags"
-                value={form_data.tags}
-                onChange={handleChange}
-                placeholder="Enter Product Tag"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              />
-            </div>
-
+            <label
+              htmlFor="cashback"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tags
+            </label>
+            <input
+              type="text"
+              name="tags"
+              value={form_data.tags}
+              onChange={handleChange}
+              placeholder="Enter Product Tag"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+            />
+          </div>
 
           <div className="text-right pt-20">
             <button
@@ -661,10 +666,7 @@ const AddProduct = () => {
               disabled={loding}
               className="px-6 py-2 text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none "
             >
-              {
-                loding ? "On Process":"Submit"
-              }
-              
+              {loding ? "On Process" : "Submit"}
             </button>
           </div>
         </form>

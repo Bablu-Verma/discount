@@ -71,6 +71,7 @@ export async function POST(req: Request) {
     const hot_p = requestData.get('hot_p')
     const add_poster = requestData.get('add_poster')
     const arrival = requestData.get('arrival')
+    const flash_time = requestData.get('flash_time');
 
     if (!imgFiles.length) {
       return new NextResponse(
@@ -130,9 +131,13 @@ export async function POST(req: Request) {
     campaignData.tags = tags;
     campaignData.add_poster= add_poster == "true" ? true : false;
     campaignData.arrival= arrival == "true" ? true : false;
+    campaignData.expire_time= flash_time
+    campaignData.user_email= email_check
 
 
+    
 
+    flash_time
    
     const campaign = new CampaignModel(campaignData);
     await campaign.save();

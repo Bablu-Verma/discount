@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 const AutoIncrementFactory = require("mongoose-sequence");
 
-const AutoIncrement = AutoIncrementFactory(mongoose); 
-
+const AutoIncrement = AutoIncrementFactory(mongoose);
 
 // Define the interface for the Campaign model
-export interface ICampaign  {
+export interface ICampaign {
+  user_email: string;
   title: string;
   price: string;
   offer_price: string;
@@ -16,8 +16,8 @@ export interface ICampaign  {
   img: Array<string>;
   new: boolean;
   featured: boolean;
-  add_poster:boolean;
-  arrival:boolean;
+  add_poster: boolean;
+  arrival: boolean;
   hot: boolean;
   active: boolean;
   tc: string; 
@@ -31,9 +31,11 @@ export interface ICampaign  {
   meta_title: string; 
   meta_description: string; 
   meta_keywords: string; 
-  deleted_campaign:boolean,
-  brand: string,
-  banner:boolean
+  deleted_campaign: boolean;
+  brand: string;
+  banner: boolean;
+  expire_time: Date | null;
+  createdAt:string 
 }
 
 const CampaignSchema = new Schema<ICampaign>(
@@ -50,11 +52,15 @@ const CampaignSchema = new Schema<ICampaign>(
       type: String,
       required: [true, "Cashback is required"],
     },
+    user_email:{
+      type: String,
+      required: [true, "email is required"],
+    },
     offer_price: {
       type: String,
       required: [true, "Offer price is required"],
     },
-    brand:{
+    brand: {
       type: String,
       required: [true, "Brand is required"],
     },
@@ -74,11 +80,11 @@ const CampaignSchema = new Schema<ICampaign>(
       type: Boolean,
       default: false,
     },
-    add_poster:{
+    add_poster: {
       type: Boolean,
       default: false,
     },
-    arrival:{
+    arrival: {
       type: Boolean,
       default: false,
     },
@@ -90,15 +96,10 @@ const CampaignSchema = new Schema<ICampaign>(
       type: Boolean,
       default: false,
     },
-   
     tc: {
       type: String,
       required: [true, "Terms and conditions are required"],
-    },
-    created_at: {
-      type: Date,
-      default: Date.now,
-    },
+    },     
     slug: {
       type: String,
       required: [true, "Slug is required"],
@@ -119,32 +120,33 @@ const CampaignSchema = new Schema<ICampaign>(
       type: String,
       required: [true, "Meta keywords are required"],
     },
-
-    campaign_id: { type: Number },
-
-    banner:{
-      default: false,
-      type: Boolean ,
+    campaign_id: { 
+      type: Number 
     },
-
+    banner: {
+      type: Boolean,
+      default: false,
+    },
     active: {
       type: Boolean,
       default: false,
       required: [true, "Active status is required"],
     },
-    
-    deleted_campaign: { 
+    deleted_campaign: {
+      type: Boolean,
       default: false,
-      type: Boolean 
-    }
+    },
+    expire_time: { 
+      type: Date, 
+      default: null 
+    },
+    
   },
   { timestamps: true }
 );
 
+CampaignSchema.plugin(AutoIncrement, { inc_field: "campaign_id", start_seq: 100 });
 
-CampaignSchema.plugin(AutoIncrement, { inc_field: "campaign_id",start_seq: 100 });
-
-const CampaignModel =
-  mongoose.models.Campaign || mongoose.model<ICampaign>("Campaign", CampaignSchema);
+const CampaignModel = mongoose.models.Campaign || mongoose.model<ICampaign>("Campaign", CampaignSchema);
 
 export default CampaignModel;

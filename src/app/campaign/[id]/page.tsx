@@ -7,29 +7,53 @@ import React from "react";
 import Campaign_banner from "./_campaign_banner";
 import { MainHeading, SubHeading } from "@/components/Heading";
 import BestSalling from "@/components/homepage/BestSelling";
+import { getServerToken } from "@/helpers/server/server_function";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { product_details_ } from "@/utils/api_url";
+import { getTimeAgo } from "@/helpers/client/client_function";
+import Campaign_user_event from "./_campaign_user_event";
 
-const CampaignDetail = () => {
-  const campaign_data = {
-    title: "Campaign Title",
-    description: "Campaign Description",
-    image: [
+
+interface DetailsProps {
+  params : {id: string};
+}
+
+export const GetData = async (token: string, slug:string) => {
+  try {
+    let { data } = await axios.post(
+      product_details_,
       {
-        src: "https://i.imgur.com/c9tRQmQ.jpeg",
-        alt: "Campaign Image 1",
+        slug: slug,
       },
       {
-        src: "https://i.imgur.com/HKKwp63.jpeg",
-        alt: "Campaign Image 1",
-      },
-      {
-        src: "https://i.imgur.com/JMV7EJ4.png",
-        alt: "Campaign Image 1",
-      },
-    ],
-    buttonText: "Learn More",
-    buttonLink: "/campaign/details",
-    // Add more properties as needed
-  };
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return data.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Error registering user", error.response?.data.message);
+      toast.error(error.response?.data.message);
+    } else {
+      console.error("Unknown error", error);
+    }
+  }
+};
+
+const CampaignDetail = async ({params}: DetailsProps) => {
+  const token = await getServerToken();
+
+  let { id } = await params;
+  let slug = id; 
+
+  const page_data = await GetData(token, slug);
+
+  // console.log(page_data)
 
   return (
     <>
@@ -39,70 +63,67 @@ const CampaignDetail = () => {
         <section className="max-w-[1400px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
-              <Campaign_banner campaign_data={campaign_data} />
-              <div className="rounded grid grid-cols-2 border-2 border-gray-200 my-12 mb-5 p-3 py-5">
-                <div className="flex justify-center gap-2 sm:gap-5 items-center border-r-2">
-                  <i className="fa-solid fa-note-sticky text-secondary text-xl sm:text-4xl"></i>
-                  <div>
-                    <h4 className="text-secondary text-sm sm:text-base font-normal">Tream and Condition</h4>
-                    <a href="" className="text-[12px] sm:text-sm text-blue-500  hover:underline">Click to link</a>
-                  </div>
-                </div>
-                
-                <div className="flex justify-center gap-2 sm:gap-5 items-center">
-                  <i className="fa-solid fa-circle-exclamation text-secondary text-xl sm:text-4xl"></i>
-                  <div>
-                    <h4 className="text-secondary text-sm sm:text-base font-normal">More Information</h4>
-                    <a href="" className="text-[12px] sm:text-sm text-blue-500  hover:underline">Click to link</a>
-                  </div>
-                </div>
-                
-              </div>
+              <Campaign_banner campaign_data={page_data?.img} />
+              <Campaign_user_event campaign_data={page_data}/>
             </div>
 
             <div>
               <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
-                Toys R Us Fastlane 3D Super Transparent Car 360 Mechanical
-                Rotation with Sound &Light Toys for Kids (Multicolor)
+                {page_data?.title}
               </h1>
               <div className="flex gap-3 mb-4 items-center">
-                <div className="flex gap-1">
-                  <i className="fa-solid fa-star text-base  text-yellow-500"></i>
-                  <i className="fa-solid fa-star text-base text-yellow-500"></i>
-                  <i className="fa-solid fa-star text-base text-yellow-500"></i>
-                  <i className="fa-solid fa-star-half-stroke text-base text-yellow-500"></i>
-                  <i className="fa-regular fa-star text-base text-yellow-500"></i>
-                </div>
-                <p className="text-gray-800 text-sm font-normal">
-                  (90 Review) |{" "}
-                  <span className="text-green-400 font-medium">Active</span>{" "}
-                </p>
+                <p>
+                  <i className="fa-regular fa-clock mr-1 "></i>
+                  <span>{getTimeAgo(page_data.createdAt)}</span>
+                </p>{" "}
+                |
+                {page_data?.active ? (
+                  <span className="text-green-400 font-medium">Active</span>
+                ) : (
+                  <span className="text-red-400 font-medium">Expire </span>
+                )}
               </div>
-              <h2 className="mt-4 text-2xl sm:text-3xl font-semibold text-secondary">
-                ₹ 7576/-
-              </h2>
-              <div className="pt-4 text-sm">
-                Toys R Us 360 Degree Rotating Transparent Concept Racing Car
-                with 3D Flashing Led Light.Multi-functional, colorful lighting,
-                clone gear mechanical system, awesome sound effects. Transparent
-                Design. Can view the gear inside, and help the child to know the
-                mechanical concept earlier. Gear driving effect. Enhance Brain
-                Development and build a Child’s Curiosity for New Things.
-                Different Color helps a child's cognitive ability. Made from
-                heavy-duty plastic, the toy has no small parts to it so that
-                children can enjoy it. To operate a toy car you need to have 3 x
-                AA batteries (Not Included).
+              <div className="flex items-center mt-1">
+                <strong className="text-secondary text-3xl mr-3">
+                  ₹{page_data?.offer_price}/-
+                </strong>
+                <span className="text-gray-600 text-xl font-medium line-through">
+                  ₹{page_data?.price}
+                </span>
+                <small className="text-red-500 text-base py-.5 px-2 ml-4 border-[1px] border-red-500 ">
+                  ₹{page_data?.cashback} Off
+                </small>
               </div>
+              <div className="py-7 flex justify-start items-center">
+                <button className="h-11 w-[200px] text-lg text-center rounded-l-md outline-none border-none text-white  duration-200 bg-primary hover:pl-2">
+                 Avail this offer
+                </button>
+                <button className="h-11 w-[240px] text-lg text-center outline-none border-none text-white bg-green-500  duration-200 hover:pl-2">
+                  Help to Avail this offer
+                </button>
+                <button className="h-11 hover:pl-2 w-[90px] text-center outline-none rounded-r-md border-none text-white bg-yellow-500  duration-200">
+                   <i className="fa-solid fa-cart-shopping text-lg"></i>
+                </button>
+              </div>
+              <div className="flex justify-start gap-10 items-center">
+              <p className="text-base text-gray-700 capitalize"> <small>Brand:</small> <span className="text-secondary text-xl">{page_data?.brand}</span></p>
+              <p className="text-base text-gray-700 capitalize"> <small>Category:</small> <span className="text-secondary text-xl">{page_data?.category}</span></p>
+              </div>
+             
+             <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
+             <div
+                className="text-base text-gray-500"
+                dangerouslySetInnerHTML={{ __html: page_data.description }}
+              ></div>
+             </div>
             </div>
           </div>
-          
-      <SubHeading title="This Month" />
-      <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
-      >
-       <MainHeading title="Best Selling Products"/>
-      </div>
-        <BestSalling />
+
+          <SubHeading title="This Month" />
+          <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
+            <MainHeading title="Best Selling Products" />
+          </div>
+          {/* <BestSalling /> */}
         </section>
         <BottomToTop />
       </main>
@@ -112,7 +133,3 @@ const CampaignDetail = () => {
 };
 
 export default CampaignDetail;
-
-// https://www.shutterstock.com/image-vector/colorful-game-controller-icon-vector-600nw-2489844309.jpg
-// https://www.shutterstock.com/image-vector/joystick-gamepad-game-console-controller-600nw-2137131861.jpg
-// https://banner2.cleanpng.com/20231111/ibg/transparent-cartoon-characters-colorful-cartoon-style-video-game-controller-1711023988390.webp

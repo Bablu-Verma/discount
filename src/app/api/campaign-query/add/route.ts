@@ -21,19 +21,9 @@ export async function POST(req: Request) {
       }
   
       // Parse the request body
-      const { user_message, subject, user_id, campaign_id, whatsapp_number, location } = await req.json();
-  
+      const { user_message, subject, campaign_id, whatsapp_number, location } = await req.json();
 
-
-      if (!user_id) {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message:'User ID is required.',
-          }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
+     
 
 
       // Step-by-step validation for each field
@@ -89,7 +79,7 @@ export async function POST(req: Request) {
   
       // Step 2: Create a new campaign query
       const newCampaignQuery = new CampaignQueryModel({
-        user_id: user_id, // Use authenticated user ID
+        email: user?.email,
         message: user_message,
         subject,
         campaign_id,

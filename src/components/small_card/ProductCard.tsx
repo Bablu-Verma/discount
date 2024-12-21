@@ -1,3 +1,4 @@
+import { getTimeAgo } from "@/helpers/client/client_function";
 import { ICampaign } from "@/model/CampaignModel";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,27 +9,13 @@ interface CardProp {
 }
 
 
-const getTimeAgo = (createdAt: string | Date) => {
-  const now = new Date();
-  const createdDate = createdAt instanceof Date ? createdAt : new Date(createdAt);
-  const diffInMs = now.getTime() - createdDate.getTime();
 
-  const seconds = Math.floor(diffInMs / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
-  if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-  return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
-};
 
 
 
 const ProductCard: React.FC<CardProp> = ({ card_data }) => {
   
-  const timeAgo = getTimeAgo(card_data.created_at);
+  const timeAgo = getTimeAgo(card_data.createdAt);
 
   return (
     <div className="shadow overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:shadow-lg hover:border-gray-100 hover:border-[1px] ">

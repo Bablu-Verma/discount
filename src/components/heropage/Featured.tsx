@@ -24,7 +24,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
           <h3 className="font-semibold text-2xl md:text-3xl text-white tracking-wide pb-2">
             {featured_1?.brand}
           </h3>
-          <p className="text-sm md:text-base text-white line-clamp-2">{featured_1.title}</p>
+          <p className="text-sm md:text-base text-white line-clamp-2">{featured_1?.title}</p>
           <Link
             href={`/campaign/${featured_1?.slug}`}
             className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
@@ -53,7 +53,6 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
         </div>
       </div>
       }
-
       
       {
         featured_3 &&  <div style={{

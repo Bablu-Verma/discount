@@ -68,9 +68,10 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
         </div>
         <div className="flex justify-between mt-4 mb-1 items-center">
           <Link
+          style={{background:'rgb(204 43 82 / 52%)'}}
             href={`/campaign/${card_data?.slug}`}
-            className="select-none bg-white border-primary border-[1px] rounded-md text-primary font-medium py-1 px-8 text-sm duration-200 ease-in-out
-          hover:text-white hover:bg-gradient-to-r hover:from-[#b8cbb8] hover:via-[#b465da] hover:to-[#ee609c]"
+            className="select-none bg-white rounded-md text-secondary font-medium py-1 px-8 text-sm duration-200 ease-in-out
+           "
           >
             Get offer
           </Link>

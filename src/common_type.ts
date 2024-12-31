@@ -29,3 +29,8 @@ export interface ICategory {
   font_awesome_class: string; 
   deleted_category:boolean;
 }
+export interface loginpayload {
+  email?: string;
+  role?:string;
+  user_id?:string
+}

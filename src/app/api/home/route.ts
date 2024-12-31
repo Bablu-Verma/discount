@@ -7,12 +7,15 @@ import BlogModel from "@/model/BlogModal";
 export async function POST(req: Request) {
   await dbConnect();
 
+
+  const currentDate = new Date();
+
   try {
     
     const banner = await CampaignModel.find({banner:true}).limit(5);
     const newCampaigns = await CampaignModel.find({new:true}).limit(10);
     const hotCampaigns = await CampaignModel.find({hot:true}).limit(10);
-    const featuredCampaigns = await CampaignModel.find({featured:true}).limit(10);
+    const featuredCampaigns = await CampaignModel.find({featured:true, expire_time: { $gt: currentDate },}).limit(10);
     const category = await CategoryModel.find({})
     const newBlogs = await BlogModel.find({}).limit(4).sort({ createdAt: -1 });
     const poster = await CampaignModel.find({add_poster:true}).limit(2);

@@ -96,26 +96,16 @@ const MainHeader = () => {
             </Link>
           )}
           <Link
-            href={userlogin ? "/wishlist" : "/login"}
-            className="select-none text-primary p-1 px-1.5 mr-3 hover:bg-gray-100 relative flex justify-center items-center rounded"
+            href={userlogin?'/wishlist':'/login'}
+            className="select-none text-primary p-1 px-1.5 mr-1 hover:bg-gray-100 relative flex justify-center items-center rounded"
           >
             <i className="fa-regular fa-heart text-xl"></i>
           </Link>
           {userlogin ? (
             <>
-            
-            <Link
-              href="/cart"
-              className="select-none text-gray-600 p-1 relative group"
-            >
-              <span className="absolute bottom-5 left-7 text-[11px] py-[1px] px-[4px] text-white rounded bg-green-700">
-                2
-              </span>
-              <i className="fa-solid fa-cart-shopping text-xl group-hover:text-primary duration-150"></i>
-            </Link>
             <Link
                 href="/profile-edit"
-                className={` font-medium duration-200  ml-8 shadow cursor-pointer hover:opacity-80`}
+                className={` font-medium duration-200 ml-5 shadow cursor-pointer hover:opacity-80`}
               >
               <Image
                 src={user?.profile || "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"} 

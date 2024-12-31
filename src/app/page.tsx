@@ -29,7 +29,7 @@ export const GetData = async (token:string) => {
       home_api,
       {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }

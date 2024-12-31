@@ -13,13 +13,14 @@ import toast from "react-hot-toast";
 import { product_details_ } from "@/utils/api_url";
 import { getTimeAgo } from "@/helpers/client/client_function";
 import Campaign_user_event from "./_campaign_user_event";
-
+import Offer_end_component from "./_offer_end_component";
+import Watchlistadd from "./_watchlistadd";
 
 interface DetailsProps {
-  params : {id: string};
+  params: { id: string };
 }
 
-export const GetData = async (token: string, slug:string) => {
+export const GetData = async (token: string, slug: string) => {
   try {
     let { data } = await axios.post(
       product_details_,
@@ -45,15 +46,15 @@ export const GetData = async (token: string, slug:string) => {
   }
 };
 
-const CampaignDetail = async ({params}: DetailsProps) => {
+const CampaignDetail = async ({ params }: DetailsProps) => {
   const token = await getServerToken();
 
   let { id } = await params;
-  let slug = id; 
+  let slug = id;
 
   const page_data = await GetData(token, slug);
 
-  // console.log(page_data)
+  
 
   return (
     <>
@@ -64,7 +65,7 @@ const CampaignDetail = async ({params}: DetailsProps) => {
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
               <Campaign_banner campaign_data={page_data?.img} />
-              <Campaign_user_event campaign_data={page_data}/>
+              <Campaign_user_event campaign_data={page_data} />
             </div>
 
             <div>
@@ -94,28 +95,41 @@ const CampaignDetail = async ({params}: DetailsProps) => {
                   ₹{page_data?.cashback} Off
                 </small>
               </div>
-              <div className="py-7 flex justify-start items-center">
-                <button className="h-11 w-[200px] text-lg text-center rounded-l-md outline-none border-none text-white  duration-200 bg-primary hover:pl-2">
-                 Avail this offer
+              <div className="py-7 flex justify- gap-5 items-center">
+                <button className=" w-[180px] py-2 text-base text-center rounded-md outline-none border-none text-white  duration-200 bg-primary">
+                  Shop Now
                 </button>
-                <button className="h-11 w-[240px] text-lg text-center outline-none border-none text-white bg-green-500  duration-200 hover:pl-2">
-                  Help to Avail this offer
+                <button className=" py-2 px-5 capitalize text-base text-center outline-none border-none text-secondary hover:underline duration-200 ">
+                  Help to Avail this offer?
                 </button>
-                <button className="h-11 hover:pl-2 w-[90px] text-center outline-none rounded-r-md border-none text-white bg-yellow-500  duration-200">
-                   <i className="fa-solid fa-cart-shopping text-lg"></i>
-                </button>
+                <Watchlistadd  id={page_data._id}/>
               </div>
-              <div className="flex justify-start gap-10 items-center">
-              <p className="text-base text-gray-700 capitalize"> <small>Brand:</small> <span className="text-secondary text-xl">{page_data?.brand}</span></p>
-              <p className="text-base text-gray-700 capitalize"> <small>Category:</small> <span className="text-secondary text-xl">{page_data?.category}</span></p>
-              </div>
+              {
+                page_data.featured && <Offer_end_component time_data={page_data?.expire_time}/>
+              }
              
-             <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
-             <div
-                className="text-base text-gray-500"
-                dangerouslySetInnerHTML={{ __html: page_data.description }}
-              ></div>
-             </div>
+              <div className="flex justify-start gap-10 items-center">
+                <p className="text-base text-gray-700 capitalize">
+                  {" "}
+                  <small>Brand:</small>
+                  <span className="text-secondary text-xl">
+                    {page_data?.brand}
+                  </span>
+                </p>
+                <p className="text-base text-gray-700 capitalize">
+                  {" "}
+                  <small>Category:</small>{" "}
+                  <span className="text-secondary text-xl">
+                    {page_data?.category}
+                  </span>
+                </p>
+              </div>
+              <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
+                <div
+                  className="text-base text-gray-500"
+                  dangerouslySetInnerHTML={{ __html: page_data.description }}
+                ></div>
+              </div>
             </div>
           </div>
 

@@ -1,21 +1,23 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
-import { authenticateUser } from "@/lib/authenticate"; // Authentication middleware
+
+import { authenticateUser } from "@/lib/authenticate";
+import { loginpayload } from "@/common_type";
+import CampaignModel from "@/model/CampaignModel";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Step 1: Authenticate the user
+    // Authenticate user
     const { authenticated, user, message } = await authenticateUser(req);
 
-    // If the user is not authenticated, return a 401 response
-    if (!authenticated) {
+    if (!authenticated || !user) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message,
+          message: message || "Authentication failed.",
         }),
         {
           status: 401,
@@ -26,34 +28,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Step 2: Parse request body
-    const requestData = await req.json();
-    const { user_id } = requestData;
+    const user_: loginpayload = user;
+    const user_id = user_.user_id;
 
-    // Step 3: Validate `user_id`
-    if (!user_id) {
+
+    const watchlist = await WishlistModel.findOne({ user_id });
+
+    if (!watchlist || !watchlist.campaigns || watchlist.campaigns.length === 0) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "User ID is required.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    // Step 4: Fetch the user's wishlist
-    const userWishlist = await WishlistModel.findOne({ user_id }).populate("campaigns");
-
-    if (!userWishlist) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "No wishlist found for this user.",
+          message: "No products found in the watchlist.",
         }),
         {
           status: 404,
@@ -64,12 +49,28 @@ export async function POST(req: Request) {
       );
     }
 
-  
+    const products = await CampaignModel.find({ _id: { $in: watchlist.campaigns } });
+
+    if (!products || products.length === 0) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "No product details found for the given watchlist.",
+        }),
+        {
+          status: 404,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "User wishlist retrieved successfully.",
-        data: userWishlist,
+        message: "Watchlist retrieved successfully.",
+        data: products,
       }),
       {
         status: 200,
@@ -78,14 +79,12 @@ export async function POST(req: Request) {
         },
       }
     );
-
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error retrieving user wishlist:", error.message);
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Failed to retrieve user wishlist.",
+          message: "Failed to retrieve watchlist.",
           error: error.message,
         }),
         {
@@ -96,7 +95,6 @@ export async function POST(req: Request) {
         }
       );
     } else {
-      console.error("Unexpected error:", error);
       return new NextResponse(
         JSON.stringify({
           success: false,

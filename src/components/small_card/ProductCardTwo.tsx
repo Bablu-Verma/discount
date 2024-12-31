@@ -9,7 +9,7 @@ interface CardProp {
 
 const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
   const [remainingTime, setRemainingTime] = useState<string>("00:00:00");
-  const [isExpired, setIsExpired] = useState<boolean>(false);
+ 
 
   useEffect(() => {
     if (!card_data?.expire_time) return; 
@@ -22,8 +22,6 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
 
       if (distance <= 0) {
         clearInterval(countdownInterval);
-        setIsExpired(true); // Mark the deal as expired
-        setRemainingTime("EXPIRED");
       } else {
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -37,8 +35,6 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
     return () => clearInterval(countdownInterval);
   }, [card_data?.expire_time]);
 
-  // If the deal is expired, return null to not render the card
-  if (isExpired) return null;
 
   return (
     <Link href={`/campaign/${card_data?.slug}`}

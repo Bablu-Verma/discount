@@ -50,7 +50,6 @@ const Flash:React.FC<IfleasProp> = ({featured}) => {
       {featured.map((item, i) => (
         <SwiperSlide key={i}>
           <ProductCardTwo card_data={item}/>
-          {/* <ProductCardThree card_data={item}/> */}
         </SwiperSlide>
       ))}
     </Swiper>

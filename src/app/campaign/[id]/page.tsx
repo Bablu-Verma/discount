@@ -81,7 +81,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 {page_data?.active ? (
                   <span className="text-green-400 font-medium">Active</span>
                 ) : (
-                  <span className="text-red-400 font-medium">Expire </span>
+                  <span className="text-red-400 font-medium">Expire - <span className="text-sm font-normal">Don't Bye this product</span></span>
                 )}
               </div>
               <div className="flex items-center mt-1">
@@ -102,7 +102,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <button className=" py-2 px-5 capitalize text-base text-center outline-none border-none text-secondary hover:underline duration-200 ">
                   Help to Avail this offer?
                 </button>
-                <Watchlistadd  id={page_data._id}/>
+                <Watchlistadd  id={page_data.campaign_id}/>
               </div>
               {
                 page_data.featured && <Offer_end_component time_data={page_data?.expire_time}/>

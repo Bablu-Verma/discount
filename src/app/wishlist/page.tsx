@@ -9,7 +9,8 @@ import axios, { AxiosError } from "axios";
 import React from "react";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
-import { ICampaign } from "@/model/CampaignModel";
+import Wishlist_client from "./_wishlist_client";
+import Wishlist_remove from "./_wishlist_remove";
 
 export const GetData = async (token: string) => {
   try {
@@ -23,8 +24,8 @@ export const GetData = async (token: string) => {
         },
       }
     );
-
-    return data;
+   return data.data;
+    
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error get wishlist", error.response?.data.message);
@@ -43,6 +44,8 @@ const Wishlist = async () => {
 
   const page_data = await GetData(token);
 
+  const wishlist_products = page_data.products;
+
   return (
     <>
       <TopHeader />
@@ -50,57 +53,23 @@ const Wishlist = async () => {
       <main className="min-h-screen">
         <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-between items-end mb-4 relative">
           <h2 className="text-xl font-semibold text-gray-700 capitalize pr-5 md:pr-10 gap-10">
-            Wishlist(6)
+            Total ({page_data?.count})
           </h2>
-          <button className="text-gray-700 bg-white py-1.5 px-4 rounded capitalize font-medium text-[11px] border-2 border-gray-600 text-sm hover:shadow-sm hover:rounded-md duration-200">
-            Remove all
-          </button>
+         <Wishlist_remove id={page_data?.wishlist_id} />
         </div>
         <div className="max-w-[1400px] mx-auto px-4 pt-2  mb-4 gap-3 ">
           <div className="grid grid-cols-10 w-full mt-10 py-2 text-xl font-semibold mb-2 select-none px-4">
             <h3 className="text-base text-secondary">S No.</h3>
-            <h3 className="col-span-3 text-base text-secondary">Product</h3>
+            <h3 className="col-span-3 text-base text-secondary">Product...</h3>
             <h3 className="text-base text-secondary">Partner</h3>
             <h3 className="text-base text-secondary"></h3>
             <h3 className="text-base text-secondary">Offer</h3>
             <h3 className="text-base text-secondary">Status</h3>
             <h3 className="text-base text-secondary">Action</h3>
           </div>
-          {page_data.data.map((item:ICampaign,i:number) => {
-            return (
-              <div className="grid grid-cols-10 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 items-center px-4 rounded" key={i}>
-                <span>{i+1}</span>
-                <div className="col-span-3 flex items-center">
-                  <img
-                    src="https://api.thechennaimobiles.com/1719121334790.webp"
-                    className="max-h-14 aspect-auto"
-                    alt=""
-                  />{" "}
-                  <span className=" mx-3 line-clamp-1">{item.title}</span>
-                </div>
-                <span className="col-span-2">
-                  <a href="">{item.brand}</a>
-                </span>
-                <span>{item.cashback}</span>
-                <span>
-                  <b
-                    className="text-green-700 italic"
-                    title="Bye this product use link"
-                  >
-                    Active
-                  </b>
-                </span>
-                <span>
-                   View
-                </span>
-                <span>
-                  <i className="fa-solid fa-trash"></i>
-                </span>
-              </div>
-            );
-          })}
-        </div>
+          <Wishlist_client item_={wishlist_products}/>
 
+        </div>
         <BottomToTop />
       </main>
       <Footer />

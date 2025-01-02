@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
-
 import { authenticateUser } from "@/lib/authenticate";
 import { loginpayload } from "@/common_type";
-import CampaignModel from "@/model/CampaignModel";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate user
+    // Authenticate the user
     const { authenticated, user, message } = await authenticateUser(req);
 
     if (!authenticated || !user) {
@@ -28,24 +26,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const user_: loginpayload = user;
+    let user_: loginpayload = user;
     const user_id = user_.user_id;
 
-    // Fetch the user's watchlist
-    const watchlist = await WishlistModel.findOne({ user_id });
+    // Find the user's wishlist
+    const wishlist = await WishlistModel.findOne({ user_id });
 
-    if (!watchlist || !watchlist.campaigns || watchlist.campaigns.length === 0) {
+    if (!wishlist) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          data:{
-            count:0,
-            products:[],
-          },
-          message: "No products found in the watchlist.",
+          message: "Wishlist not found.",
         }),
         {
-          status: 200,
+          status: 404,
           headers: {
             "Content-Type": "application/json",
           },
@@ -53,39 +47,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Fetch product details from the CampaignModel
-    const products = await CampaignModel.find({ campaign_id: { $in: watchlist.campaigns } });
+    // Clear the campaigns array
+    wishlist.campaigns = [];
 
-    if (!products || products.length === 0) {
-      return new NextResponse(
-        JSON.stringify({
-          data:{
-            count:0,
-            products:[],
-          },
-          success: false,
-        
-          message: "No product details found for the given watchlist.",
-        }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    // Save the updated wishlist
+    await wishlist.save();
 
-    // Respond with products, count, and Wishlist ID
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Watchlist retrieved successfully.",
-        data: {
-          wishlist_id: watchlist._id, // Wishlist ID
-          products, // Product details
-          count: products.length, // Count of products
-        },
+        message: "Wishlist cleared successfully.",
+        data: wishlist,
       }),
       {
         status: 200,
@@ -96,10 +68,11 @@ export async function POST(req: Request) {
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error("Failed to clear wishlist:", error.message);
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Failed to retrieve watchlist.",
+          message: "Failed to clear wishlist.",
           error: error.message,
         }),
         {
@@ -110,6 +83,7 @@ export async function POST(req: Request) {
         }
       );
     } else {
+      console.error("Unexpected error:", error);
       return new NextResponse(
         JSON.stringify({
           success: false,

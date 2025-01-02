@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import { authenticateUser } from "@/lib/authenticate"; 
+import { authenticateUser } from "@/lib/authenticate";
 import BlogModel from "@/model/BlogModal";
 import { isAdmin } from "@/lib/checkUserRole";
 import { generateSlug } from "@/helpers/client/client_function";
 
-
-const validateField = (field: string, fieldName: string) => {
-  if (!field) {
+const validateField = (field: any, fieldName: string, isOptional = false) => {
+  if (!field && !isOptional) {
     return {
       success: false,
       message: `${fieldName} is required.`,
@@ -18,7 +17,7 @@ const validateField = (field: string, fieldName: string) => {
 
 export async function POST(req: Request) {
   await dbConnect();
-  
+
   try {
     const { authenticated, user, message } = await authenticateUser(req);
 
@@ -34,7 +33,7 @@ export async function POST(req: Request) {
 
     const email_check = user?.email || "";
     const is_admin = await isAdmin(email_check);
-  
+
     if (!is_admin) {
       return new NextResponse(
         JSON.stringify({
@@ -45,16 +44,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, short_desc, category, blogType, isPublished, image, readTime } = await req.json();
+    const {
+      title,
+      short_desc,
+      desc,
+      category,
+      blogType,
+      isPublished,
+      image,
+      writer_email,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      ogImage,
+      twitterImage,
+      tags,
+
+    } = await req.json();
 
     const fields = [
-      { field: title, name: "title" },
-      { field: short_desc, name: "short_desc" },
-      { field: category, name: "category" },
-      { field: blogType, name: "blogType" },
-      { field: isPublished, name: "isPublished" },
-      { field: image, name: "image" },
-      { field: readTime, name: "readTime" },
+      { field: title, name: "Title" },
+      { field: short_desc, name: "Short Description" },
+      { field: desc, name: "Description" },
+      { field: category, name: "Category" },
+      { field: blogType, name: "Blog Type" },
+      { field: writer_email, name: "Writer Email" },
     ];
 
     for (const { field, name } of fields) {
@@ -81,24 +95,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const newBlogQuery = new BlogModel({
+    const newBlog = new BlogModel({
       title,
       slug,
       short_desc,
+      desc,
       category,
       blogType,
       isPublished,
       image,
-      readTime,
+      writer_email,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      ogImage,
+      twitterImage,
+      tags,
     });
 
-    await newBlogQuery.save();
+    await newBlog.save();
 
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Your blog was added successfully.",
-        data: newBlogQuery,
+        message: "Blog created successfully.",
+        data: newBlog,
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );

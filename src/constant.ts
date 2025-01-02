@@ -1,0 +1,1 @@
+export const blogType = ['Article', 'Tutorial', 'Case Study', 'Review', 'Interview']

@@ -41,7 +41,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
         <div className="flex justify-between items-center">
           <div>
             <span style={{ fontSize: "14px" }} className="text-gray-500 mr-3">
-              <i className="fa-regular fa-eye"></i> {item?.readTime}
+              <i className="fa-regular fa-eye"></i> {item?.views}
             </span>
             <span style={{ fontSize: "14px" }} className="text-gray-500">
               <i className="fa-regular fa-clock"></i> {formattedDate}

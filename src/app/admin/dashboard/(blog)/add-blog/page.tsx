@@ -1,11 +1,13 @@
 "use client";
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
+import { blogType } from "@/constant";
 
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import {  category_list_api } from "@/utils/api_url";
+import { add__blog_, category_list_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -14,7 +16,6 @@ interface IFormData {
   title: string;
   category: string;
   short_desc: string;
-  desc: string;
   blogType: string;
   isPublished: boolean;
   image: File | null;
@@ -26,19 +27,17 @@ interface IFormData {
   tags: string[];
 }
 
-const AddProduct = () => {
+const AddBlog = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const editorContent = useSelector((state: any) => state.editor.content);
 
   const [categoryList, setCategoryList] = useState([]);
-  const [images, setImages] = useState<FileList | null>(null);
   const [loding, setLoading] = useState<boolean>(false);
 
   const [form_data, setForm_data] = useState<IFormData>({
     title: "",
     category: "",
     short_desc: "",
-    desc: "",
     blogType: "",
     isPublished: true,
     image: null,
@@ -50,21 +49,68 @@ const AddProduct = () => {
     tags: [],
   });
 
+  const validateForm = () => {
+    const errors: string[] = [];
+
+    if (!form_data.title.trim()) {
+      errors.push("Title is required.");
+    }
+    if (!form_data.category.trim()) {
+      errors.push("Category is required.");
+    }
+    if (!form_data.short_desc.trim()) {
+      errors.push("Short description is required.");
+    }
+    if (!form_data.blogType.trim()) {
+      errors.push("Blog type is required.");
+    }
+    if (!form_data.image) {
+      errors.push("Image is required.");
+    }
+    if (!form_data.ogImage) {
+      errors.push("ogImage is required.");
+    }
+    if (!form_data.twitterImage) {
+      errors.push("twitterImage is required.");
+    }
+    if (!editorContent) {
+      errors.push("Add Blog description");
+    } else {
+      if (editorContent.length < 100) {
+        errors.push("Add Blog description");
+      }
+    }
+    if (!form_data.metaTitle.trim()) {
+      errors.push("Meta title is required.");
+    }
+    if (!form_data.metaDescription.trim()) {
+      errors.push("Meta description is required.");
+    }
+    if (form_data.metaKeywords.length === 0) {
+      errors.push("At least one meta keyword is required.");
+    }
+    if (form_data.tags.length === 0) {
+      errors.push("At least one tags is required.");
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((error) => toast.error(error));
+      return false;
+    }
+
+    return true;
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+    const { name, files } = e.target;
+
+    console.log(files);
 
     if (files) {
-      if (files.length < 3) {
-        toast.error("Please select at least 3 images.");
-      } else if (files.length > 5) {
-        toast.error("You can select a maximum of 5 images.");
-      } else {
-        setImages(files);
-        setForm_data((prev) => ({
-          ...prev,
-          images: files,
-        }));
-      }
+      setForm_data((prev) => ({
+        ...prev,
+        [name]: files[0],
+      }));
     }
   };
 
@@ -101,24 +147,62 @@ const AddProduct = () => {
     >
   ) => {
     const { name, value, type } = e.target;
-  
+
     setForm_data((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : type === "radio"
-          ? value === "true" // Convert radio values to boolean
           : name === "tags" || name === "metaKeywords"
-          ? value.split(",").map((item) => item.trim()) // Split comma-separated values into an array
+          ? value.split(",").map((item) => item.trim())
+          : name === "isPublished"
+          ? value === "true" // Convert "true"/"false" strings to boolean
           : value,
     }));
   };
 
   const handleSubmit = async () => {
     try {
-      
-      toast.success("Product added successfully!");
+      if (!validateForm()) {
+        return;
+      }
+
+      const formPayload = new FormData();
+
+      formPayload.append("title", form_data.title);
+      formPayload.append("category", form_data.category);
+      formPayload.append("short_desc", form_data.short_desc);
+      formPayload.append("blogType", form_data.blogType);
+      formPayload.append("isPublished", String(form_data.isPublished));
+      formPayload.append("metaTitle", form_data.metaTitle);
+      formPayload.append("metaDescription", form_data.metaDescription);
+      formPayload.append("description", editorContent);
+
+      formPayload.append(
+        "metaKeywords",
+        JSON.stringify(form_data.metaKeywords)
+      );
+
+      if (form_data.image) {
+        formPayload.append("image", form_data.image); 
+      }
+      if (form_data.ogImage) {
+        formPayload.append("ogImage", form_data.ogImage);
+      }
+      if (form_data.twitterImage) {
+        formPayload.append("twitterImage", form_data.twitterImage); 
+      }
+      formPayload.append("tags", JSON.stringify(form_data.tags));
+      setLoading(true);
+      const { data } = await axios.post(add__blog_, formPayload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Blog added successfully!");
+
       setTimeout(() => {
         window.location.reload();
       }, 4000);
@@ -163,9 +247,9 @@ const AddProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>
-        
+
           <div className="grid grid-cols-2 gap-5">
-          <div>
+            <div>
               <label
                 htmlFor="blog_type"
                 className="block text-sm font-medium text-gray-700"
@@ -182,16 +266,14 @@ const AddProduct = () => {
                 <option value="" disabled selected>
                   Select a Blog Type
                 </option>
-                {/* {categoryList.map((item: ICategory, i) => {
-                  return (
-                    <option key={i} value={item.slug}>
-                      {item.name}
-                    </option>
-                  );
-                })} */}
+                {blogType.map((type, index) => (
+                  <option key={index} value={type}>
+                    {type}
+                  </option>
+                ))}
               </select>
             </div>
-           
+
             <div>
               <label
                 htmlFor="category"
@@ -221,74 +303,111 @@ const AddProduct = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-           <div>
-           <label
-              htmlFor="image"
-              className="block text-sm font-medium text-gray-700"
-            >
-               Image
-            </label>
-            <input
-              type="file"
-              id="image"
-              multiple
-              accept="image/*"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={handleImageChange}
-            />
-           </div>
-           <div>
-           <label
-              htmlFor="ogImage"
-              className="block text-sm font-medium text-gray-700"
-            >
-               OgImage
-            </label>
-            <input
-              type="file"
-              id="ogImage"
-              multiple
-              accept="image/*"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={handleImageChange}
-            />
-           </div>
-           <div>
-           <label
-              htmlFor="twitterImage"
-              className="block text-sm font-medium text-gray-700"
-            >
-               TwitterImage
-            </label>
-            <input
-              type="file"
-              id="twitterImage"
-              multiple
-              accept="image/*"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={handleImageChange}
-            />
-           </div>
+            <div>
+              <div>
+                <label
+                  htmlFor="image"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Image
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+                  onChange={handleImageChange}
+                />
+              </div>
+              {form_data.image && form_data.image instanceof File && (
+                <div className="flex justify-center items-center mb-6 mt-4">
+                  <Image
+                    src={URL.createObjectURL(form_data.image)}
+                    alt="Image"
+                    width={200}
+                    height={200}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
+            <div>
+              <div>
+                <label
+                  htmlFor="ogImage"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  OgImage
+                </label>
+                <input
+                  type="file"
+                  id="ogImage"
+                  name="ogImage"
+                  accept="image/*"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+                  onChange={handleImageChange}
+                />
+              </div>
+              {form_data.ogImage && form_data.ogImage instanceof File && (
+                <div className="flex justify-center items-center mb-6 mt-4">
+                  <Image
+                    src={URL.createObjectURL(form_data.ogImage)}
+                    alt="Image"
+                    width={200}
+                    height={200}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
 
-          
+            <div>
+              <div>
+                <label
+                  htmlFor="twitterImage"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  TwitterImage
+                </label>
+                <input
+                  type="file"
+                  name="twitterImage"
+                  id="twitterImage"
+                  accept="image/*"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+                  onChange={handleImageChange}
+                />
+              </div>
+              {form_data.twitterImage &&
+                form_data.twitterImage instanceof File && (
+                  <div className="flex justify-center items-center mb-6 mt-4">
+                    <Image
+                      src={URL.createObjectURL(form_data.twitterImage)}
+                      alt="Image"
+                      width={200}
+                      height={200}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+            </div>
           </div>
-
-          
 
           <div className="grid grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-              isPublished
+                isPublished
               </label>
               <div className="flex items-center space-x-4">
                 <label className="flex items-center">
                   <input
                     type="radio"
                     name="isPublished"
-                    value='true'
+                    value="true" // Value as a string
                     onChange={handleChange}
-                    checked={form_data.isPublished === true}
-                    className="text-blue-500 "
+                    checked={form_data.isPublished === true} // Strict comparison with boolean
+                    className="text-blue-500"
                   />
                   <span className="ml-2 text-gray-700">Yes</span>
                 </label>
@@ -296,9 +415,10 @@ const AddProduct = () => {
                   <input
                     type="radio"
                     name="isPublished"
+                    value="false" // Value as a string
                     onChange={handleChange}
-                    checked={form_data.isPublished === false}
-                    className="text-blue-500  "
+                    checked={form_data.isPublished === false} // Strict comparison with boolean
+                    className="text-blue-500"
                   />
                   <span className="ml-2 text-gray-700">No</span>
                 </label>
@@ -311,7 +431,7 @@ const AddProduct = () => {
               htmlFor="short_desc"
               className="block text-sm font-medium text-gray-700"
             >
-             Short Description
+              Short Description
             </label>
             <textarea
               id="short_desc"
@@ -334,8 +454,6 @@ const AddProduct = () => {
 
             <TextEditor />
           </div>
-
-         
 
           <div className="grid grid-cols-2 gap-5">
             <div>
@@ -423,4 +541,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default AddBlog;

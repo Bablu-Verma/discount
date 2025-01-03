@@ -2,31 +2,51 @@ import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
+import { getServerToken } from "@/helpers/server/server_function";
+import { blog_details } from "@/utils/api_url";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
 
 import React from "react";
+import toast from "react-hot-toast";
 
-const CampaignDetail = () => {
-  const campaign_data = {
-    title: "Campaign Title",
-    description: "Campaign Description",
-    image: [
+interface CategoryDetailsProps {
+  params: { slug: string };
+}
+
+export const GetData = async (token: string, slug: string) => {
+  try {
+    let { data } = await axios.post(
+      blog_details,
       {
-        src: "https://i.imgur.com/c9tRQmQ.jpeg",
-        alt: "Campaign Image 1",
+        slug: slug,
       },
       {
-        src: "https://i.imgur.com/HKKwp63.jpeg",
-        alt: "Campaign Image 1",
-      },
-      {
-        src: "https://i.imgur.com/JMV7EJ4.png",
-        alt: "Campaign Image 1",
-      },
-    ],
-    buttonText: "Learn More",
-    buttonLink: "/campaign/details",
-    // Add more properties as needed
-  };
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Error registering user", error.response?.data.message);
+      toast.error(error.response?.data.message);
+    } else {
+      console.error("Unknown error", error);
+    }
+  }
+};
+
+const BlogDetail = async ({ params }: CategoryDetailsProps) => {
+  const token = await getServerToken();
+  const awaitslug = await params;
+  const slug = awaitslug.slug;
+
+  const page_data = await GetData(token, slug);
+  console.log("page_data", page_data.data);
 
   return (
     <>
@@ -34,30 +54,27 @@ const CampaignDetail = () => {
       <MainHeader />
       <main className="">
         <section className="max-w-[800px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
-          
-            <div className="mb-10">
-              <img src="https://i.imgur.com/x8AGeNt.jpeg" alt="blog-img" className="w-full"/>
-            </div>
-            <div>
-              <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
-                Toys R Us Fastlane 3D Super Transparent Car 360 Mechanical
-                Rotation with Sound &Light Toys for Kids (Multicolor)
-              </h1>
+          <div className="mb-10">
+            <Image
+              src={page_data.data.image}
+              alt="blog-img"
+              width={200}
+              height={200}
+              sizes="100vw"
+              className="w-full"
+            />
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
+              {page_data.data.title}
+            </h1>
+            <div className="pt-4 text-sm">{page_data.data.short_desc}</div>
 
-              <div className="pt-4 text-sm">
-                Toys R Us 360 Degree Rotating Transparent Concept Racing Car
-                with 3D Flashing Led Light.Multi-functional, colorful lighting,
-                clone gear mechanical system, awesome sound effects. Transparent
-                Design. Can view the gear inside, and help the child to know the
-                mechanical concept earlier. Gear driving effect. Enhance Brain
-                Development and build a Child’s Curiosity for New Things.
-                Different Color helps a child's cognitive ability. Made from
-                heavy-duty plastic, the toy has no small parts to it so that
-                children can enjoy it. To operate a toy car you need to have 3 x
-                AA batteries (Not Included).
-              </div>
-            </div>
-      
+            <div
+              className="pt-4 text-sm"
+              dangerouslySetInnerHTML={{ __html: page_data.data.desc }}
+            ></div>
+          </div>
         </section>
         <BottomToTop />
       </main>
@@ -66,8 +83,4 @@ const CampaignDetail = () => {
   );
 };
 
-export default CampaignDetail;
-
-// https://www.shutterstock.com/image-vector/colorful-game-controller-icon-vector-600nw-2489844309.jpg
-// https://www.shutterstock.com/image-vector/joystick-gamepad-game-console-controller-600nw-2137131861.jpg
-// https://banner2.cleanpng.com/20231111/ibg/transparent-cartoon-characters-colorful-cartoon-style-video-game-controller-1711023988390.webp
+export default BlogDetail;

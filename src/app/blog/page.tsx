@@ -17,7 +17,7 @@ export interface IBlogCard {
   image: string;
   short_desc: string;
   createdAt: string;
-  readTime: string;
+  views: string;
 }
 
 const fetchData = async () => {

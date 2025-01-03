@@ -1,12 +1,13 @@
 import { blogType } from '@/constant';
 import mongoose, { Schema, Document, model } from 'mongoose';
-import slugify from 'slugify';
+
 
 export interface IBlog extends Document {
   title: string;
   slug: string;
   short_desc: string;
   desc: string;
+  createdAt: string;
   category: string;
   blogType: string;
   isPublished: boolean;
@@ -39,7 +40,6 @@ const BlogSchema = new Schema<IBlog>(
     short_desc: {
       type: String,
       required: [true, 'Short description is required'],
-      maxlength: [300, 'Short description cannot exceed 300 characters'],
     },
     desc: {
       type: String,
@@ -139,12 +139,7 @@ BlogSchema.index({ tags: 1 });
 
 // Hooks
 BlogSchema.pre('save', function (next) {
-  // Auto-generate slug from title if not provided
-  if (!this.slug) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
-  }
-
-  // Set publishedAt date if the blog is being published
+  
   if (this.isPublished && !this.publishedAt) {
     this.publishedAt = new Date();
   }

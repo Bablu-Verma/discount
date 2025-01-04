@@ -100,6 +100,13 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       icon: "fas fa-tachometer-alt",
       submenu: [],
     },
+    {
+      id: 10,
+      name: "blog-list",
+      url: "/admin/dashboard/blog-list",
+      icon: "fas fa-tachometer-alt",
+      submenu: [],
+    },
   ];
 
   return (

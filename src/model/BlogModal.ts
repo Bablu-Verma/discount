@@ -1,8 +1,8 @@
 import { blogType } from '@/constant';
-import mongoose, { Schema, Document, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 
-export interface IBlog extends Document {
+export interface IBlog  {
   title: string;
   slug: string;
   short_desc: string;

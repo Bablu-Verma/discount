@@ -1,31 +1,25 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useRef } from "react";
 import JoditEditor from "jodit-react";
-import { debounce } from "lodash";
-import { setEditorData } from "@/redux-store/slice/editorSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { setEditorData } from "@/redux-store/slice/editorSlice";
 
 const TextEditor: React.FC = () => {
-  const [content, setContent] = useState<string>("");
-  const [show_editor, setShow_editor] = useState<boolean>(false);
+  const [show_editor, setShow_editor] = React.useState<boolean>(false);
   const editor = useRef<any>(null);
 
   const editorContent = useSelector((state: any) => state.editor.content);
 
   const dispatch = useDispatch();
+
   const config = {
     readonly: false,
     height: 500,
     placeholder: "Start typing...",
   };
 
-
-  const handleChange = useCallback((newContent: string) => {
-    setContent(newContent);
-  }, []);
-
-  useEffect(()=>{
-    dispatch(setEditorData(content)); 
-  },[content])
+  const handleChange = (newContent: string) => {
+    dispatch(setEditorData(newContent));
+  };
 
   return (
     <>
@@ -33,7 +27,7 @@ const TextEditor: React.FC = () => {
         <JoditEditor
           config={config}
           ref={editor}
-          value={content}
+          value={editorContent}
           onBlur={(newContent) => handleChange(newContent)}
         />
       </div>
@@ -46,7 +40,9 @@ const TextEditor: React.FC = () => {
       </button>
 
       {show_editor && (
-        <div className="max-w-[100%] my-4 p-4 border-2 "> {editorContent} </div>
+        <div className="max-w-[100%] my-4 p-4 border-2 ">
+          {editorContent}
+        </div>
       )}
     </>
   );

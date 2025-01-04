@@ -45,7 +45,7 @@ const CategoryList = () => {
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
-        Products
+        All Category
       </h1>
       <div className="pt-5 pb-5 flex justify-between items-center">
         <Link

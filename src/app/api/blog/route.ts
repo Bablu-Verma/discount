@@ -31,7 +31,7 @@ const buildFilters = (req: Request) => {
   return filters;
 };
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   await dbConnect();
   
   const { page, limit } = getPaginationParams(req);

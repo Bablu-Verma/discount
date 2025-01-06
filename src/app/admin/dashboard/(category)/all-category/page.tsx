@@ -76,9 +76,8 @@ const CategoryList = () => {
                 </th>
 
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                Class
+                  Font awsom  Class
                 </th>
-                
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
                 </th>
@@ -119,13 +118,13 @@ const CategoryList = () => {
 
                   <td className="px-6 py-4">
                     <Link
-                      href=""
+                      href={`/category/${item.slug}`}
                       className="px-2 py-1 text-sm text-blue-500 hover:underline "
                     >
-                      Details
+                      View
                     </Link>
                     <Link
-                      href=""
+                      href={`/admin/dashboard/category/${item.slug}`}
                       className="px-2 py-1 text-sm inline-block ml-5 text-blue-500 hover:underline"
                     >
                       Edit

@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const hotCampaigns = await CampaignModel.find({hot:true}).limit(10);
     const featuredCampaigns = await CampaignModel.find({featured:true, expire_time: { $gt: currentDate },}).limit(10);
     const category = await CategoryModel.find({})
-    const newBlogs = await BlogModel.find({isPublished:true}).limit(6);
+    const newBlogs = await BlogModel.find({isPublished:true}).limit(4);
     const poster = await CampaignModel.find({add_poster:true}).limit(2);
     const arrival = await CampaignModel.find({arrival:true}).limit(4);
    

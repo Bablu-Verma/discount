@@ -2,6 +2,9 @@ import React, { useRef } from "react";
 import JoditEditor from "jodit-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditorData } from "@/redux-store/slice/editorSlice";
+import DOMPurify from "dompurify";
+
+
 
 const TextEditor: React.FC = () => {
   const [show_editor, setShow_editor] = React.useState<boolean>(false);
@@ -18,7 +21,8 @@ const TextEditor: React.FC = () => {
   };
 
   const handleChange = (newContent: string) => {
-    dispatch(setEditorData(newContent));
+    const sanitizedContent = DOMPurify.sanitize(newContent);
+    dispatch(setEditorData(sanitizedContent));
   };
 
   return (
@@ -33,7 +37,7 @@ const TextEditor: React.FC = () => {
       </div>
       <button
         type="button"
-        className="text-lg text-blue-600 hover:underline inline-block mt-4"
+        className="text-sm text-blue-600 hover:underline inline-block mt-4"
         onClick={() => setShow_editor(!show_editor)}
       >
         {show_editor ? "Hide Code" : "Show Code"}

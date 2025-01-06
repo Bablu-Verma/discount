@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { IBlog } from "@/model/BlogModal";
 import { get_All_blogs } from "@/utils/api_url";
 import { getTimeAgo } from "@/helpers/client/client_function";
+import Deleteblog from "../_deleteblog";
 
 const ProductList = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -35,7 +36,7 @@ const ProductList = () => {
         }
       );
 
-      console.log(data);
+      
       setBlogList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -196,11 +197,7 @@ const ProductList = () => {
                     >
                       Edit
                     </Link>
-                    <button
-                      className="px-2 py-1 text-sm inline-block ml-5 text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
+                   <Deleteblog item={item} />
                   </td>
                 </tr>
               ))}

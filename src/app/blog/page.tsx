@@ -2,13 +2,11 @@ import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
-
 import React from "react";
-import Filter from "./_filter";
-import BlogCard from "@/components/small_card/BlogCard";
 import Image from "next/image";
 import axios from "axios";
 import { get_All_blogs } from "@/utils/api_url";
+import ClientBlog from "./_clientblog";
 
 
 export interface IBlogCard {
@@ -33,9 +31,9 @@ const fetchData = async () => {
 };
 
 const AllBlog = async () => {
-  const fetchBlogData = await fetchData();
- const blogs: IBlogCard[] = await fetchBlogData.data;
- const pagination = await fetchBlogData.pagination;
+//   const fetchBlogData = await fetchData();
+ const blogs: IBlogCard[] = []
+//  const pagination = await fetchBlogData.pagination;
 
   return (
     <>
@@ -56,16 +54,7 @@ const AllBlog = async () => {
               className="h-auto w-full"
             />
           </div>
-          <div className="md:grid grid-cols-8 gap-8 mt-20">
-            <Filter />
-            <div className="col-span-6">
-              <div className="max-w-[1400px] mx-auto px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">
-                {blogs.map((item, i) => (
-                  <BlogCard item={item} key={i}/>
-                ))}
-              </div>
-            </div>
-          </div>
+         <ClientBlog blog={blogs} />
         </section>
 
         <BottomToTop />

@@ -93,10 +93,6 @@ export async function POST(req: Request) {
       }
       blogToUpdate.slug = update_slug;
     }
-    
-
-
-   
    
     if (title) blogToUpdate.title = title;
     if (category) blogToUpdate.category = category;
@@ -109,7 +105,7 @@ export async function POST(req: Request) {
     if (metaKeywords) blogToUpdate.metaKeywords = metaKeywords.split(",").map((item) => item.trim());
     if (tags) blogToUpdate.tags = tags.split(",").map((item) => item.trim());
 
-    // Upload images if provided
+  
     if (image_get && image_get instanceof File) {
       const { success, message, url } = await upload_image(image_get, "blog_image");
       if (success && url) {

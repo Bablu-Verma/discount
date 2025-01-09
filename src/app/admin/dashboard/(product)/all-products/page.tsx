@@ -1,19 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
 import SelectInput from "@/app/admin/_admin_components/SelectInput";
 import PaginationControls from "@/app/admin/_admin_components/PaginationControls";
 import {productData} from "@/utils/data"
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux-store/redux_store";
+import { product_list_ } from "@/utils/api_url";
+import { ICampaign } from "@/model/CampaignModel";
 
 const ProductList = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
-
+  const [produt_list, setProdutList]= useState([])
   const [entries, setEntries] = useState<string>("10");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = 10;
 
+  const token = useSelector((state: RootState) => state.user.token);
 
   const months = [
     "January",
@@ -29,6 +36,37 @@ const ProductList = () => {
     "November",
     "December",
   ];
+
+  
+  const getBlog = async () => {
+    try {
+      const { data } = await axios.post(
+        product_list_,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      
+      setProdutList(data.data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("Error ", error.response?.data.message);
+        toast.error(error.response?.data.message);
+      } else {
+        console.error("Unknown error", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getBlog();
+  }, []);
+
 
 
   return (
@@ -104,6 +142,9 @@ const ProductList = () => {
                   Category
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Brand
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
@@ -112,56 +153,57 @@ const ProductList = () => {
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Price
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  Stock
-                </th>
+               
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {productData.map((product,i) => (
+              {produt_list.map((product:ICampaign,i) => (
                 <tr className="bg-white hover:bg-gray-100" key={i}>
                   <td className="px-6 py-4 flex items-center gap-4">
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={product.img[0]}
+                      alt={product.title}
                       className="w-10 h-10 rounded-md"
                     />
-                    <span className="text-gray-800">{product.name}</span>
+                    <span className="text-gray-800 line-clamp-2">{product.title}</span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 ">
+                    {product.category}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    {product.category}
+                    {product.brand}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <span
                       className={`px-2 py-1 text-sm text-white rounded-md ${
-                        product.status === "Active"
+                        product.active == true
                           ? "bg-green-500"
                           : "bg-red-500"
                       }`}
                     >
-                      {product.status}
+                      {product.active ? "Active":"Inactive"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <span
                       className={`px-2 py-1 text-sm rounded-md ${
-                        product.banner === "Yes"
+                        product.banner === true
                           ? "bg-yellow-300"
                           : "bg-gray-300"
                       }`}
                     >
-                      {product.banner}
+                      {product.banner ? "Yes": "No"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-600">{product.price}</td>
-                  <td className="px-6 py-4 text-gray-600">{product.stock}</td>
+            
                   <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-sm text-white bg-gray-500 rounded-md">
-                      View in Details
-                    </span>
+                    <Link href={`/admin/dashboard/product/${product.slug}`} className="px-2 py-1 text-sm text-white bg-gray-500 rounded-md">
+                      View
+                    </Link>
                   </td>
                 </tr>
               ))}

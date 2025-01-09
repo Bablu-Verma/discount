@@ -2,16 +2,16 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
 import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole";  // This function checks if the user is an admin
+import { isAdmin } from "@/lib/checkUserRole"; // This function checks if the user is an admin
+import { upload_image } from "@/helpers/server/upload_image";
 
-export async function PUT(req: Request) {
+export async function POST(req: Request) {
   await dbConnect();
 
   try {
     // Authenticate the user
     const { authenticated, user, message } = await authenticateUser(req);
 
-    // If the user is not authenticated, return a 401 response
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
@@ -46,16 +46,19 @@ export async function PUT(req: Request) {
       );
     }
 
-    // Extract category data and category ID from the request body
-    const requestData = await req.json();
-    const { categoryId, name, description, slug, img, font_awesome_class, status } = requestData;
+    const requestData = await req.formData();
+    const description = requestData.get("description") as string;
+    const slug = requestData.get("slug") as string;
+    const img = requestData.get("img") as File;
+    const font_awesome_class = requestData.get("font_awesome_class") as string;
+    const status = requestData.get("status") === "true";
 
     // Validate required fields
-    if (!categoryId) {
+    if (!slug) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Category ID is required.",
+          message: "Category slug is required.",
         }),
         {
           status: 400,
@@ -66,8 +69,7 @@ export async function PUT(req: Request) {
       );
     }
 
-    // Check if the category exists
-    const category = await CategoryModel.findById(categoryId);
+    const category = await CategoryModel.findOne({slug});
     if (!category) {
       return new NextResponse(
         JSON.stringify({
@@ -83,41 +85,34 @@ export async function PUT(req: Request) {
       );
     }
 
-    // Check if category with the same name or slug already exists (but not the current category)
-    const existingCategory = await CategoryModel.findOne({
-      $or: [{ name }, { slug }],
-      _id: { $ne: categoryId }, 
-    });
-
-    if (existingCategory) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "A category with this name or slug already exists.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    // Update the category fields dynamically based on provided data
     const updatedFields: any = {};
 
-    if (name) updatedFields.name = name;
     if (description) updatedFields.description = description;
-    if (slug) updatedFields.slug = slug;
-    if (img) updatedFields.img = img;
-    if (font_awesome_class) updatedFields.font_awesome_class = font_awesome_class;
+
+    if (img) {
+      if (img instanceof File) {
+        const { success, message, url } = await upload_image(
+          img,
+          "site_category"
+        );
+
+        if (success) {
+          console.log("Image uploaded successfully:", url);
+          updatedFields.img = url;
+        } else {
+          console.error("Image upload failed:", message);
+        }
+      } else {
+        console.error("Invalid image value. Expected a File.");
+      }
+    }
+
+    if (font_awesome_class)
+      updatedFields.font_awesome_class = font_awesome_class;
     if (status !== undefined) updatedFields.status = status;
 
-    // Update the category with the provided data
     Object.assign(category, updatedFields);
 
-    // Save the updated category to the database
     await category.save();
 
     return new NextResponse(

@@ -61,7 +61,6 @@ export async function POST(req: Request) {
     const banner_status = requestData.get("banner_status");
     const category = requestData.get("category");
     const terms = requestData.get("terms");
-    const slug = requestData.get("slug_url")
     const meta_title = requestData.get("meta_title");
     const meta_description = requestData.get("meta_description");
     const meta_keywords = requestData.get("meta_keywords");
@@ -109,6 +108,8 @@ export async function POST(req: Request) {
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
    
+
+    const slug = generateSlug(typeof product_name === 'string' ? product_name : '');
 
     campaignData.title = product_name;
     campaignData.price = Number(price);

@@ -5,6 +5,7 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 // Define the interface for the Campaign model
 export interface ICampaign {
+  _id: string;
   user_email: string;
   title: string;
   price: string;

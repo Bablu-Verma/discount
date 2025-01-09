@@ -114,8 +114,6 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
 
-    console.log(files);
-
     if (files) {
       setForm_data((prev) => ({
         ...prev,
@@ -139,7 +137,6 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
       setCategoryList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.error("Error ", error.response?.data.message);
         toast.error(error.response?.data.message);
       } else {
         console.error("Unknown error", error);

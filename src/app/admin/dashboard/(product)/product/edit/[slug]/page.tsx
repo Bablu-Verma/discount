@@ -1,16 +1,23 @@
 "use client";
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
-import { generateSlug } from "@/helpers/client/client_function";
+import { ICampaign } from "@/model/CampaignModel";
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import { add_product, category_list_api } from "@/utils/api_url";
+import { setEditorData } from "@/redux-store/slice/editorSlice";
+import {
+  product_edit_,
+  category_list_api,
+  product_details_,
+} from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IFormData {
+  product_id: string;
   product_name: string;
   brand_name: string;
   price: string;
@@ -20,37 +27,40 @@ interface IFormData {
   banner_status: string;
   images: FileList | null;
   terms: string;
-  hot_p: string;
+  hot_p: boolean;
   meta_title: string;
   meta_description: string;
   meta_keywords: string;
-  new_p: string;
-  featured_p: string;
+  new_p: boolean;
+  featured_p: boolean;
   tags: string;
-  add_poster: string;
-  arrival: string;
-  flash_time:Date | null;
+  add_poster: boolean;
+  arrival: boolean;
+  flash_time: Date | null;
 }
-
-const AddProduct = () => {
+const EditProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const editorContent = useSelector((state: any) => state.editor.content);
-
-  const [categoryList, setCategoryList] = useState([]);
+  const [productDetails, setProductDetails] = useState<ICampaign>();
+  const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [images, setImages] = useState<FileList | null>(null);
-  const [loding, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const [form_data, setForm_data] = useState<IFormData>({
+    product_id: "",
     product_name: "",
     brand_name: "",
     price: "",
     cashback: "",
-    hot_p: "",
     category: "",
     product_status: "active",
     banner_status: "active",
     images: null,
     terms: "",
+    hot_p: "",
     meta_title: "",
     meta_description: "",
     meta_keywords: "",
@@ -59,14 +69,104 @@ const AddProduct = () => {
     tags: "",
     add_poster: "",
     arrival: "",
-   
     flash_time: null,
   });
 
+  useEffect(() => {
+    getCategory();
+  }, []);
+
+  const urlslug = pathname.split("/").pop() || "";
+
+  const GetData = async (slug: string) => {
+    try {
+      let { data } = await axios.post(
+        product_details_,
+        {
+          slug: slug,
+        },
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setProductDetails(data.data);
+      toast.success(data.message);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("Error registering user", error.response?.data.message);
+        toast.error(error.response?.data.message);
+      } else {
+        console.error("Unknown error", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    GetData(urlslug);
+  }, [urlslug]);
+
+
+  console.log(productDetails)
+
+
+  useEffect(() => {
+    setForm_data({
+      product_id: productDetails?._id || "",
+      product_name: productDetails?.title || "",
+      brand_name: productDetails?.brand || "",
+      price: productDetails?.price || "",
+      cashback: productDetails?.cashback || "",
+      category: productDetails?.category || "",
+      product_status: productDetails?.active  || "active",
+      banner_status: productDetails?.banner || "active",
+      images: null, // Reset to null for editing
+      terms: productDetails?.tc|| "",
+      hot_p: productDetails?.hot || "",
+      meta_title: productDetails?.meta_title || "",
+      meta_description: productDetails?.meta_description || "",
+      meta_keywords: productDetails?.meta_keywords || "",
+      new_p: productDetails?.new || "",
+      featured_p: productDetails?.featured == true ? 'active' :'' ,
+      tags: productDetails?.tags || "", // Add tags field
+      add_poster: productDetails?.add_poster || "", // Add add_poster field
+      arrival: productDetails?.arrival || "no", // Add arrival field with default value
+      flash_time: productDetails?.expire_time ? new Date(productDetails.expire_time) : null,
+    });
+  
+    // Set the editor content
+    dispatch(setEditorData(productDetails?.description || ""));
+  }, [productDetails, dispatch]);
+  
+
+  const getCategory = async () => {
+    try {
+      const { data } = await axios.post(
+        category_list_api,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCategoryList(data.data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.message || "Error fetching categories"
+        );
+      } else {
+        console.error("Unknown error", error);
+      }
+    }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-
     if (files) {
       if (files.length < 3) {
         toast.error("Please select at least 3 images.");
@@ -74,19 +174,14 @@ const AddProduct = () => {
         toast.error("You can select a maximum of 5 images.");
       } else {
         setImages(files);
-        setForm_data((prev) => ({
-          ...prev,
-          images: files,
-        }));
+        setForm_data((prev) => ({ ...prev, images: files }));
       }
     }
   };
 
   const renderImagePreview = () => {
     if (!images) return null;
-
-    const fileArray = Array.from(images);
-    return fileArray.map((file, index) => {
+    return Array.from(images).map((file, index) => {
       const objectUrl = URL.createObjectURL(file);
       return (
         <img
@@ -99,33 +194,6 @@ const AddProduct = () => {
       );
     });
   };
-
-  const getCategory = async () => {
-    try {
-      const { data } = await axios.post(
-        category_list_api,
-        {},
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCategoryList(data.data);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error("Error ", error.response?.data.message);
-        toast.error(error.response?.data.message);
-      } else {
-        console.error("Unknown error", error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    getCategory();
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -142,94 +210,48 @@ const AddProduct = () => {
           return { ...prev, [target.name]: target.files };
         } else if (target.name === "flash_time") {
           return { ...prev, [target.name]: new Date(target.value) };
-        }
-        else {
+        } else {
           return { ...prev, [target.name]: target.value };
         }
-      } else if (
-        target instanceof HTMLTextAreaElement ||
-        target instanceof HTMLSelectElement
-      ) {
+      } else {
         return { ...prev, [target.name]: target.value };
       }
-      return prev;
     });
   };
 
-
-
-
   const handleSubmit = async () => {
     try {
-      const requiredFields = [
-        "product_name",
-        "brand_name",
-        "price",
-        "cashback",
-        "category",
-        "product_status",
-        "banner_status",
-        "terms",
-        "tags",
-        "meta_title",
-        "meta_description",
-        "meta_keywords",
-        "tags",
-      ];
-
-      for (const field of requiredFields) {
-        if (!form_data[field as keyof typeof form_data]) {
-          toast.error(`${field.replace("_", " ")} is required.`);
-          return;
-        }
-      }
-
       if (!editorContent.trim()) {
         toast.error("Description is required.");
         return;
       }
 
-      if (form_data.images == null) {
-        toast.error("Please select at least Three image.");
-        return;
-      }
-
       const formPayload = new FormData();
-      if (form_data.images && isFileList(form_data.images)) {
-        Array.from(form_data.images).forEach((file) =>
-          formPayload.append("images", file)
-        );
-      } else if (form_data.images !== null) {
-        toast.error("Invalid file input.");
-        return;
-      }
-
       Object.entries(form_data).forEach(([key, value]) => {
-        if (key !== "images" && value !== undefined && value !== null) {
+        if (key === "images" && value instanceof FileList) {
+          Array.from(value).forEach((file) =>
+            formPayload.append("images", file)
+          );
+        } else {
           formPayload.append(key, String(value));
         }
       });
+
       formPayload.append("description", editorContent);
-     
 
       setLoading(true);
 
-      const { data } = await axios.post(add_product, formPayload, {
+      const { data } = await axios.post(product_edit_, formPayload, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // console.log("data==>", data);
-
-      toast.success("Product added successfully!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 4000);
+      toast.success("Product updated successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "An error occurred");
+        toast.error(error.response?.data?.message || "Error updating product");
       } else {
         console.error("Unexpected error:", error);
       }
@@ -238,14 +260,10 @@ const AddProduct = () => {
     }
   };
 
-  const isFileList = (value: unknown): value is FileList => {
-    return value instanceof FileList;
-  };
-
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
-        Add Product
+        Edit Product
       </h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
         <form
@@ -272,7 +290,7 @@ const AddProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>
-         
+
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label
@@ -534,7 +552,11 @@ const AddProduct = () => {
               <input
                 type="datetime-local"
                 name="flash_time"
-                value={form_data.flash_time ? form_data.flash_time.toISOString().split('T')[0] : ''}
+                value={
+                  form_data.flash_time
+                    ? form_data.flash_time.toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={handleChange}
                 placeholder="Expire time"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
@@ -645,10 +667,10 @@ const AddProduct = () => {
             </button>
             <button
               type="submit"
-              disabled={loding}
+              disabled={loading}
               className="px-6 py-2 text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none "
             >
-              {loding ? "On Process" : "Submit"}
+              {loading ? "On Process" : "Submit"}
             </button>
           </div>
         </form>
@@ -657,4 +679,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

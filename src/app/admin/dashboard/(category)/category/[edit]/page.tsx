@@ -1,7 +1,7 @@
 "use client";
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
-import { category_details_api, blog_edit } from "@/utils/api_url";
+import { category_details_api, category_edit_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -63,7 +63,6 @@ const EditCategory: React.FC = () => {
     }
   };
 
-  // Fetch Category Details
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
@@ -95,14 +94,14 @@ const EditCategory: React.FC = () => {
     }
   };
 
-  // Cleanup Editor Data on Component Unmount
+  
   useEffect(() => {
     return () => {
       dispatch(setEditorData(""));
     };
   }, [dispatch]);
 
-  // Fetch Category Details on Mount
+  
   useEffect(() => {
     getCategory();
   }, [urlslug]);
@@ -119,6 +118,8 @@ const EditCategory: React.FC = () => {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
+          : name === "isActive"
+          ? value === "true" 
           : value,
     }));
   };
@@ -128,16 +129,19 @@ const EditCategory: React.FC = () => {
     if (!validateForm()) return;
 
     const formPayload = new FormData();
-    formPayload.append("isActive", String(form_data.isActive));
-    formPayload.append("description", editorContent);
     formPayload.append("slug", urlslug);
+
+
+    formPayload.append("status", String(form_data.isActive));
+    formPayload.append("description", editorContent);
+    formPayload.append("font_awesome_class", form_data.fontawesome);
     if (form_data.image instanceof File) {
-      formPayload.append("image", form_data.image);
+      formPayload.append("img", form_data.image);
     }
 
     try {
       setLoading(true);
-      const { data } = await axios.post(blog_edit, formPayload, {
+      const { data } = await axios.post(category_edit_api, formPayload, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

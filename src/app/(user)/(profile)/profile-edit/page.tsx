@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IUser } from "@/common_type";
+import Image from "next/image";
 
 interface IFormData {
   name: string;
@@ -122,13 +123,16 @@ const ProfileEdit = () => {
               htmlFor="user_profile"
               className="block mb-2 text-sm font-medium text-gray-700"
             >
-              <img
+              <Image
                 src={
                   formData.profileImage
                     ? URL.createObjectURL(formData.profileImage)
                     : user?.profile ||
                       "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"
                 }
+                height={100}
+                width={100}
+                sizes="100vw"
                 alt="Profile"
                 className="max-w-[100px] max-h-[100px] rounded-full"
               />
@@ -179,7 +183,7 @@ const ProfileEdit = () => {
               value={formData.phone}
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-primary"
-              placeholder="912344556"
+              placeholder="Phone"
             />
           </div>
 

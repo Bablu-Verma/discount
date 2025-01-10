@@ -4,6 +4,7 @@ interface FilterData {
   categories: string[];
   price: string;
   order: string;
+  day: number | null;
   trends: string[];
   amount: number[];
 }
@@ -13,8 +14,9 @@ export const defaultFilterData: FilterData = {
   categories: [],
   price: "",
   order: "",
+  day: null,
   trends: [],
-  amount: [0, 10000000],
+  amount: [0, 100000],
 };
 
 

@@ -24,13 +24,17 @@ const CampaignClient:React.FC<productProps> = ({product_}) => {
   const token = useSelector((state: RootState) => state.user.token);
   const pfilter = useSelector((state: RootState) => state.pfilter);
 
+
+  console.log("pfilter", pfilter);
+  console.log("products", products);
+
   const isDefaultFilter = JSON.stringify(pfilter) === JSON.stringify(defaultFilterData);
 
   const getProduct = async () => {
     try {
       const { data } = await axios.post(
         product_list_,
-        {},
+        {filterData: pfilter},
         {
           headers: {
             "Content-Type": "application/json",

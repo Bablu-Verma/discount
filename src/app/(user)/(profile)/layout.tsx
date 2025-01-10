@@ -73,9 +73,6 @@ const ProfileLayout: React.FC<LayoutProps> =  ({ children }) => {
               <Link href='/order-list' className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block">
                 All Order
               </Link>
-              <Link href='/cart' className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block">
-                Cart
-              </Link>
               <Link href='/wishlist' className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block">
                 Wishlist
               </Link>

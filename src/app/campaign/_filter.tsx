@@ -2,7 +2,11 @@
 
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import { defaultFilterData, resetFilters, setFilterData } from "@/redux-store/slice/ProductFilterSlice";
+import {
+  defaultFilterData,
+  resetFilters,
+  setFilterData,
+} from "@/redux-store/slice/ProductFilterSlice";
 import { category_list_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
@@ -76,7 +80,9 @@ const FilterContent = () => {
       setCategories(data.data || []);
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message || "Failed to fetch categories");
+        toast.error(
+          error.response?.data.message || "Failed to fetch categories"
+        );
       } else {
         toast.error("An unexpected error occurred");
       }
@@ -112,6 +118,11 @@ const FilterContent = () => {
     const { name, value } = event.target;
     setFilterDataState((prev) => ({ ...prev, [name]: value }));
   };
+  
+  const handleSortDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFilterDataState((prev) => ({ ...prev, [name]: parseInt(value, 10) }));
+  };
 
   const handleRangeChange = (values: number[]) => {
     setFilterDataState((prev) => ({ ...prev, amount: values }));
@@ -140,7 +151,10 @@ const FilterContent = () => {
               onChange={handleCategoryChange}
               checked={filterData.categories.includes(item.slug)}
             />
-            <label htmlFor={item.slug} className="ml-2 text-sm text-dark capitalize">
+            <label
+              htmlFor={item.slug}
+              className="ml-2 text-sm text-dark capitalize"
+            >
               {item.name}
             </label>
           </div>
@@ -159,7 +173,10 @@ const FilterContent = () => {
             onChange={handleSortChange}
             checked={filterData.price === "low_high"}
           />
-          <label htmlFor="low_high" className="ml-2 text-sm text-dark capitalize">
+          <label
+            htmlFor="low_high"
+            className="ml-2 text-sm text-dark capitalize"
+          >
             Low to High Price
           </label>
           <br />
@@ -171,7 +188,10 @@ const FilterContent = () => {
             onChange={handleSortChange}
             checked={filterData.price === "high_low"}
           />
-          <label htmlFor="high_low" className="ml-2 text-sm text-dark capitalize">
+          <label
+            htmlFor="high_low"
+            className="ml-2 text-sm text-dark capitalize"
+          >
             High to Low Price
           </label>
         </div>
@@ -202,6 +222,67 @@ const FilterContent = () => {
         </div>
       </div>
 
+      {/* Sorting Filters days */}
+      <div className="mt-5">
+        <p className="text-base mb-2 text-secondary capitalize">Day</p>
+        <div className="mb-3">
+          <input
+            type="radio"
+            id="dayOne"
+            name="day"
+            value={1}
+            onChange={handleSortDayChange}
+            checked={filterData.day === 1}
+          />
+          <label
+            htmlFor="dayOne"
+            className="ml-2 text-sm text-dark capitalize"
+          >
+            Today
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="daySeven"
+            name="day"
+            value={7}
+            onChange={handleSortDayChange}
+            checked={filterData.day === 7}
+          />
+          <label
+            htmlFor="daySeven"
+            className="ml-2 text-sm text-dark capitalize"
+          >
+           7 days
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="dayThirty"
+            name="day"
+            value={30}
+            onChange={handleSortDayChange}
+            checked={filterData.day === 30}
+          />
+          <label htmlFor="dayThirty" className="ml-2 text-sm text-dark capitalize">
+            30 days
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="dayNinty"
+            name="day"
+            value={90}
+            onChange={handleSortDayChange}
+            checked={filterData.day === 90}
+          />
+          <label htmlFor="dayNinty" className="ml-2 text-sm text-dark capitalize">
+            90 days
+          </label>
+        </div>
+ 
+      </div>
+
       <div className="mt-5">
         <p className="text-base mb-2 text-secondary capitalize">Trend</p>
         {["hot", "new", "featured"].map((filterKey) => (
@@ -213,7 +294,10 @@ const FilterContent = () => {
               checked={filterData.trends.includes(filterKey)}
               onChange={handleTrendChange}
             />
-            <label htmlFor={filterKey} className="ml-2 text-sm text-dark capitalize">
+            <label
+              htmlFor={filterKey}
+              className="ml-2 text-sm text-dark capitalize"
+            >
               {filterKey}
             </label>
           </div>
@@ -229,7 +313,7 @@ const FilterContent = () => {
         <Range
           step={100}
           min={0}
-          max={10000000}
+          max={100000}
           values={filterData.amount}
           onChange={handleRangeChange}
           renderTrack={({ props, children }) => (
@@ -246,11 +330,12 @@ const FilterContent = () => {
               {children}
             </div>
           )}
-          renderThumb={({ props }) => (
+          renderThumb={(params) => (
             <div
-              {...props}
+              {...params.props}
+              key={params.index}
               style={{
-                ...props.style,
+                ...params.props.style,
                 height: "16px",
                 width: "16px",
                 backgroundColor: "#d85134",
@@ -260,9 +345,9 @@ const FilterContent = () => {
           )}
         />
       </div>
-      <div style={{marginTop:"30px"}} className=""></div>
-      <hr className="divide-x-2"/>
-      <div style={{marginTop:"30px"}} className=""></div>
+      <div style={{ marginTop: "30px" }} className=""></div>
+      <hr className="divide-x-2" />
+      <div style={{ marginTop: "30px" }} className=""></div>
       <div className="flex justify-around items-center mt-5">
         <button
           className="text-sm bg-red-300 py-1 px-5 rounded-md"
@@ -282,6 +367,3 @@ const FilterContent = () => {
     </div>
   );
 };
-
-
-

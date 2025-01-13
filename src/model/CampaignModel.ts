@@ -36,7 +36,8 @@ export interface ICampaign {
   brand: string;
   banner: boolean;
   expire_time: Date | null;
-  createdAt:string 
+  createdAt:string,
+  calculation_type:string
 }
 
 const CampaignSchema = new Schema<ICampaign>(
@@ -92,6 +93,10 @@ const CampaignSchema = new Schema<ICampaign>(
     featured: {
       type: Boolean,
       default: false,
+    },
+    calculation_type:{
+      type: String,
+      required: [true, "Calculation type is required"],
     },
     hot: {
       type: Boolean,

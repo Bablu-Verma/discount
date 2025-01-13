@@ -15,28 +15,30 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import DatePicker from "react-datepicker";
+
 
 interface IFormData {
-  product_id: string;
-  product_name: string;
+  _id: string;
+  title: string;
   brand_name: string;
   price: string;
   cashback: string;
   category: string;
-  product_status: string;
-  banner_status: string;
-  images: FileList | null;
-  terms: string;
-  hot_p: boolean;
+  active: string;
+  banner: string;
+  images: FileList | string[] | null;
+  tc: string;
+  hot: boolean;
   meta_title: string;
   meta_description: string;
   meta_keywords: string;
-  new_p: boolean;
-  featured_p: boolean;
+  new: boolean;
+  featured: boolean;
   tags: string;
   add_poster: boolean;
   arrival: boolean;
-  flash_time: Date | null;
+  expire_time: Date | null;
 }
 const EditProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -50,31 +52,34 @@ const EditProduct = () => {
   const dispatch = useDispatch();
 
   const [form_data, setForm_data] = useState<IFormData>({
-    product_id: "",
-    product_name: "",
+    _id: "",
+    title: "",
     brand_name: "",
     price: "",
     cashback: "",
     category: "",
-    product_status: "active",
-    banner_status: "active",
+    active: "active",
+    banner: "active",
     images: null,
-    terms: "",
-    hot_p: "",
+    tc: "",
+    hot:false,
     meta_title: "",
     meta_description: "",
     meta_keywords: "",
-    new_p: "",
-    featured_p: "",
+    new: false,
+    featured: false,
     tags: "",
-    add_poster: "",
-    arrival: "",
-    flash_time: null,
+    add_poster:false,
+    arrival: false,
+    expire_time: null,
   });
 
   useEffect(() => {
     getCategory();
   }, []);
+
+
+  console.log(form_data.expire_time)
 
   const urlslug = pathname.split("/").pop() || "";
 
@@ -108,35 +113,30 @@ const EditProduct = () => {
     GetData(urlslug);
   }, [urlslug]);
 
-
-  console.log(productDetails)
-
-
   useEffect(() => {
     setForm_data({
-      product_id: productDetails?._id || "",
-      product_name: productDetails?.title || "",
+      _id: productDetails?._id || "",
+      title: productDetails?.title || "",
       brand_name: productDetails?.brand || "",
       price: productDetails?.price || "",
       cashback: productDetails?.cashback || "",
       category: productDetails?.category || "",
-      product_status: productDetails?.active  || "active",
-      banner_status: productDetails?.banner || "active",
-      images: null, // Reset to null for editing
-      terms: productDetails?.tc|| "",
-      hot_p: productDetails?.hot || "",
+      active: productDetails?.active == true ? "active":"inactive",
+      banner: productDetails?.banner == true ? "active":"inactive",
+      images: productDetails?.img || null,
+      tc: productDetails?.tc|| "",
       meta_title: productDetails?.meta_title || "",
       meta_description: productDetails?.meta_description || "",
       meta_keywords: productDetails?.meta_keywords || "",
-      new_p: productDetails?.new || "",
-      featured_p: productDetails?.featured == true ? 'active' :'' ,
-      tags: productDetails?.tags || "", // Add tags field
-      add_poster: productDetails?.add_poster || "", // Add add_poster field
-      arrival: productDetails?.arrival || "no", // Add arrival field with default value
-      flash_time: productDetails?.expire_time ? new Date(productDetails.expire_time) : null,
+      new: !!productDetails?.new,
+      hot: !!productDetails?.hot,
+      featured: !!productDetails?.featured,
+      add_poster: !!productDetails?.add_poster, 
+      arrival: !!productDetails?.arrival, 
+      tags: productDetails?.tags || "", 
+      expire_time: productDetails?.expire_time ? new Date(productDetails.expire_time) : null, 
     });
-  
-    // Set the editor content
+
     dispatch(setEditorData(productDetails?.description || ""));
   }, [productDetails, dispatch]);
   
@@ -195,6 +195,10 @@ const EditProduct = () => {
     });
   };
 
+
+  console.log(productDetails)
+
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -208,7 +212,7 @@ const EditProduct = () => {
           return { ...prev, [target.name]: target.checked };
         } else if (target.type === "file") {
           return { ...prev, [target.name]: target.files };
-        } else if (target.name === "flash_time") {
+        } else if (target.name === "expire_time") {
           return { ...prev, [target.name]: new Date(target.value) };
         } else {
           return { ...prev, [target.name]: target.value };
@@ -219,45 +223,58 @@ const EditProduct = () => {
     });
   };
 
-  const handleSubmit = async () => {
-    try {
-      if (!editorContent.trim()) {
-        toast.error("Description is required.");
-        return;
-      }
-
-      const formPayload = new FormData();
-      Object.entries(form_data).forEach(([key, value]) => {
-        if (key === "images" && value instanceof FileList) {
-          Array.from(value).forEach((file) =>
-            formPayload.append("images", file)
-          );
-        } else {
-          formPayload.append(key, String(value));
-        }
-      });
-
-      formPayload.append("description", editorContent);
-
-      setLoading(true);
-
-      const { data } = await axios.post(product_edit_, formPayload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Product updated successfully!");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error updating product");
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    } finally {
-      setLoading(false);
+  const handel_date_change = (date: Date | null) => {
+    if (date) {
+      setForm_data((prevData) => ({
+        ...prevData,
+        expire_time: date,
+      }));
     }
+  };
+
+
+
+  const handleSubmit = async () => {
+
+
+    // try {
+    //   if (!editorContent.trim()) {
+    //     toast.error("Description is required.");
+    //     return;
+    //   }
+
+    //   const formPayload = new FormData();
+    //   Object.entries(form_data).forEach(([key, value]) => {
+    //     if (key === "images" && value instanceof FileList) {
+    //       Array.from(value).forEach((file) =>
+    //         formPayload.append("images", file)
+    //       );
+    //     } else {
+    //       formPayload.append(key, String(value));
+    //     }
+    //   });
+
+    //   formPayload.append("description", editorContent);
+
+    //   setLoading(true);
+
+    //   const { data } = await axios.post(product_edit_, formPayload, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   });
+
+    //   toast.success("Product updated successfully!");
+    // } catch (error) {
+    //   if (axios.isAxiosError(error)) {
+    //     toast.error(error.response?.data?.message || "Error updating product");
+    //   } else {
+    //     console.error("Unexpected error:", error);
+    //   }
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -266,6 +283,8 @@ const EditProduct = () => {
         Edit Product
       </h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
+
+      <h4 className="mb-3 text-base text-secondary select-none font-semibold">Product id: #{productDetails?.campaign_id}</h4>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -283,8 +302,8 @@ const EditProduct = () => {
             <input
               type="text"
               id="product_name"
-              name="product_name"
-              value={form_data.product_name}
+              name="title"
+              value={form_data.title}
               onChange={handleChange}
               placeholder="Enter product name"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
@@ -394,6 +413,21 @@ const EditProduct = () => {
             <div id="imagePreview" className="mt-4 flex space-x-4">
               {renderImagePreview()}
             </div>
+            <div className="flex gap-5">
+            {
+  Array.isArray(form_data.images) &&
+  form_data.images.map((item, index) => (
+    <img
+      key={index} // Use the index or a unique identifier from `item` if available
+      src={item} // Directly use the string as the `src` for the image
+      alt={`Product image ${index + 1}`}
+      className="w-24 h-24 object-cover rounded-md"
+    />
+  ))
+}
+            </div>
+           
+
           </div>
 
           <div className="grid grid-cols-4">
@@ -405,7 +439,7 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    name="hot_p"
+                    name="hot"
                     value="active"
                     onChange={handleChange}
                     className="text-blue-500 "
@@ -423,7 +457,7 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    name="new_p"
+                    name="new"
                     value="active"
                     onChange={handleChange}
                     className="text-blue-500 "
@@ -478,10 +512,10 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="radio"
-                    name="banner_status"
+                    name="banner"
                     value="active"
                     onChange={handleChange}
-                    checked={form_data.banner_status === "active"}
+                    checked={form_data.banner === "active"}
                     className="text-blue-500 "
                   />
                   <span className="ml-2 text-gray-700">Active</span>
@@ -489,7 +523,8 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="radio"
-                    name="banner_status"
+                    name="banner"
+                    checked={form_data.banner === "inactive"}
                     onChange={handleChange}
                     value="inactive"
                     className="text-blue-500  "
@@ -506,10 +541,10 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="radio"
-                    name="product_status"
+                    name="active"
                     value="active"
                     onChange={handleChange}
-                    checked={form_data.product_status === "active"}
+                    checked={form_data.active === "active"}
                     className="text-blue-500 "
                   />
                   <span className="ml-2 text-gray-700">Active</span>
@@ -519,6 +554,7 @@ const EditProduct = () => {
                     type="radio"
                     name="product_status"
                     onChange={handleChange}
+                    checked={form_data.active === "inactive"}
                     value="inactive"
                     className="text-blue-500  "
                   />
@@ -536,8 +572,9 @@ const EditProduct = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    name="featured_p"
-                    value="active"
+                    checked={form_data.featured} 
+                    name="featured"
+                    value="actve"
                     onChange={handleChange}
                     className="text-blue-500 "
                   />
@@ -549,18 +586,33 @@ const EditProduct = () => {
               <label className="block text-sm font-medium text-gray-700">
                 If select Fleah Product, Add Expire time also
               </label>
-              <input
+
+
+ <div className="">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Date of Birth
+              </label>
+              <DatePicker
+                selected={form_data.expire_time}
+                onChange={(date) => handel_date_change(date)}
+                className="px-3 py-2 text-sm border border-gray-300 max-w-[150px] rounded-md focus:outline-none focus:border-primary"
+              />
+            </div>
+
+
+
+              {/* <input
                 type="datetime-local"
-                name="flash_time"
+                name="expire_time"
                 value={
-                  form_data.flash_time
-                    ? form_data.flash_time.toISOString().split("T")[0]
+                  form_data.expire_time
+                    ? form_data.expire_time.toISOString().split("T")[0]
                     : ""
                 }
                 onChange={handleChange}
                 placeholder="Expire time"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              />
+              /> */}
             </div>
           </div>
 
@@ -584,8 +636,8 @@ const EditProduct = () => {
             </label>
             <textarea
               id="terms"
-              name="terms"
-              value={form_data.terms}
+              name="tc"
+              value={form_data.tc}
               onChange={handleChange}
               placeholder="Enter terms & conditions"
               rows={5}

@@ -7,6 +7,7 @@ import { RootState } from "@/redux-store/redux_store";
 import { add_product, category_list_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
+import DateTimePicker from "react-datetime-picker";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -29,7 +30,8 @@ interface IFormData {
   tags: string;
   add_poster: string;
   arrival: string;
-  flash_time:Date | null;
+  flash_time: Date | null;
+  calculation_type: string;
 }
 
 const AddProduct = () => {
@@ -59,10 +61,9 @@ const AddProduct = () => {
     tags: "",
     add_poster: "",
     arrival: "",
-   
     flash_time: null,
+    calculation_type: "",
   });
-
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -140,10 +141,7 @@ const AddProduct = () => {
           return { ...prev, [target.name]: target.checked };
         } else if (target.type === "file") {
           return { ...prev, [target.name]: target.files };
-        } else if (target.name === "flash_time") {
-          return { ...prev, [target.name]: new Date(target.value) };
-        }
-        else {
+        } else {
           return { ...prev, [target.name]: target.value };
         }
       } else if (
@@ -156,15 +154,13 @@ const AddProduct = () => {
     });
   };
 
-
-
-
   const handleSubmit = async () => {
     try {
       const requiredFields = [
         "product_name",
         "brand_name",
         "price",
+        'calculation_type',
         "cashback",
         "category",
         "product_status",
@@ -209,9 +205,16 @@ const AddProduct = () => {
           formPayload.append(key, String(value));
         }
       });
-      formPayload.append("description", editorContent);
-     
 
+      if (form_data.featured_p) {
+        if (form_data.flash_time == null) {
+          toast.error("Flash sale time is required.");
+          return;
+        } else {
+          console.log(form_data.flash_time);
+        }
+      }
+      formPayload.append("description", editorContent);
       setLoading(true);
 
       const { data } = await axios.post(add_product, formPayload, {
@@ -220,8 +223,6 @@ const AddProduct = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      // console.log("data==>", data);
 
       toast.success("Product added successfully!");
       setTimeout(() => {
@@ -272,7 +273,7 @@ const AddProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>
-         
+
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label
@@ -311,13 +312,21 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-3 gap-5">
             <div>
               <label
                 htmlFor="cashback"
                 className="block text-sm font-medium text-gray-700"
               >
-                Cashback (%)
+                Cashback   <span className="text-red-400">
+
+                  {form_data.calculation_type == "Subtract"
+                    ? "Subtract"
+                    : form_data.calculation_type == "Division"
+                    ? "Division"
+                    : ""}
+                </span>
+                
               </label>
               <input
                 type="number"
@@ -325,9 +334,30 @@ const AddProduct = () => {
                 name="cashback"
                 value={form_data.cashback}
                 onChange={handleChange}
-                placeholder="Enter cashback percentage"
+                placeholder="Enter cashback"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
               />
+            </div>
+            <div>
+              <label
+                htmlFor="calculation_type"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Calculation type
+              </label>
+              <select
+                id="calculation_type"
+                name="calculation_type"
+                value={form_data.calculation_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+              >
+                <option value="" disabled selected>
+                  Calculation type
+                </option>
+                <option value="Subtract">Subtract</option>
+                <option value="Division">Division</option>
+              </select>
             </div>
             <div>
               <label
@@ -531,13 +561,25 @@ const AddProduct = () => {
               <label className="block text-sm font-medium text-gray-700">
                 If select Fleah Product, Add Expire time also
               </label>
-              <input
+              {/* <input
                 type="datetime-local"
                 name="flash_time"
                 value={form_data.flash_time ? form_data.flash_time.toISOString().split('T')[0] : ''}
                 onChange={handleChange}
                 placeholder="Expire time"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+              /> */}
+
+              <DateTimePicker
+                format="dd-MM-yyyy HH:mm:ss"
+                onChange={(date: Date | null) =>
+                  setForm_data((prevData) => ({
+                    ...prevData,
+                    flash_time: date ?? new Date(),
+                  }))
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+                value={form_data.flash_time}
               />
             </div>
           </div>

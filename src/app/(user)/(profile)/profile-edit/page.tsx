@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IUser } from "@/common_type";
 import Image from "next/image";
+import DateTimePicker from "react-datetime-picker";
 
 interface IFormData {
   name: string;
@@ -19,7 +20,6 @@ interface IFormData {
   dob: Date;
   gender: string;
 }
-
 
 const ProfileEdit = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -188,15 +188,27 @@ const ProfileEdit = () => {
           </div>
 
           <div className="flex justify-between mb-5 ">
-            
             <div className="">
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Date of Birth
               </label>
-              <DatePicker
+              {/* <DatePicker
                 selected={formData.dob}
                 onChange={(date) => handel_date_change(date)}
                 className="px-3 py-2 text-sm border border-gray-300 max-w-[150px] rounded-md focus:outline-none focus:border-primary"
+              /> */}
+              <DateTimePicker
+                disableClock={true}
+                format="dd-MM-yyyy"
+                onChange={(date: Date | null) =>
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    dob: date ?? new Date(),
+                  }))
+                }
+                className=" text-sm border border-gray-300 w-[160px] rounded-md focus:outline-none focus:border-primary" 
+                clearIcon={null}
+                value={formData.dob}
               />
             </div>
 
@@ -242,7 +254,6 @@ const ProfileEdit = () => {
                 </label>
               </div>
             </div>
-
           </div>
 
           <div className="flex justify-end gap-10 my-10">

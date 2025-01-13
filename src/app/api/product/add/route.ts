@@ -7,8 +7,6 @@ import CampaignModel from "@/model/CampaignModel";
 
 import { NextResponse } from "next/server";
 
-
-
 export async function POST(req: Request) {
   await dbConnect();
 
@@ -53,6 +51,7 @@ export async function POST(req: Request) {
 
     const imgFiles = requestData.getAll("images") as File[];
     const description = requestData.get("description");
+    const calculation_type = requestData.get("calculation_type");
     const product_name = requestData.get("product_name");
     const brand_name = requestData.get("brand_name");
     const price = requestData.get("price");
@@ -64,17 +63,20 @@ export async function POST(req: Request) {
     const meta_title = requestData.get("meta_title");
     const meta_description = requestData.get("meta_description");
     const meta_keywords = requestData.get("meta_keywords");
-    const tags = requestData.get('tags')
-    const new_p = requestData.get('new_p')
-    const featured_p = requestData.get('featured_p')
-    const hot_p = requestData.get('hot_p')
-    const add_poster = requestData.get('add_poster')
-    const arrival = requestData.get('arrival')
-    const flash_time = requestData.get('flash_time');
+    const tags = requestData.get("tags");
+    const new_p = requestData.get("new_p");
+    const featured_p = requestData.get("featured_p");
+    const hot_p = requestData.get("hot_p");
+    const add_poster = requestData.get("add_poster");
+    const arrival = requestData.get("arrival");
+    const flash_time = requestData.get("flash_time");
 
     if (!imgFiles.length) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "At least one image is required." }),
+        JSON.stringify({
+          success: false,
+          message: "At least one image is required.",
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -83,7 +85,10 @@ export async function POST(req: Request) {
 
     for (const img of imgFiles) {
       if (img instanceof File) {
-        const { success, message, url } = await upload_image(img, "site_product");
+        const { success, message, url } = await upload_image(
+          img,
+          "site_product"
+        );
         if (success && url) {
           imageUrls.push(url);
           console.log("Image uploaded successfully:", url);
@@ -107,39 +112,46 @@ export async function POST(req: Request) {
 
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
-   
 
-    const slug = generateSlug(typeof product_name === 'string' ? product_name : '');
+    const slug = generateSlug(
+      typeof product_name === "string" ? product_name : ""
+    );
+
+    let offer_price: number = 0;
+
+    if (calculation_type === "Subtract") {
+      offer_price = Number(price) - Number(cashback);
+    } else if (calculation_type === "Division") {
+      offer_price = Number(price) * (1 - Number(cashback) / 100);
+    }
 
     campaignData.title = product_name;
+    campaignData.calculation_type = calculation_type;
     campaignData.price = Number(price);
     campaignData.description = description;
-    campaignData.offer_price = Number(price) - Number(cashback) ;
+    campaignData.offer_price = offer_price;
     campaignData.brand = brand_name;
     campaignData.category = category;
     campaignData.img = imageUrls;
     campaignData.active = product_status === "active" ? true : false;
     campaignData.tc = terms;
-    campaignData.cashback = Number(cashback);
-    campaignData.banner  = banner_status === "active" ? true : false;
+    campaignData.cashback = Number(price) - offer_price;
+    campaignData.banner = banner_status === "active" ? true : false;
     campaignData.hot = hot_p == "true" ? true : false;
-    campaignData.featured  = featured_p == "true" ? true : false;
-    campaignData.new = new_p  == "true" ? true : false;
+    campaignData.featured = featured_p == "true" ? true : false;
+    campaignData.new = new_p == "true" ? true : false;
     campaignData.slug = slug;
     campaignData.meta_title = meta_title;
     campaignData.meta_description = meta_description;
     campaignData.meta_keywords = meta_keywords;
     campaignData.tags = tags;
-    campaignData.add_poster= add_poster == "true" ? true : false;
-    campaignData.arrival= arrival == "true" ? true : false;
-    campaignData.expire_time= flash_time
-    campaignData.user_email= email_check
+    campaignData.add_poster = add_poster == "true" ? true : false;
+    campaignData.arrival = arrival == "true" ? true : false;
+    campaignData.expire_time = flash_time;
+    campaignData.user_email = email_check;
 
+    flash_time;
 
-    
-
-    flash_time
-   
     const campaign = new CampaignModel(campaignData);
     await campaign.save();
 

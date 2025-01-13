@@ -3,6 +3,9 @@ import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 import ReduxProvider from "@/redux-store/provider_";
 
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
 
 
 export const metadata: Metadata = {

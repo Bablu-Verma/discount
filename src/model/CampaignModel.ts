@@ -35,6 +35,7 @@ export interface ICampaign {
   deleted_campaign: boolean;
   brand: string;
   banner: boolean;
+  banner_img:string
   expire_time: Date | null;
   createdAt:string,
   calculation_type:string
@@ -85,6 +86,9 @@ const CampaignSchema = new Schema<ICampaign>(
     add_poster: {
       type: Boolean,
       default: false,
+    },
+    banner_img:{
+      type: String,
     },
     arrival: {
       type: Boolean,

@@ -9,6 +9,7 @@ import BestSalling from "@/components/homepage/BestSelling";
 import HomeBlog from "@/components/homepage/HomeBlog";
 import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
+import HomePoster from "@/components/homepage/HomePoster";
 import SubFooter from "@/components/SubFooter";
 import TimeCount from "@/components/TimeCount";
 import { getServerToken } from "@/helpers/server/server_function";
@@ -80,24 +81,10 @@ export default async function  Home() {
        <MainHeading title="Best Selling Products"/>
       </div>
       <BestSalling  best_product={page_data.data.new}/>
+      
       <div className="max-w-[1400px] mx-auto mt-14">
-        {
-       page_data.data && page_data.data.poster.map((item:ICampaign)=>{
-            return (
-              <Link href={`/campaign/${item.slug}`}> 
-              <Image 
-               src={item?.img[0]}
-               className="w-full h-[220px] md:h-[300px] rounded-t-md"
-               height={200}
-               width={200}
-               sizes="100vw"
-               alt="shose"
-              />
-              </Link>
-            )
-          })
-        }
-
+       
+       <HomePoster poster={page_data.data.poster} />
       </div>
       <SubHeading title="Our Product" />
       <div

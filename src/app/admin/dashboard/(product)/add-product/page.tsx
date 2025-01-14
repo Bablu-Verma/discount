@@ -30,6 +30,7 @@ interface IFormData {
   tags: string;
   add_poster: string;
   arrival: string;
+  banner:File | null;
   flash_time: Date | null;
   calculation_type: string;
 }
@@ -40,6 +41,7 @@ const AddProduct = () => {
 
   const [categoryList, setCategoryList] = useState([]);
   const [images, setImages] = useState<FileList | null>(null);
+  const [imagesbanner, setImagesbanner] = useState<File | null>(null);
   const [loding, setLoading] = useState<boolean>(false);
 
   const [form_data, setForm_data] = useState<IFormData>({
@@ -62,24 +64,35 @@ const AddProduct = () => {
     add_poster: "",
     arrival: "",
     flash_time: null,
+    banner:null,
     calculation_type: "",
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files) {
-      if (files.length < 3) {
-        toast.error("Please select at least 3 images.");
-      } else if (files.length > 5) {
-        toast.error("You can select a maximum of 5 images.");
-      } else {
-        setImages(files);
-        setForm_data((prev) => ({
-          ...prev,
-          images: files,
-        }));
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, input_:string) => {
+    if(input_== 'image'){
+      const files = e.target.files;
+      if (files) {
+        if (files.length < 2) {
+          toast.error("Please select at least 2 images.");
+        } else if (files.length > 3) {
+          toast.error("You can select a maximum of 3 images.");
+        } else {
+          setImages(files);
+          setForm_data((prev) => ({
+            ...prev,
+            images: files,
+          }));
+        }
       }
+    }else if (input_== 'banner'){
+      const file = e.target.files?.[0]; 
+    if (file) {
+      setImagesbanner(file);
+      setForm_data((prev) => ({
+        ...prev,
+        banner: file,
+      }));
+    };
     }
   };
 
@@ -190,6 +203,8 @@ const AddProduct = () => {
         return;
       }
 
+     
+
       const formPayload = new FormData();
       if (form_data.images && isFileList(form_data.images)) {
         Array.from(form_data.images).forEach((file) =>
@@ -199,6 +214,20 @@ const AddProduct = () => {
         toast.error("Invalid file input.");
         return;
       }
+
+      if (form_data.banner_status === 'active' || form_data.featured_p || form_data.add_poster) {
+        if (form_data.banner == null) {
+          toast.error("Please select one banner type image.");
+          return;
+        } else if (form_data.banner instanceof File) {
+          formPayload.append("banner", form_data.banner);
+        } else {
+          toast.error("Invalid banner type.");
+          return;
+        }
+      }
+
+
 
       Object.entries(form_data).forEach(([key, value]) => {
         if (key !== "images" && value !== undefined && value !== null) {
@@ -312,7 +341,7 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-4 gap-5">
             <div>
               <label
                 htmlFor="cashback"
@@ -359,7 +388,7 @@ const AddProduct = () => {
                 <option value="Division">Division</option>
               </select>
             </div>
-            <div>
+            <div className="col-span-2">
               <label
                 htmlFor="category"
                 className="block text-sm font-medium text-gray-700"
@@ -386,13 +415,13 @@ const AddProduct = () => {
               </select>
             </div>
           </div>
-
-          <div>
+          <div className="grid grid-cols-3 gap-5">
+          <div className="col-span-2">
             <label
               htmlFor="images"
               className="block text-sm font-medium text-gray-700"
             >
-              Product Images (min 3)
+              Product Images 
             </label>
             <input
               type="file"
@@ -400,13 +429,42 @@ const AddProduct = () => {
               multiple
               accept="image/*"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={handleImageChange}
+              onChange={(e)=>handleImageChange(e,'image')}
             />
 
             <div id="imagePreview" className="mt-4 flex space-x-4">
               {renderImagePreview()}
             </div>
           </div>
+
+          <div>
+            <label
+              htmlFor="banner"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Banner/Flash/Add
+            </label>
+            <input
+              type="file"
+              id="banner"
+              accept="image/*"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+              onChange={(e)=>handleImageChange(e,'banner')}
+            />
+
+            {
+              imagesbanner &&  <img
+              src={URL.createObjectURL(imagesbanner)}
+              alt={`Product image `}
+              className="w-32 h-24 object-cover mt-8 rounded-md"
+            />
+            }
+
+          </div>
+            
+          </div>
+
+          
 
           <div className="grid grid-cols-4">
             <div>

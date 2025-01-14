@@ -50,6 +50,7 @@ export async function POST(req: Request) {
     // console.log("Form Data Received:", Object.fromEntries(requestData.entries()));
 
     const imgFiles = requestData.getAll("images") as File[];
+    const banner_file = requestData.get("banner") as File;
     const description = requestData.get("description");
     const calculation_type = requestData.get("calculation_type");
     const product_name = requestData.get("product_name");
@@ -100,6 +101,7 @@ export async function POST(req: Request) {
       }
     }
 
+
     if (imageUrls.length === 0) {
       return new NextResponse(
         JSON.stringify({
@@ -109,6 +111,29 @@ export async function POST(req: Request) {
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
+
+console.log('banner_file', banner_file)
+
+let banner_= ''
+if(banner_file instanceof File) {
+  const { success, message, url } = await upload_image(
+    banner_file,
+    "site_banner"
+  );
+  if (success && url) {
+    banner_ = url;
+    console.log("banner uploaded successfully:", url);
+  } else {
+    console.error("banner upload failed:", message);
+  }
+}
+    
+console.log('banner_ ==', banner_)
+
+   
+
+
+
 
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
@@ -149,6 +174,7 @@ export async function POST(req: Request) {
     campaignData.arrival = arrival == "true" ? true : false;
     campaignData.expire_time = flash_time;
     campaignData.user_email = email_check;
+    campaignData.banner_img = banner_;
 
     flash_time;
 

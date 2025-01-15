@@ -46,7 +46,10 @@ const Prduct_details = () => {
   };
 
   useEffect(() => {
-    GetData(urlslug);
+    if(urlslug){
+      GetData(urlslug);
+    }
+  
   }, [urlslug]);
 
   return (

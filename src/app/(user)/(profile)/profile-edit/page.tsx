@@ -7,8 +7,6 @@ import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { IUser } from "@/common_type";
 import Image from "next/image";
 import DateTimePicker from "react-datetime-picker";

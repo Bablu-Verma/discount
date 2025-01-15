@@ -18,6 +18,7 @@ const MainHeader = () => {
  const user = useSelector(
     (state: RootState) => state.user.user
   ) as IUser | null;
+  const wishlist = useSelector((state:RootState) => state.wishlist.items);
 
   const userlogin = token_? true : false;
 
@@ -97,10 +98,14 @@ const MainHeader = () => {
           )}
           <Link
             href={userlogin?'/wishlist':'/login'}
-            className="select-none text-primary p-1 px-1.5 mr-1 hover:bg-gray-100 relative flex justify-center items-center rounded"
+            className="select-none text-primary p-1 px-1.5 mr-1 hover:bg-gray-100 flex justify-center items-center rounded relative"
           >
             <i className="fa-regular fa-heart text-xl"></i>
+            {
+              userlogin && wishlist.length > 0 && <span className="w-4 h-4 justify-center flex items-center rounded-full bg-green-300 absolute top-0 -right-2 text-[12px] text-secondary ">{wishlist.length}</span>
+            }
           </Link>
+
           {userlogin ? (
             <>
             <Link

@@ -6,6 +6,7 @@ import { MainHeading, SubHeading } from "@/components/Heading";
 import Featured from "@/components/heropage/Featured";
 import Hero from "@/components/heropage/Hero";
 import BestSalling from "@/components/homepage/BestSelling";
+import CallApiInHome from "@/components/homepage/CallApiInHome";
 import HomeBlog from "@/components/homepage/HomeBlog";
 import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
@@ -27,7 +28,7 @@ import toast from "react-hot-toast";
 export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
-      home_api,
+      home_api,{},
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -56,6 +57,7 @@ export default async function  Home() {
     <>
     <TopHeader />
     <MainHeader />
+    <CallApiInHome />
     <Hero home_category={page_data.data.category} banner={page_data.data.banner}/>
     <main>
       <SubHeading title="Today's" />

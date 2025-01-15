@@ -9,11 +9,7 @@ export async function POST(req: Request) {
 
   try {
     
-    const requestData = await req.json();
-    const page = parseInt(requestData.page || "1", 10); 
-    const limit = parseInt(requestData.limit || "20", 10); 
-    const skip = (page - 1) * limit; 
-
+  
     
     const { authenticated, user, message } = await authenticateUser(req);
 
@@ -51,21 +47,22 @@ export async function POST(req: Request) {
     }
 
    
-    const users = await UserModel.find().skip(skip).limit(limit);
-    const totalUsers = await UserModel.countDocuments(); 
-    const totalPages = Math.ceil(totalUsers / limit);
+    const users = await UserModel.find()
+    // .skip(skip).limit(limit);
+    // const totalUsers = await UserModel.countDocuments(); 
+    // const totalPages = Math.ceil(totalUsers / limit);
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Users retrieved successfully.",
         data: users,
-        pagination: {
-          currentPage: page,
-          totalPages,
-          totalUsers,
-          limit,
-        },
+        // pagination: {
+        //   currentPage: page,
+        //   // totalPages,
+        //   // totalUsers,
+        //   // limit,
+        // },
       }),
       {
         status: 200,

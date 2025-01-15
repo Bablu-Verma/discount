@@ -47,7 +47,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const campaign = await CampaignModel.findById(campaignId);
+    const campaign = await CampaignModel.findOne({campaign_id:Number(campaignId)});
+
     if (!campaign) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Campaign not found." }),
@@ -55,65 +56,66 @@ export async function POST(req: Request) {
       );
     }
 
-    // Handle image uploads
+  
     const imgFiles = requestData.getAll("images") as File[];
-    const imageUrls = await Promise.all(
-      imgFiles.map(async (img) => {
-        if (img instanceof File) {
+    const banner_file = requestData.get("banner_img") as File;
+    const description = requestData.get("description");
+    const calculation_type = requestData.get("calculation_type");
+    const product_name = requestData.get("title") as string;
+    const brand_name = requestData.get("brand_name");
+    const price = requestData.get("price");
+    const cashback = requestData.get("cashback");
+    const product_status = requestData.get("active");
+    const banner_status = requestData.get("banner");
+    const category = requestData.get("category");
+    const terms = requestData.get("tc");
+    const meta_title = requestData.get("meta_title");
+    const meta_description = requestData.get("meta_description");
+    const meta_keywords = requestData.get("meta_keywords");
+    const tags = requestData.get("tags");
+    const new_p = requestData.get("new");
+    const featured_p = requestData.get("featured");
+    const hot_p = requestData.get("hot");
+    const add_poster = requestData.get("add_poster");
+    const arrival = requestData.get("arrival");
+    const flash_time = requestData.get("expire_time");
+
+
+
+
+
+
+    if (imgFiles && Array.isArray(imgFiles) && imgFiles.every((img) => img instanceof File)) {
+      const imageUrls = await Promise.all(
+        imgFiles.map(async (img) => {
           const { success, message, url } = await upload_image(img, "site_product");
           if (success && url) return url;
           console.error("Image upload failed:", message);
           return null;
-        }
-        console.error("Invalid image value. Expected a File.");
-        return null;
-      })
-    ).then((urls) => urls.filter((url) => url !== null)); // Filter out null values
-
-    const campaignData: Record<string, any> = {};
-
-    const fields = [
-      "product_name",
-      "price",
-      "cashback",
-      "description",
-      "brand_name",
-      "category",
-      "product_status",
-      "banner_status",
-      "hot_p",
-      "featured_p",
-      "new_p",
-      "meta_title",
-      "meta_description",
-      "meta_keywords",
-      "tags",
-      "add_poster",
-      "arrival",
-      "flash_time",
-    ];
-
-    fields.forEach((field) => {
-      if (requestData.has(field)) {
-        const value = requestData.get(field);
-        if (["price", "cashback"].includes(field)) {
-          campaignData[field] = Number(value);
-        } else if (["product_status", "banner_status", "hot_p", "featured_p", "new_p", "add_poster", "arrival"].includes(field)) {
-          campaignData[field] = value === "true";
-        } else {
-          campaignData[field] = value;
-        }
+        })
+      ).then((urls) => urls.filter((url) => url !== null));
+    
+      if (imageUrls.length > 0) {
+        campaign.img = imageUrls;
       }
-    });
+    } 
 
-    if (campaignData.price && campaignData.cashback) {
-      campaignData.offer_price = campaignData.price - campaignData.cashback;
+  
+    if(banner_file && banner_file instanceof File) {
+      const { success, message, url } = await upload_image(
+        banner_file,
+        "site_banner"
+      );
+      if (success && url) {
+        campaign.banner_img = url;
+        console.log("banner uploaded successfully:", url);
+      } else {
+        console.error("banner upload failed:", message);
+      }
     }
-
-    // Handle slug generation and validation
-    if (requestData.has("product_name")) {
-      const productName = requestData.get("product_name") as string;
-      const newSlug = generateSlug(productName);
+   
+    if (product_name) {
+      const newSlug = generateSlug(product_name);
 
       if (newSlug !== campaign.slug) {
         const existingCampaign = await CampaignModel.findOne({ slug: newSlug });
@@ -126,14 +128,48 @@ export async function POST(req: Request) {
             { status: 400, headers: { "Content-Type": "application/json" } }
           );
         }
-        campaignData.slug = newSlug;
+        campaign.slug = newSlug;
       }
     }
 
-    if (imageUrls.length > 0) campaignData.img = imageUrls;
+    let offer_price: number = 0;
+    if (calculation_type === "Subtract") {
+      offer_price = Number(price) - Number(cashback);
+    } else if (calculation_type === "Division") {
+      offer_price = Number(price) * (1 - Number(cashback) / 100);
+    }
 
-    // Update the campaign document
-    Object.assign(campaign, campaignData);
+    console.log(imgFiles,banner_file,calculation_type,product_name,brand_name,price,cashback,product_status,banner_status,category,terms,meta_title,meta_description,meta_keywords,tags,new_p,featured_p,hot_p,add_poster,arrival,flash_time,'==>',)
+    // description
+
+
+
+
+
+
+    campaign.cashback = Number(price) - offer_price
+    campaign.title = product_name;
+    campaign.calculation_type = calculation_type;
+    campaign.price = Number(price);
+    campaign.description = description;
+    campaign.offer_price = offer_price;
+    campaign.brand = brand_name;
+    campaign.category = category;
+    campaign.active = product_status === "active" ? true : false;
+    campaign.tc = terms;
+    campaign.banner = banner_status === "active" ? true : false;
+    campaign.hot = hot_p == "true" ? true : false;
+    campaign.featured = featured_p == "true" ? true : false;
+    campaign.new = new_p == "true" ? true : false;
+    campaign.meta_title = meta_title;
+    campaign.meta_description = meta_description;
+    campaign.meta_keywords = meta_keywords;
+    campaign.tags = tags;
+    campaign.add_poster = add_poster == "true" ? true : false;
+    campaign.arrival = arrival == "true" ? true : false;
+    campaign.expire_time = flash_time;
+
+   
 
     await campaign.save();
 

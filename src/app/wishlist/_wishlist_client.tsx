@@ -2,13 +2,14 @@
 
 import { ICampaign } from "@/model/CampaignModel";
 import { RootState } from "@/redux-store/redux_store";
+import { addItem, removeItem } from "@/redux-store/slice/wishlistSlice";
 import { wishlist_product_remove_ } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IWCProps {
   item_: ICampaign[];
@@ -16,7 +17,15 @@ interface IWCProps {
 
 const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
   const token = useSelector((state: RootState) => state.user.token);
-  const [itemList, setItemList] = useState(item_);
+  // const [itemList, setItemList] = useState(item_);
+  const dispatch = useDispatch();
+  const wishlist = useSelector((state:RootState) => state.wishlist.items);
+
+  useEffect(()=>{
+    dispatch(addItem(item_));
+  },[])
+
+
 
   const remover_data = async (id: number) => {
     try {
@@ -31,9 +40,8 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
         }
       );
 
-      // Update the state to remove the item from the list
-      setItemList((prevList) => prevList.filter((item) => item.campaign_id !== id));
-
+      
+      dispatch(removeItem(id));
       toast.success("Product removed successfully!");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -48,7 +56,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
 
   return (
     <>
-      {itemList.map((item, i) => {
+      {wishlist.map((item, i) => {
         return (
           <div
             key={item.campaign_id}
@@ -93,7 +101,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
           </div>
         );
       })}
-      {itemList.length === 0 && (
+      {wishlist.length === 0 && (
         <div className="text-center py-12">
           <p className="text-base text-gray-600 mb-3">No products in your wishlist.</p>
           <Link

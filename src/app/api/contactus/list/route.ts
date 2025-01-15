@@ -5,7 +5,7 @@ import { authenticateUser } from "@/lib/authenticate";
 import { isAdmin } from "@/lib/checkUserRole";
 
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   await dbConnect();
 
   try {
@@ -20,8 +20,7 @@ export async function GET(req: Request) {
         { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
-
-
+    
     const email_check = user?.email || "";
     const is_admin = await isAdmin(email_check);
 

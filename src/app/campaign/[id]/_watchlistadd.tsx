@@ -1,31 +1,34 @@
 "use client"
 
+import { ICampaign } from '@/model/CampaignModel';
 import { RootState } from '@/redux-store/redux_store';
+import { addOne } from '@/redux-store/slice/wishlistSlice';
 import { wishlist_add_ } from '@/utils/api_url';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 interface IWAadProps {
-    id: String;
+  oneitem: ICampaign;
 }
 
-const Watchlistadd:React.FC<IWAadProps> = ({id}) => {
+const Watchlistadd:React.FC<IWAadProps> = ({oneitem}) => {
   const [isAdding, setIsAdding] = useState(false); 
   const token = useSelector((state: RootState) => state.user.token);
+  const wishlist = useSelector((state:RootState) => state.wishlist.items);
+ const dispatch = useDispatch()
+
+  const isInWishlist = wishlist.some((item) => item.campaign_id === Number(oneitem.campaign_id));
 
   const router = useRouter();
 
   const add_list = async () => {
-
     if (!token) {
        return router.push('/login');
-     }
-
-
+    }
 
     if (isAdding) return; 
     setIsAdding(true);
@@ -35,7 +38,7 @@ const Watchlistadd:React.FC<IWAadProps> = ({id}) => {
       const { data } = await axios.post(
         wishlist_add_,
         {
-            campaign_id:id
+            campaign_id:oneitem.campaign_id
         },
         {
           headers: {
@@ -44,7 +47,7 @@ const Watchlistadd:React.FC<IWAadProps> = ({id}) => {
           },
         }
       );
-
+      dispatch(addOne(oneitem))
       toast.success('Added to wishlist successfully!');
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -61,16 +64,18 @@ const Watchlistadd:React.FC<IWAadProps> = ({id}) => {
   return (
     <button
       onClick={add_list}
-      title={token?"Add to Wishlist":"Login to Add Wishlist"}
+      title={token ? "Add to Wishlist" : "Login to Add Wishlist"}
       aria-label="Add to Wishlist"
       role="button"
-      disabled={isAdding} 
-      className={`py-2 px-5 text-center outline-none border-none text-secondary duration-200 ${
-        isAdding ? 'opacity-50 cursor-not-allowed' : 'hover:text-primary'
-      }`}
+      disabled={isAdding}
+      className={`py-2 px-5 text-center text-secondary outline-none border-none duration-200`}
     >
-      <i className="fa-regular fa-heart text-2xl mr-1"></i>
-      <i className="fa-solid fa-plus text-sm"></i>
+      <i
+        className={`fa-heart text-2xl mr-1 ${
+          isInWishlist ? "fa-solid text-red-500" : "fa-regular"
+        }`}
+      ></i>
+      {isInWishlist ? <i className="fa-solid fa-check text-sm text-red-500"></i> : <i className="fa-solid fa-plus text-sm"></i>}
     </button>
   );
 };

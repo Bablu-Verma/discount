@@ -5,13 +5,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import editorReducer from './slice/editorSlice'
 import PFilterSlice from './slice/ProductFilterSlice'
-
+import wishlistReduce from './slice/wishlistSlice'
 
 const store_ = configureStore({
   reducer: {
     user: userSlice,
     editor: editorReducer,
-    pfilter: PFilterSlice
+    pfilter: PFilterSlice,
+    wishlist: wishlistReduce,
   },
 });
 

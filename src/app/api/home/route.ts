@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
 import CategoryModel from "@/model/CategoryModel";
 import BlogModel from "@/model/BlogModal";
+import { authenticateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -11,6 +12,9 @@ export async function POST(req: Request) {
   const currentDate = new Date();
 
   try {
+
+    const { authenticated, user, message } = await authenticateUser(req);
+
     
     const banner = await CampaignModel.find({banner:true}).limit(5);
     const newCampaigns = await CampaignModel.find({new:true}).limit(10);
@@ -34,7 +38,8 @@ export async function POST(req: Request) {
           featured: featuredCampaigns,
           blogs: newBlogs,
           poster:poster,
-          arrival:arrival
+          arrival:arrival,
+         
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
@@ -62,3 +67,5 @@ export async function POST(req: Request) {
     }
   }
 }
+
+

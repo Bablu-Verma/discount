@@ -112,7 +112,7 @@ export async function POST(req: Request) {
       );
     }
 
-console.log('banner_file', banner_file)
+
 
 let banner_= ''
 if(banner_file instanceof File) {
@@ -127,13 +127,6 @@ if(banner_file instanceof File) {
     console.error("banner upload failed:", message);
   }
 }
-    
-console.log('banner_ ==', banner_)
-
-   
-
-
-
 
     // Construct campaign data object
     const campaignData: Record<string, any> = {};

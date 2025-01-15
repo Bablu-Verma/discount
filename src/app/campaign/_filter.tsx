@@ -195,31 +195,7 @@ const FilterContent = () => {
             High to Low Price
           </label>
         </div>
-        <div>
-          <input
-            type="radio"
-            id="a_to_z"
-            name="order"
-            value="a_to_z"
-            onChange={handleSortChange}
-            checked={filterData.order === "a_to_z"}
-          />
-          <label htmlFor="a_to_z" className="ml-2 text-sm text-dark capitalize">
-            A to Z
-          </label>
-          <br />
-          <input
-            type="radio"
-            id="z_to_a"
-            name="order"
-            value="z_to_a"
-            onChange={handleSortChange}
-            checked={filterData.order === "z_to_a"}
-          />
-          <label htmlFor="z_to_a" className="ml-2 text-sm text-dark capitalize">
-            Z to A
-          </label>
-        </div>
+      
       </div>
 
       {/* Sorting Filters days */}
@@ -305,7 +281,7 @@ const FilterContent = () => {
       </div>
 
       {/* Range Filter */}
-      <div className="max-w-[220px] mt-5">
+      {/* <div className="max-w-[220px] mt-5">
         <p className="text-base mb-2 text-secondary capitalize">Amount</p>
         <span className="text-secondary text-xl inline-block mb-3">
           ₹{filterData.amount[0]} - ₹{filterData.amount[1]}
@@ -344,11 +320,11 @@ const FilterContent = () => {
             />
           )}
         />
-      </div>
+      </div> */}
       <div style={{ marginTop: "30px" }} className=""></div>
       <hr className="divide-x-2" />
       <div style={{ marginTop: "30px" }} className=""></div>
-      <div className="flex justify-around items-center mt-5">
+      <div className="flex justify-start gap-10 items-center mt-5">
         <button
           className="text-sm bg-red-300 py-1 px-5 rounded-md"
           type="button"

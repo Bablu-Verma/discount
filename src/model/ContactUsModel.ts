@@ -8,6 +8,7 @@ export interface IContactUs {
   message: string;
   phone_number?: string;
   location?: string;
+  createdAt:string;
 }
 
 const ContactUsSchema = new Schema<IContactUs>(

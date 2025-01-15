@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation,Autoplay, Pagination, A11y } from "swiper/modules";
+import {Autoplay, Pagination, A11y } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -15,9 +15,6 @@ interface BannerProps {
 }
 
 const Banner:React.FC<BannerProps> = ({banner}) => {
-
-  console.log(banner)
-
   return (
     <div className="rounded col-span-5 lg:col-span-4 relative">
       <Swiper
@@ -38,7 +35,7 @@ const Banner:React.FC<BannerProps> = ({banner}) => {
           <SwiperSlide key={i}>
             <Link href={`/campaign/${item.slug}`}
               className="relative h-[270px] rounded bg-cover bg-center block"
-              style={{ backgroundImage: `url(${item.img[0]})` }}
+              style={{ backgroundImage: `url(${item.banner_img})` }}
             ></Link>
           </SwiperSlide>
         ))}

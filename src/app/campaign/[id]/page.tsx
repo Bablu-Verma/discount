@@ -102,7 +102,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <button className=" py-2 px-5 capitalize text-base text-center outline-none border-none text-secondary hover:underline duration-200 ">
                   Help to Avail this offer?
                 </button>
-                <Watchlistadd  id={page_data.campaign_id}/>
+                <Watchlistadd  oneitem={page_data}/>
               </div>
               {
                 page_data.featured && <Offer_end_component time_data={page_data?.expire_time}/>

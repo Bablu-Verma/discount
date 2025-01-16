@@ -21,31 +21,35 @@ const TextEditor: React.FC = () => {
     {
       name: "Blog Template",
       content:
-        "<h1>TBlog Template  </h1><p>Default content for Template 1.</p>",
+        "<div class='blog_template'>Add Blog</div>",
     },
     {
       name: "Campaign Template",
       content:
-        "<h2>Campaign Template </h2><p>Default content for Template 2.</p>",
+        "<div class='campaign_template'>Campaign Add</div>",
     },
     {
       name: "Category Template",
       content:
-        "<h2> Category Template  Heading</h2><p>Default content for Template 2.</p>",
+        "<div class='category_template'>Category Add</div>",
     },
   ]);
 
   const dispatch = useDispatch();
 
   const config = {
+    
     readonly: false,
     height: 500,
     placeholder: "Start typing...",
   };
 
   const handleContentChange = (newContent: string) => {
-    const sanitizedContent = DOMPurify.sanitize(newContent);
-    dispatch(setEditorData(sanitizedContent));
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(newContent, "text/html");
+    doc.querySelectorAll("[style]").forEach((el) => el.removeAttribute("style"));
+    const cleanedContent = DOMPurify.sanitize(doc.body.innerHTML);
+    dispatch(setEditorData(cleanedContent));
   };
 
   const handleTemplateChange = (value: string) => {

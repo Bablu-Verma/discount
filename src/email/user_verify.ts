@@ -1,16 +1,18 @@
-import EmailTransporter from "@/lib/nodemailer";
+import { email_transporter, sender_email } from "@/lib/nodemailer";
 
-export const user_verify_email = async (otp:string, user_email:string) => {
-   
-    const info = await EmailTransporter.sendMail({
-      from: '"discount.com 👻" discount.verify@gmail.com', 
-      to: user_email, 
-      subject: "Verification", 
-      text: "discount.com", 
-      html: `Hi user this is your email verification OTP ${otp}` 
-    });
+export const user_verify_email = async (otp: string, user_email: string) => {
   
-    console.log("Message sent: %s", info.messageId);
-
+  try {
+   const info = await email_transporter.send({
+    from: sender_email,
+    to: [{ email: user_email }],
+    subject: "Signup Verifaction!",
+    text: `
+    Your verifaction otp is! ${otp}
+    `,
+  })
+  console.log(`Message sent`, info);
+  } catch (error) {
+    console.log(`error sent`, error);
   }
-  
+};

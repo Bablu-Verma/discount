@@ -95,7 +95,7 @@ const UserVerify = () => {
         }
       );
 
-      console.log(data);
+      // console.log(data);
       toast.success("Your Email Verified!");
       setTimeout(()=>{
         route.push('/login')

@@ -25,24 +25,21 @@ const Banner:React.FC<BannerProps> = ({banner}) => {
         pagination={{ clickable: true }}
         onSwiper={(swiper) => ''}
         onSlideChange={() => ''}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
+        // autoplay={{
+        //   delay: 2500,
+        //   disableOnInteraction: false,
+        // }}
         className="home_banner_"
       >
         {banner.map((item, i) => (
           <SwiperSlide key={i}>
             <Link href={`/campaign/${item.slug}`}
-              className="relative h-[270px] rounded bg-cover bg-center block"
+              className="relative h-48 lg:h-60 rounded bg-cover bg-center block"
               style={{ backgroundImage: `url(${item.banner_img})` }}
             ></Link>
           </SwiperSlide>
         ))}
       </Swiper>
-      <style jsx>{`
-       
-      `}</style>
     </div>
   );
 };

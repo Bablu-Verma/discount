@@ -1,35 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import Image from "next/image";
 import { IUser } from "@/common_type";
 
-
-
-
 const MainHeader = () => {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
   const token_ = useSelector((state: RootState) => state.user.token);
   const pathname = usePathname();
- const user = useSelector(
-    (state: RootState) => state.user.user
-  ) as IUser | null;
-  const wishlist = useSelector((state:RootState) => state.wishlist.items);
+  const user = useSelector((state: RootState) => state.user.user) as IUser | null;
+  const wishlist = useSelector((state: RootState) => state.wishlist.items);
 
-  const userlogin = token_? true : false;
-
+  const userlogin = token_ ? true : false;
 
   const showtoggle = () => {
     setToggleMenu(!toggleMenu);
   };
-  
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // Scrolling down
+        setIsVisible(false);
+      } else {
+        // Scrolling up
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   return (
-    <nav className="border-b-2 border-gray-200">
+    <nav
+      className={`border-b-2 border-gray-200 z-50 bg-white sticky top-0 transition-transform duration-500 ${
+       isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="max-w-[1400px] m-auto py-3 flex justify-between items-center px-4">
         <h3 className="font-semibold text-black text-2xl md:text-3xl font-mono select-none">
           Discount
@@ -37,7 +58,9 @@ const MainHeader = () => {
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">
             <Link
-              className={`${pathname == '/'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${
+                pathname == "/" ? "text-primary" : "text-gray-700"
+              } font-medium duration-200 px-2 hover:text-gray-900`}
               href="/"
             >
               Home
@@ -49,7 +72,9 @@ const MainHeader = () => {
             </span>
             <Link
               href="/campaign"
-              className={`${pathname == '/campaign'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${
+                pathname == "/campaign" ? "text-primary" : "text-gray-700"
+              } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Campaign
             </Link>
@@ -57,7 +82,9 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="/contact-us"
-              className={`${pathname == '/contact-us'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${
+                pathname == "/contact-us" ? "text-primary" : "text-gray-700"
+              } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Contact
             </Link>
@@ -65,12 +92,13 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="about"
-              className={`${pathname == '/about'? 'text-primary':'text-gray-700' } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${
+                pathname == "/about" ? "text-primary" : "text-gray-700"
+              } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               About
             </Link>
           </li>
-         
         </ul>
 
         <div className="flex justify-center items-center">
@@ -97,31 +125,35 @@ const MainHeader = () => {
             </Link>
           )}
           <Link
-            href={userlogin?'/wishlist':'/login'}
+            href={userlogin ? "/wishlist" : "/login"}
             className="select-none text-primary p-1 px-1.5 mr-1 hover:bg-gray-100 flex justify-center items-center rounded relative"
           >
             <i className="fa-regular fa-heart text-xl"></i>
-            {
-              userlogin && wishlist.length > 0 && <span className="w-4 h-4 justify-center flex items-center rounded-full bg-green-300 absolute top-0 -right-2 text-[12px] text-secondary ">{wishlist.length}</span>
-            }
+            {userlogin && wishlist.length > 0 && (
+              <span className="w-4 h-4 justify-center flex items-center rounded-full bg-green-300 absolute top-0 -right-2 text-[12px] text-secondary ">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
 
           {userlogin ? (
             <>
-            <Link
+              <Link
                 href="/profile-edit"
                 className={` font-medium duration-200 ml-5 shadow cursor-pointer hover:opacity-80`}
               >
-              <Image
-                src={user?.profile || "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"} 
-                alt={user?.email || "User profile"} 
-                height={100}
-                width={100}
-                className="w-9 h-9 rounded-full"
-              />
+                <Image
+                  src={
+                    user?.profile ||
+                    "https://cdn-icons-png.flaticon.com/512/9203/9203764.png"
+                  }
+                  alt={user?.email || "User profile"}
+                  height={100}
+                  width={100}
+                  className="w-9 h-9 rounded-full"
+                />
               </Link>
             </>
-           
           ) : (
             <Link
               href="/login"
@@ -133,7 +165,7 @@ const MainHeader = () => {
 
           <button
             onClick={showtoggle}
-            className="lg:hidden ml-6 p-2 text-gray-700 w-[30px] flex justify-center items-center hover:text-black"
+            className="lg:hidden p-2 text-gray-700 w-[30px] flex justify-center items-center hover:text-black"
           >
             <i className="fa-solid fa-bars text-xl" id="menu_icon"></i>
           </button>
@@ -148,97 +180,111 @@ const MainHeader = () => {
               <button onClick={showtoggle} className="absolute top-3 right-5">
                 <i className="fa-solid fa-times text-xl  text-gray-700"></i>
               </button>
-              {
-                pathname != "/search" &&  <Link href='/search' className="relative mb-7 lg:hidden inline-block w-full rounded-sm overflow-hidden">
-                <input
-                  type="text"
-                  id="search"
-                  name="search"
-                  readOnly
-                  placeholder="What are you looking for"
-                  className="w-full bg-gray-200 py-1.5 px-3 pr-6 outline-none border-gray-200 text-sm font-normal text-gray-950 border-2"
-                />
-                <button type="button" disabled className="absolute right-2 top-[6px]">
-                  <i className="fa-solid fa-search"></i>
-                </button>
-              </Link>
-              }
+              {pathname != "/search" && (
+                <Link
+                  href="/search"
+                  className="relative mb-7 lg:hidden inline-block w-full rounded-sm overflow-hidden"
+                >
+                  <input
+                    type="text"
+                    id="search"
+                    name="search"
+                    readOnly
+                    placeholder="What are you looking for"
+                    className="w-full bg-gray-200 py-1.5 px-3 pr-6 outline-none border-gray-200 text-sm font-normal text-gray-950 border-2"
+                  />
+                  <button
+                    type="button"
+                    disabled
+                    className="absolute right-2 top-[6px]"
+                  >
+                    <i className="fa-solid fa-search"></i>
+                  </button>
+                </Link>
+              )}
               <div>
-              <h2 className="text-lg pl-2 mb-2 text-secondary font-medium"><span className="pr-4">Link</span> <i className="fa-solid fa-caret-down"></i></h2>
-              <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
-              <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  {
-                    userlogin ? <Link
-                    href="/profile-edit"
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    Profile
-                  </Link> : <Link
-                    href="/login"
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    Login
-                  </Link>
-                  }
-                  
-                </li>
-                <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  <Link
-                    className="text-gray-700 font-normal pl-2  block"
-                    href="/"
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li className="mx-1 my-1 relative hover:pl-2 duration-150">
-                  {/* <span className="absolute bottom-3 left-[90px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
+                <h2 className="text-lg pl-2 mb-2 text-secondary font-medium">
+                  <span className="pr-4">Link</span>{" "}
+                  <i className="fa-solid fa-caret-down"></i>
+                </h2>
+                <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    {userlogin ? (
+                      <Link
+                        href="/profile-edit"
+                        className="text-gray-700 font-normal pl-2  block"
+                      >
+                        Profile
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/login"
+                        className="text-gray-700 font-normal pl-2  block"
+                      >
+                        Login
+                      </Link>
+                    )}
+                  </li>
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      className="text-gray-700 font-normal pl-2  block"
+                      href="/"
+                    >
+                      Home
+                    </Link>
+                  </li>
+                  <li className="mx-1 my-1 relative hover:pl-2 duration-150">
+                    {/* <span className="absolute bottom-3 left-[90px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
                     New
                   </span> */}
-                  <Link
-                    href=""
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    Campaign
-                  </Link>
-                </li>
-                <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  <Link
-                    href=""
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    Contact
-                  </Link>
-                </li>
-                <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  <Link
-                    href=""
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    About
-                  </Link>
-                </li>
-              </ul>
+                    <Link
+                      href=""
+                      className="text-gray-700 font-normal pl-2  block"
+                    >
+                      Campaign
+                    </Link>
+                  </li>
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      href=""
+                      className="text-gray-700 font-normal pl-2  block"
+                    >
+                      Contact
+                    </Link>
+                  </li>
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      href=""
+                      className="text-gray-700 font-normal pl-2  block"
+                    >
+                      About
+                    </Link>
+                  </li>
+                </ul>
               </div>
               <div className="mt-6">
-              <h2 className="text-lg pl-2 mb-2 text-secondary font-medium"><span className="pr-4">Category</span> <i className="fa-solid fa-caret-down"></i></h2>
-              <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
-                <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  <Link
-                    className="text-gray-700 font-normal pl-2  block"
-                    href=""
-                  >
-                    Incurance
-                  </Link>
-                </li>
-                <li className="mx-1 my-1 hover:pl-2 duration-150">
-                  <Link
-                    href=""
-                    className="text-gray-700 font-normal pl-2  block"
-                  >
-                    Health
-                  </Link>
-                </li>
-              </ul>
+                <h2 className="text-lg pl-2 mb-2 text-secondary font-medium">
+                  <span className="pr-4">Category</span>{" "}
+                  <i className="fa-solid fa-caret-down"></i>
+                </h2>
+                <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      className="text-gray-700 font-normal pl-2  block"
+                      href=""
+                    >
+                      Incurance
+                    </Link>
+                  </li>
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      href=""
+                      className="text-gray-700 font-normal pl-2  block"
+                    >
+                      Health
+                    </Link>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

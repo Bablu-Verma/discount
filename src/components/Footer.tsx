@@ -47,12 +47,7 @@ const Footer = () => {
                 userlogin ?  "Profile":  "Login / Register"
               }
             </Link>
-            <Link
-              href={userlogin ? "/cart":"/login" }
-              className="text-sm font-thin hover:pl-1 duration-200 py-0.5"
-            >
-              Cart
-            </Link>
+           
             <Link
               href={userlogin ? "/wishlist":"/login" }
               className="text-sm font-thin hover:pl-1 duration-200 py-0.5"
@@ -75,6 +70,12 @@ const Footer = () => {
               className="text-sm font-thin hover:pl-1 duration-200 py-0.5"
             >
               Contact Us
+            </Link>
+            <Link
+              href='/blog'
+              className="text-sm font-thin hover:pl-1 duration-200 py-0.5"
+            >
+              Blog
             </Link>
             <Link
               href='/about'

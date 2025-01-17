@@ -52,10 +52,11 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
       </div>
 
       <Image
-        src={card_data?.img[0]}
+        src={card_data?.banner_img}
         className="w-full h-[220px]"
         height={200}
-        width={200}
+        sizes="100vw"
+        width={400}
         alt={card_data?.title}
       />
     </Link>

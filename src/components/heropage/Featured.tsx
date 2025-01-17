@@ -8,6 +8,8 @@ interface FeaturedProps {
 
 const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
   const featured_1 = arrival[0];
+
+
   const featured_2 = arrival[1];
   const featured_3 = arrival[2];
   const featured_4 = arrival[3];

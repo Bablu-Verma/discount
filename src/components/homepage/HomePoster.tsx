@@ -32,8 +32,7 @@ const HomePoster: React.FC<posterProps> = ({ poster }) => {
           <SwiperSlide  key={i}>
             <Link href={`/campaign/${item.slug}`}>
               <Image
-
-                src={item?.img[0]}
+                src={item?.banner_img}
                 className="w-full h-[180px] md:h-[250px] rounded-t-md"
                 height={200}
                 width={200}

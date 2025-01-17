@@ -139,7 +139,7 @@ export async function POST(req: Request) {
       offer_price = Number(price) * (1 - Number(cashback) / 100);
     }
 
-    console.log(imgFiles,banner_file,calculation_type,product_name,brand_name,price,cashback,product_status,banner_status,category,terms,meta_title,meta_description,meta_keywords,tags,new_p,featured_p,hot_p,add_poster,arrival,flash_time,'==>',)
+    // console.log(imgFiles,banner_file,calculation_type,product_name,brand_name,price,cashback,product_status,banner_status,category,terms,meta_title,meta_description,meta_keywords,tags,new_p,featured_p,hot_p,add_poster,arrival,flash_time,'==>',)
     // description
 
 
@@ -167,7 +167,10 @@ export async function POST(req: Request) {
     campaign.tags = tags;
     campaign.add_poster = add_poster == "true" ? true : false;
     campaign.arrival = arrival == "true" ? true : false;
-    campaign.expire_time = flash_time;
+    if(flash_time){
+      campaign.expire_time = flash_time;
+    }
+    
 
    
 

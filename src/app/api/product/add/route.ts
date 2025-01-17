@@ -82,6 +82,43 @@ export async function POST(req: Request) {
       );
     }
 
+    const slug = generateSlug(
+      typeof product_name === "string" ? product_name : ""
+    );
+
+   const find_product = await CampaignModel.findOne({slug:slug})
+
+    if (find_product) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Product with this name already exists.",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if(add_poster == "true"? true:false){
+      const find_arrival_count = await CampaignModel.find({arrival:true})
+
+      if (find_arrival_count.length > 4) {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "You can also add $ product in arrival mode.",
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+  
+    }
+
+   
+
+
+
+
+
     const imageUrls: string[] = [];
 
     for (const img of imgFiles) {
@@ -131,9 +168,7 @@ if(banner_file instanceof File) {
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
 
-    const slug = generateSlug(
-      typeof product_name === "string" ? product_name : ""
-    );
+   
 
     let offer_price: number = 0;
 
@@ -165,11 +200,13 @@ if(banner_file instanceof File) {
     campaignData.tags = tags;
     campaignData.add_poster = add_poster == "true" ? true : false;
     campaignData.arrival = arrival == "true" ? true : false;
-    campaignData.expire_time = flash_time;
+    if(flash_time){
+      campaignData.expire_time = flash_time;
+    }
     campaignData.user_email = email_check;
     campaignData.banner_img = banner_;
 
-    flash_time;
+
 
     const campaign = new CampaignModel(campaignData);
     await campaign.save();

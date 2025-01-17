@@ -62,7 +62,7 @@ export default async function  Home() {
     <main>
       <SubHeading title="Today's" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Flash Sales" />
        {/* <TimeCount /> */}
@@ -70,7 +70,7 @@ export default async function  Home() {
       <HomeFlash featured={page_data.data.featured} />
       <SubHeading title="Categories" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Browse by category"/>
       </div>
@@ -78,7 +78,7 @@ export default async function  Home() {
   
       <SubHeading title="This Month" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Best Selling Products"/>
       </div>
@@ -90,7 +90,7 @@ export default async function  Home() {
       </div>
       <SubHeading title="Our Product" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Explore Our Products"/>
       </div>
@@ -98,14 +98,14 @@ export default async function  Home() {
 
       <SubHeading title="Featured" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="New Arrival"/>
       </div>
       <Featured arrival={page_data.data.arrival} /> 
       <SubHeading title="Blog" />
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
        <MainHeading title="Read Our Blog"/>
       </div>

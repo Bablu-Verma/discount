@@ -17,9 +17,9 @@ export const MainHeading:React.FC<MainHeadingProps> = ({title}) => {
 
 export const SubHeading: React.FC<SubHeadingProps> = ({title}) => {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 flex mt-14">
-      <span className="bg-primary px-2.5 rounded"></span>
-      <h3 className="text-primary font-semibold text-xl md:text-2xl capitalize ml-4">
+    <div className="max-w-[1400px] mx-auto px-4 flex mt-10 lg:mt-14">
+      <span className="bg-primary px-2 lg:px-2.5 rounded"></span>
+      <h3 className="text-primary font-semibold text-xl md:text-2xl capitalize ml-2 lg:ml-4">
         {title}
       </h3>
     </div>

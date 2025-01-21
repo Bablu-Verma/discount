@@ -15,7 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import Image from "next/image";
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 import DateTimePicker from "react-datetime-picker";
 
 interface IFormData {
@@ -27,7 +27,7 @@ interface IFormData {
   category: string;
   active: string;
   banner: string;
-  images: FileList | string[] | null;
+  images: string[] | null;
   tc: string;
   hot: boolean;
   meta_title: string;
@@ -37,7 +37,7 @@ interface IFormData {
   featured: boolean;
   tags: string;
   add_poster: boolean;
-  banner_img:File | string | null;
+  banner_img:string;
   arrival: boolean;
   calculation_type: string;
   expire_time: Date | null;
@@ -47,7 +47,7 @@ const EditProduct = () => {
   const editorContent = useSelector((state: any) => state.editor.content);
   const [productDetails, setProductDetails] = useState<ICampaign>();
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
-  const [images, setImages] = useState<FileList | null>(null);
+  const [images, setImages] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const [imagesbanner, setImagesbanner] = useState<File | null>(null);
@@ -63,7 +63,7 @@ const EditProduct = () => {
     category: "",
     active: "active",
     banner: "active",
-    images: null,
+    images: [],
     tc: "",
     hot: false,
     meta_title: "",
@@ -76,7 +76,7 @@ const EditProduct = () => {
     arrival: false,
     expire_time: null,
     calculation_type: "",
-    banner_img:null
+    banner_img:''
   });
 
   useEffect(() => {
@@ -117,6 +117,7 @@ const EditProduct = () => {
     }
     
   }, [urlslug]);
+  console.log(productDetails?.img)
 
   useEffect(() => {
     setForm_data({
@@ -128,7 +129,7 @@ const EditProduct = () => {
       category: productDetails?.category || "",
       active: productDetails?.active == true ? "active" : "inactive",
       banner: productDetails?.banner == true ? "active" : "inactive",
-      images: productDetails?.img || null,
+      images: productDetails?.img || [],
       tc: productDetails?.tc || "",
       meta_title: productDetails?.meta_title || "",
       meta_description: productDetails?.meta_description || "",
@@ -143,7 +144,7 @@ const EditProduct = () => {
       expire_time: productDetails?.expire_time
         ? new Date(productDetails.expire_time)
         : null,
-        banner_img:productDetails?.banner_img || null
+        banner_img:productDetails?.banner_img || ''
     });
 
     dispatch(setEditorData(productDetails?.description || ""));
@@ -151,6 +152,8 @@ const EditProduct = () => {
       dispatch(setEditorData(""));
     })
   }, [productDetails, dispatch]);
+
+
 
   const getCategory = async () => {
     try {
@@ -176,49 +179,7 @@ const EditProduct = () => {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, input_:string) => {
-    if(input_== 'image'){
-      const files = e.target.files;
-      if (files) {
-        if (files.length < 2) {
-          toast.error("Please select at least 2 images.");
-        } else if (files.length > 3) {
-          toast.error("You can select a maximum of 3 images.");
-        } else {
-          setImages(files);
-          setForm_data((prev) => ({
-            ...prev,
-            images: files,
-          }));
-        }
-      }
-    }else if (input_== 'banner'){
-      const file = e.target.files?.[0]; 
-    if (file) {
-      setImagesbanner(file);
-      setForm_data((prev) => ({
-        ...prev,
-        banner_img: file,
-      }));
-    };
-    }
-  };
-
-  const renderImagePreview = () => {
-    if (!images) return null;
-    return Array.from(images).map((file, index) => {
-      const objectUrl = URL.createObjectURL(file);
-      return (
-        <img
-          key={index}
-          src={objectUrl}
-          alt={`Product image ${index + 1}`}
-          className="w-24 h-24 object-cover rounded-md"
-          onLoad={() => URL.revokeObjectURL(objectUrl)}
-        />
-      );
-    });
-  };
+  
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -242,23 +203,95 @@ const EditProduct = () => {
     });
   };
 
+   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setImages(e.target.value);
+    };
+  
+    const addImage = () => {
+      if (images.trim() && form_data.images) {
+        setForm_data((prev) => ({
+          ...prev,
+          images: [...prev.images!, images.trim()],
+        }));
+        setImages("");
+      }
+    };
+    
+
+    const removeImage = (index: number) => {
+      setForm_data((prev) => ({
+        ...prev,
+        images: prev.images!.filter((_, i) => i !== index),
+      }));
+    };
+  
+    const renderImagePreview = () => {
+      return form_data.images!.map((image: string, index: number) => (
+        <div key={index} className="flex items-center space-x-2">
+          <img
+            src={image}
+            alt={`Preview ${index + 1}`}
+            className="w-16 h-16 object-cover rounded"
+          />
+          <button
+            type="button"
+            onClick={() => removeImage(index)}
+            className="text-red-500 text-sm"
+          >
+            <i className="fa-solid fa-x text-xl"></i>
+          </button>
+        </div>
+      ));
+    };
 
   const handleSubmit = async () => {
 
-    // console.log('form_data submit==>',form_data)
-    // console.log(editorContent)
     try {
       if (!editorContent.trim()) {
         toast.error("Description is required.");
         return;
       }
       const formPayload = new FormData();
+
+      
+      if (!form_data.images || form_data.images.length < 3) {
+        toast.error("Please select at least three images.");
+        return;
+      }
+      
+      if (!form_data.images || form_data.images.length > 5) {
+        toast.error("You can select a maximum of five images.");
+        return;
+      }
+
+      if (form_data.featured) {
+        if (form_data.expire_time == null) {
+          toast.error("Flash sale time is required.");
+          return;
+        } else {
+          
+        }
+      }
+
+
+      if (
+        form_data.banner === "active" ||
+        form_data.featured ||
+        form_data.add_poster
+      ) {
+        if (!form_data.banner_img) {
+          toast.error("Please select one banner type image.");
+          return;
+        } else {
+          
+          formPayload.append("banner_img", form_data.banner_img);
+        }
+      }
+
       Object.entries(form_data).forEach(([key, value]) => {
-        if (key === "images" && value instanceof FileList) {
-          Array.from(value).forEach((file) => formPayload.append("images", file));
-        } else if (key === "banner_img") {
-          if (value instanceof File) {
-            formPayload.append("banner_img", value);
+        if (key === "images" && value) {
+          if (Array.isArray(value)) {
+            value.forEach((image) => formPayload.append("images", image));
           }
         } else {
           formPayload.append(key, String(value));
@@ -291,6 +324,7 @@ const EditProduct = () => {
     }
   };
 
+
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
@@ -307,7 +341,9 @@ const EditProduct = () => {
           }}
           className="space-y-6"
         >
+            <Upload_image_get_link />
           <div>
+
             <label
               htmlFor="product_name"
               className="block text-sm font-medium text-gray-700"
@@ -437,7 +473,7 @@ const EditProduct = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-3 gap-8">
           <div className="col-span-2">
                 <label
                   htmlFor="images"
@@ -445,29 +481,27 @@ const EditProduct = () => {
                 >
                   Product Images (min 3)
                 </label>
-                <input
-                  type="file"
+               <div className="flex gap-2">
+               <input
+                  type="text"
                   id="images"
-                  multiple
-                  accept="image/*"
+                  name="images"
+                  value={images}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={(e)=>handleImageChange(e,'image')}
+                  onChange={handleImageChange}
                 />
-
+<button
+                  type="button"
+                  onClick={addImage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm"
+                >
+                  Add
+                </button>
+               </div>
                 <div id="imagePreview" className="mt-4 flex space-x-4">
                   {renderImagePreview()}
                 </div>
-                <div className="flex gap-5">
-                  {Array.isArray(form_data.images) &&
-                    form_data.images.map((item, index) => (
-                      <img
-                        key={index} // Use the index or a unique identifier from `item` if available
-                        src={item} // Directly use the string as the `src` for the image
-                        alt={`Product image ${index + 1}`}
-                        className="w-24 h-24 object-cover rounded-md"
-                      />
-                    ))}
-                </div>
+                
               </div>
               <div>
                 <label
@@ -477,26 +511,17 @@ const EditProduct = () => {
                   Banner/Flash/Add
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   id="banner"
-                  accept="image/*"
+                  name="banner_img"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={(e) => handleImageChange(e, "banner")}
+                  onChange={handleChange}
                 />
 
-                  {typeof form_data?.banner_img === 'string' && (
+                  {form_data?.banner_img  && (
                     <img src={form_data.banner_img} className="w-44 h-20 mt-3 rounded-md"  alt="banner image" />
                   )}
 
-               
-
-                {imagesbanner && (
-                  <img
-                    src={URL.createObjectURL(imagesbanner)}
-                    alt={`Product image `}
-                    className="w-32 h-24 object-cover mt-3 rounded-md"
-                  />
-                )}
               </div>
           </div>
 

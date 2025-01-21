@@ -68,7 +68,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
           {featured_3?.title}
           </p>
           <Link
-            href={featured_3?.slug}
+            href={`/campaign/${featured_3?.slug}`}
             className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
           >
             Shop Now
@@ -89,7 +89,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
           {featured_4?.title}
           </p>
           <a
-           href={featured_4?.slug}
+           href={`/campaign/${featured_4?.slug}`}
             className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
           >
             Shop Now

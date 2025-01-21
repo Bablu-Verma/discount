@@ -91,8 +91,6 @@ const AllUser = () => {
                    <td className="px-6 py-4  ">
                     <span className="text-gray-800">{item.name}</span>
                   </td>
-                  
-
                   <td className="px-6 py-4  ">
                     <span className="text-gray-800">{item.email}</span>
                   </td>
@@ -110,17 +108,12 @@ const AllUser = () => {
       
                   <td className="px-6 py-4">
                     <Link
-                      href={`/category/${item.email}`}
+                      href={`/admin/dashboard/user/${item.email}`}
                       className="px-2 py-1 text-sm text-blue-500 hover:underline "
                     >
                       View
                     </Link>
-                    <Link
-                      href={`/admin/dashboard/category/${item.email}`}
-                      className="px-2 py-1 text-sm inline-block ml-5 text-blue-500 hover:underline"
-                    >
-                      Edit
-                    </Link>
+                    
                   </td>
                 </tr>
               ))}

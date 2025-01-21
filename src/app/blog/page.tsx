@@ -20,7 +20,7 @@ export interface IBlogCard {
 
 const fetchData = async () => {
   try {
-    const { data } = await axios.get(get_All_blogs);
+    const { data } = await axios.post(get_All_blogs);
     if (!data.success) {
       throw new Error("Failed to fetch data");
     }
@@ -31,8 +31,9 @@ const fetchData = async () => {
 };
 
 const AllBlog = async () => {
-//   const fetchBlogData = await fetchData();
- const blogs: IBlogCard[] = []
+  const fetchBlogData = await fetchData();
+  // console.log("fetchBlogData==",fetchBlogData)
+ const blogs: IBlogCard[] = fetchBlogData.data
 //  const pagination = await fetchBlogData.pagination;
 
   return (

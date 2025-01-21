@@ -15,6 +15,9 @@ import { getTimeAgo } from "@/helpers/client/client_function";
 import Campaign_user_event from "./_campaign_user_event";
 import Offer_end_component from "./_offer_end_component";
 import Watchlistadd from "./_watchlistadd";
+import styles from './product_page.module.css';
+
+
 
 interface DetailsProps {
   params: { id: string };
@@ -54,7 +57,6 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
 
   const page_data = await GetData(token, slug);
 
-  
 
   return (
     <>
@@ -126,7 +128,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
               </div>
               <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
                 <div
-                  className="text-base text-gray-500"
+                  className={`${styles.product_style} text-base text-gray-500`}
                   dangerouslySetInnerHTML={{ __html: page_data.description }}
                 ></div>
               </div>

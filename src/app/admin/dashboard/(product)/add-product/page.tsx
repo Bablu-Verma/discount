@@ -1,7 +1,7 @@
 "use client";
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
-import { generateSlug } from "@/helpers/client/client_function";
+
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
 import { add_product, category_list_api } from "@/utils/api_url";
@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 
 interface IFormData {
   product_name: string;
@@ -19,7 +20,7 @@ interface IFormData {
   category: string;
   product_status: string;
   banner_status: string;
-  images: FileList | null;
+  images: string[] | null;
   terms: string;
   hot_p: string;
   meta_title: string;
@@ -30,7 +31,7 @@ interface IFormData {
   tags: string;
   add_poster: string;
   arrival: string;
-  banner:File | null;
+  banner: string;
   flash_time: Date | null;
   calculation_type: string;
 }
@@ -40,8 +41,7 @@ const AddProduct = () => {
   const editorContent = useSelector((state: any) => state.editor.content);
 
   const [categoryList, setCategoryList] = useState([]);
-  const [images, setImages] = useState<FileList | null>(null);
-  const [imagesbanner, setImagesbanner] = useState<File | null>(null);
+  const [images, setImages] = useState<string>("");
   const [loding, setLoading] = useState<boolean>(false);
 
   const [form_data, setForm_data] = useState<IFormData>({
@@ -53,7 +53,7 @@ const AddProduct = () => {
     category: "",
     product_status: "active",
     banner_status: "active",
-    images: null,
+    images: [],
     terms: "",
     meta_title: "",
     meta_description: "",
@@ -64,54 +64,48 @@ const AddProduct = () => {
     add_poster: "",
     arrival: "",
     flash_time: null,
-    banner:null,
+    banner: "",
     calculation_type: "",
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, input_:string) => {
-    if(input_== 'image'){
-      const files = e.target.files;
-      if (files) {
-        if (files.length < 2) {
-          toast.error("Please select at least 2 images.");
-        } else if (files.length > 3) {
-          toast.error("You can select a maximum of 3 images.");
-        } else {
-          setImages(files);
-          setForm_data((prev) => ({
-            ...prev,
-            images: files,
-          }));
-        }
-      }
-    }else if (input_== 'banner'){
-      const file = e.target.files?.[0]; 
-    if (file) {
-      setImagesbanner(file);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImages(e.target.value);
+  };
+
+  const addImage = () => {
+    if (images.trim() && form_data.images) {
       setForm_data((prev) => ({
         ...prev,
-        banner: file,
+        images: [...prev.images!, images.trim()],
       }));
-    };
+      setImages("");
     }
+  };
+  // Remove Image Link
+  const removeImage = (index: number) => {
+    setForm_data((prev) => ({
+      ...prev,
+      images: prev.images!.filter((_, i) => i !== index),
+    }));
   };
 
   const renderImagePreview = () => {
-    if (!images) return null;
-
-    const fileArray = Array.from(images);
-    return fileArray.map((file, index) => {
-      const objectUrl = URL.createObjectURL(file);
-      return (
+    return form_data.images!.map((image: string, index: number) => (
+      <div key={index} className="flex items-center space-x-2">
         <img
-          key={index}
-          src={objectUrl}
-          alt={`Product image ${index + 1}`}
-          className="w-24 h-24 object-cover rounded-md"
-          onLoad={() => URL.revokeObjectURL(objectUrl)}
+          src={image}
+          alt={`Preview ${index + 1}`}
+          className="w-16 h-16 object-cover rounded"
         />
-      );
-    });
+        <button
+          type="button"
+          onClick={() => removeImage(index)}
+          className="text-red-500 text-sm"
+        >
+          <i className="fa-solid fa-x text-xl"></i>
+        </button>
+      </div>
+    ));
   };
 
   const getCategory = async () => {
@@ -152,8 +146,6 @@ const AddProduct = () => {
       if (target instanceof HTMLInputElement) {
         if (target.type === "checkbox") {
           return { ...prev, [target.name]: target.checked };
-        } else if (target.type === "file") {
-          return { ...prev, [target.name]: target.files };
         } else {
           return { ...prev, [target.name]: target.value };
         }
@@ -173,7 +165,7 @@ const AddProduct = () => {
         "product_name",
         "brand_name",
         "price",
-        'calculation_type',
+        "calculation_type",
         "cashback",
         "category",
         "product_status",
@@ -198,36 +190,38 @@ const AddProduct = () => {
         return;
       }
 
-      if (form_data.images == null) {
-        toast.error("Please select at least Three image.");
+      if (!form_data.images || form_data.images.length < 3) {
+        toast.error("Please select at least three images.");
+        return;
+      }
+      
+      if (!form_data.images || form_data.images.length > 5) {
+        toast.error("You can select a maximum of five images.");
         return;
       }
 
-     
-
       const formPayload = new FormData();
-      if (form_data.images && isFileList(form_data.images)) {
-        Array.from(form_data.images).forEach((file) =>
-          formPayload.append("images", file)
-        );
-      } else if (form_data.images !== null) {
+      if (Array.isArray(form_data.images)) {
+        form_data.images.forEach((image) => {
+          formPayload.append("images", image); 
+        });
+      } else {
         toast.error("Invalid file input.");
         return;
       }
 
-      if (form_data.banner_status === 'active' || form_data.featured_p || form_data.add_poster) {
+      if (
+        form_data.banner_status === "active" ||
+        form_data.featured_p ||
+        form_data.add_poster
+      ) {
         if (form_data.banner == null) {
           toast.error("Please select one banner type image.");
           return;
-        } else if (form_data.banner instanceof File) {
-          formPayload.append("banner", form_data.banner);
         } else {
-          toast.error("Invalid banner type.");
-          return;
+          formPayload.append("banner", form_data.banner);
         }
       }
-
-
 
       Object.entries(form_data).forEach(([key, value]) => {
         if (key !== "images" && value !== undefined && value !== null) {
@@ -268,10 +262,6 @@ const AddProduct = () => {
     }
   };
 
-  const isFileList = (value: unknown): value is FileList => {
-    return value instanceof FileList;
-  };
-
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
@@ -285,6 +275,7 @@ const AddProduct = () => {
           }}
           className="space-y-6"
         >
+          <Upload_image_get_link />
           <div>
             <label
               htmlFor="product_name"
@@ -347,15 +338,14 @@ const AddProduct = () => {
                 htmlFor="cashback"
                 className="block text-sm font-medium text-gray-700"
               >
-                Cashback   <span className="text-red-400">
-
+                Cashback{" "}
+                <span className="text-red-400">
                   {form_data.calculation_type == "Subtract"
                     ? "Subtract"
                     : form_data.calculation_type == "Division"
                     ? "Division"
                     : ""}
                 </span>
-                
               </label>
               <input
                 type="number"
@@ -415,56 +405,63 @@ const AddProduct = () => {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-5">
-          <div className="col-span-2">
-            <label
-              htmlFor="images"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Product Images 
-            </label>
-            <input
-              type="file"
-              id="images"
-              multiple
-              accept="image/*"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={(e)=>handleImageChange(e,'image')}
-            />
+          <div className="grid grid-cols-3 gap-10">
+            <div className="col-span-2">
+              <label
+                htmlFor="images"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Images
+              </label>
+              <div className="flex gap-1">
+                <input
+                  type="text"
+                  id="images"
+                  placeholder="add your image link"
+                  name="images"
+                  value={images}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+                  onChange={handleImageChange}
+                />
+                <button
+                  type="button"
+                  onClick={addImage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm"
+                >
+                  Add
+                </button>
+              </div>
 
-            <div id="imagePreview" className="mt-4 flex space-x-4">
-              {renderImagePreview()}
+              <div id="imagePreview" className="mt-4 flex space-x-4">
+                {renderImagePreview()}
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="banner"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Banner/Flash/Add
+              </label>
+              <input
+                type="text"
+                id="banner"
+                name="banner"
+                value={form_data.banner}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+                onChange={handleChange}
+              />
+
+              {form_data.banner && (
+                <img
+                  src={form_data.banner}
+                  alt={`Product image `}
+                  className="w-32 h-24 object-cover mt-8 rounded-md"
+                />
+              )}
             </div>
           </div>
-
-          <div>
-            <label
-              htmlFor="banner"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Banner/Flash/Add
-            </label>
-            <input
-              type="file"
-              id="banner"
-              accept="image/*"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              onChange={(e)=>handleImageChange(e,'banner')}
-            />
-
-            {
-              imagesbanner &&  <img
-              src={URL.createObjectURL(imagesbanner)}
-              alt={`Product image `}
-              className="w-32 h-24 object-cover mt-8 rounded-md"
-            />
-            }
-
-          </div>
-            
-          </div>
-
-          
 
           <div className="grid grid-cols-4">
             <div>

@@ -57,8 +57,8 @@ export async function POST(req: Request) {
     }
 
   
-    const imgFiles = requestData.getAll("images") as File[];
-    const banner_file = requestData.get("banner_img") as File;
+    const imgFiles = requestData.getAll("images") as string[];
+    const banner_file = requestData.get("banner_img") as string;
     const description = requestData.get("description");
     const calculation_type = requestData.get("calculation_type");
     const product_name = requestData.get("title") as string;
@@ -81,38 +81,7 @@ export async function POST(req: Request) {
     const flash_time = requestData.get("expire_time");
 
 
-
-
-
-
-    if (imgFiles && Array.isArray(imgFiles) && imgFiles.every((img) => img instanceof File)) {
-      const imageUrls = await Promise.all(
-        imgFiles.map(async (img) => {
-          const { success, message, url } = await upload_image(img, "site_product");
-          if (success && url) return url;
-          console.error("Image upload failed:", message);
-          return null;
-        })
-      ).then((urls) => urls.filter((url) => url !== null));
-    
-      if (imageUrls.length > 0) {
-        campaign.img = imageUrls;
-      }
-    } 
-
-  
-    if(banner_file && banner_file instanceof File) {
-      const { success, message, url } = await upload_image(
-        banner_file,
-        "site_banner"
-      );
-      if (success && url) {
-        campaign.banner_img = url;
-        console.log("banner uploaded successfully:", url);
-      } else {
-        console.error("banner upload failed:", message);
-      }
-    }
+   
    
     if (product_name) {
       const newSlug = generateSlug(product_name);
@@ -139,14 +108,14 @@ export async function POST(req: Request) {
       offer_price = Number(price) * (1 - Number(cashback) / 100);
     }
 
-    // console.log(imgFiles,banner_file,calculation_type,product_name,brand_name,price,cashback,product_status,banner_status,category,terms,meta_title,meta_description,meta_keywords,tags,new_p,featured_p,hot_p,add_poster,arrival,flash_time,'==>',)
-    // description
+    if (imgFiles.length > 2) {
+      campaign.img = imgFiles;
+    }
 
-
-
-
-
-
+    if(banner_file) {
+      campaign.banner_img = banner_file
+    }
+    console.log("flash_time",flash_time)
     campaign.cashback = Number(price) - offer_price
     campaign.title = product_name;
     campaign.calculation_type = calculation_type;
@@ -170,10 +139,7 @@ export async function POST(req: Request) {
     if(flash_time){
       campaign.expire_time = flash_time;
     }
-    
-
-   
-
+  
     await campaign.save();
 
     return new NextResponse(

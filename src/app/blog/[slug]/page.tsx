@@ -8,6 +8,8 @@ import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 
+import styles from './blog_page.module.css';
+
 import React from "react";
 import toast from "react-hot-toast";
 
@@ -102,7 +104,7 @@ const simpal_data = [
             <Image src={page_data.data.image} width={500} height={200} className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm" sizes="100vw" alt={page_data.data.title} />
             {/* <div className="text-gray-600 uppercase flex gap-2 test-sm"><span>View: <i className="fa-regular fa-eye"></i> {page_data.data.views}</span></div> */}
             <div className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4">{page_data.data.short_desc}</div>
-            <div className="mt-16 blog_description" dangerouslySetInnerHTML={{ __html: page_data.data.desc }}>
+            <div className={`${styles.blog_style} mt-16`} dangerouslySetInnerHTML={{ __html: page_data.data.desc }}>
 
             </div>
 
@@ -138,7 +140,10 @@ const simpal_data = [
         </section>
         <BottomToTop />
       </main>
+
       <Footer />
+     
+
     </>
   );
 };

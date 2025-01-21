@@ -49,8 +49,8 @@ export async function POST(req: Request) {
     const requestData = await req.formData();
     // console.log("Form Data Received:", Object.fromEntries(requestData.entries()));
 
-    const imgFiles = requestData.getAll("images") as File[];
-    const banner_file = requestData.get("banner") as File;
+    const imgFiles = requestData.getAll("images") as string[];
+    const banner_file = requestData.get("banner") as string;
     const description = requestData.get("description");
     const calculation_type = requestData.get("calculation_type");
     const product_name = requestData.get("product_name");
@@ -81,6 +81,8 @@ export async function POST(req: Request) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    console.log(imgFiles)
 
     const slug = generateSlug(
       typeof product_name === "string" ? product_name : ""
@@ -115,56 +117,6 @@ export async function POST(req: Request) {
 
    
 
-
-
-
-
-    const imageUrls: string[] = [];
-
-    for (const img of imgFiles) {
-      if (img instanceof File) {
-        const { success, message, url } = await upload_image(
-          img,
-          "site_product"
-        );
-        if (success && url) {
-          imageUrls.push(url);
-          console.log("Image uploaded successfully:", url);
-        } else {
-          console.error("Image upload failed:", message);
-        }
-      } else {
-        console.error("Invalid image value. Expected a File.");
-      }
-    }
-
-
-    if (imageUrls.length === 0) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Failed to upload any images.",
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-
-
-let banner_= ''
-if(banner_file instanceof File) {
-  const { success, message, url } = await upload_image(
-    banner_file,
-    "site_banner"
-  );
-  if (success && url) {
-    banner_ = url;
-    console.log("banner uploaded successfully:", url);
-  } else {
-    console.error("banner upload failed:", message);
-  }
-}
-
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
 
@@ -185,7 +137,7 @@ if(banner_file instanceof File) {
     campaignData.offer_price = offer_price;
     campaignData.brand = brand_name;
     campaignData.category = category;
-    campaignData.img = imageUrls;
+    campaignData.img = imgFiles;
     campaignData.active = product_status === "active" ? true : false;
     campaignData.tc = terms;
     campaignData.cashback = Number(price) - offer_price;
@@ -204,9 +156,7 @@ if(banner_file instanceof File) {
       campaignData.expire_time = flash_time;
     }
     campaignData.user_email = email_check;
-    campaignData.banner_img = banner_;
-
-
+    campaignData.banner_img = banner_file;
 
     const campaign = new CampaignModel(campaignData);
     await campaign.save();

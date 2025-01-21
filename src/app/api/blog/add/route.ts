@@ -5,16 +5,9 @@ import BlogModel from "@/model/BlogModal";
 import { isAdmin } from "@/lib/checkUserRole";
 import { generateSlug } from "@/helpers/client/client_function";
 import { upload_image } from "@/helpers/server/upload_image";
+import { validateField } from "@/helpers/server/g_validation";
 
-const validateField = (field: any, fieldName: string, isOptional = false) => {
-  if (!field && !isOptional) {
-    return {
-      success: false,
-      message: `${fieldName} is required.`,
-    };
-  }
-  return null;
-};
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -46,24 +39,114 @@ export async function POST(req: Request) {
     }
 
     // Parse form data
-    const requestData = await req.formData();
-    const title = requestData.get("title") as string;
-    const category = requestData.get("category") as string;
-    const short_desc = requestData.get("short_desc") as string;
-    const blogType = requestData.get("blogType") as string;
-    const isPublished = requestData.get("isPublished") === "true"; 
-    const image_get = requestData.get("image") as File; 
-    const metaTitle = requestData.get("metaTitle") as string;
-    const metaDescription = requestData.get("metaDescription") as string;
-    const description = requestData.get("description") as string;
-    const metaKeywords = requestData.get("metaKeywords") as string;
-    const ogImage_get = requestData.get("ogImage") as File; 
-    const twitterImage_get = requestData.get("twitterImage") as File; 
-    const tags = requestData.get("tags") as string;
+    const requestData = await req.json();
 
-    // Validation
-    const titleValidation = validateField(title, "Title");
-    if (titleValidation) return new NextResponse(JSON.stringify(titleValidation), { status: 400, headers: { "Content-Type": "application/json" } });
+    const {
+      title,
+      category,
+      short_desc,
+      blogType,
+      isPublished,
+      image,
+      metaTitle,
+      metaDescription,
+      description,
+      metaKeywords,
+      ogImage,
+      twitterImage,
+      tags,
+    } = requestData;
+
+    const titleValidation = validateField(title, "Title", {
+      type: "string",
+      minLength: 5,
+      maxLength: 100,
+    });
+
+    if (titleValidation)
+      return new NextResponse(JSON.stringify(titleValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const categoryValidation = validateField(category, "Category", {
+      type: "string",
+      minLength: 3,
+    });
+    if (categoryValidation)
+      return new NextResponse(JSON.stringify(categoryValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const shortDescValidation = validateField(short_desc, "Short Description", {
+      type: "string",
+    });
+    if (shortDescValidation)
+      return new NextResponse(JSON.stringify(shortDescValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const blogTypeValidation = validateField(blogType, "Blog Type", {
+      type: "string",
+    });
+    if (blogTypeValidation)
+      return new NextResponse(JSON.stringify(blogTypeValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const imageValidation = validateField(image, "Image", {
+      type: "string",
+      regex: /\.(jpg|jpeg|png|gif)$/i,
+    });
+    if (imageValidation)
+      return new NextResponse(JSON.stringify(imageValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const metaTitleValidation = validateField(metaTitle, "Meta Title", {
+      type: "string",
+      maxLength: 150,
+    });
+    if (metaTitleValidation)
+      return new NextResponse(JSON.stringify(metaTitleValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const metaDescriptionValidation = validateField(
+      metaDescription,
+      "Meta Description",
+      { type: "string", maxLength: 160 }
+    );
+    if (metaDescriptionValidation)
+      return new NextResponse(JSON.stringify(metaDescriptionValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const tagsValidation = validateField(tags, "Tags", {
+      type: "string",
+      isOptional: true,
+    });
+    if (tagsValidation)
+      return new NextResponse(JSON.stringify(tagsValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+
+    const descriptionValidation = validateField(description, "Description", {
+      type: "string",
+      minLength: 10,
+    });
+    if (descriptionValidation)
+      return new NextResponse(JSON.stringify(descriptionValidation), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
 
     const slug = generateSlug(title);
 
@@ -78,51 +161,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // Upload Images if they exist
-    let image;
-    if (image_get &&  image_get instanceof File) {
-      const { success, message, url } = await upload_image(image_get, "blog_image");
-      if (success && url) {
-        image = url;
-        console.log("Image uploaded successfully:", url);
-      } else {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: `Image upload failed: ${message}`,
-          }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
-      }
-    }
+    const parsedTags = tags ? tags.split(",").map((item:string) => item.trim()) : [];
+    const parsedMetaKeywords = metaKeywords
+      ? metaKeywords.split(",").map((item:string) => item.trim())
+      : [];
 
-    let ogImage;
-    if (ogImage_get && ogImage_get instanceof File) {
-      const { success, message, url } = await upload_image(ogImage_get, "blog_image");
-      if (success && url) {
-        ogImage = url;
-        console.log("ogImage uploaded successfully:", url);
-      } else {
-        console.error("ogImage upload failed:", message);
-      }
-    }
-
-    let twitterImage;
-    if ( twitterImage_get && twitterImage_get instanceof File) {
-      const { success, message, url } = await upload_image(twitterImage_get, "blog_image");
-      if (success && url) {
-        twitterImage = url;
-        console.log("twitterImage uploaded successfully:", url);
-      } else {
-        console.error("twitterImage upload failed:", message);
-      }
-    }
-
-    // Handle tags and metaKeywords conversion
-    const parsedTags = tags ? tags.split(",").map((item) => item.trim()) : [];
-    const parsedMetaKeywords = metaKeywords ? metaKeywords.split(",").map((item) => item.trim()) : [];
-
-    // Create a new blog entry
+    
     const newBlog = new BlogModel({
       title,
       slug,
@@ -133,7 +177,7 @@ export async function POST(req: Request) {
       image,
       metaTitle,
       metaDescription,
-      desc:description,
+      desc: description,
       metaKeywords: parsedMetaKeywords,
       ogImage,
       twitterImage,
@@ -141,10 +185,8 @@ export async function POST(req: Request) {
       writer_email: email_check,
     });
 
-    // Save the new blog
     await newBlog.save();
 
-    // Return success response
     return new NextResponse(
       JSON.stringify({
         success: true,

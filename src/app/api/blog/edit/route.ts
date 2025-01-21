@@ -38,21 +38,26 @@ export async function POST(req: Request) {
     }
 
     // Parse form data
-    const requestData = await req.formData();
-    const slug = requestData.get("slug") as string;
-    const title = requestData.get("title") as string;
-    const category = requestData.get("category") as string;
-    const short_desc = requestData.get("short_desc") as string;
-    const blogType = requestData.get("blogType") as string;
-    const isPublished = requestData.get("isPublished") === "true"; 
-    const image_get = requestData.get("image") as File; 
-    const metaTitle = requestData.get("metaTitle") as string;
-    const metaDescription = requestData.get("metaDescription") as string;
-    const description = requestData.get("description") as string;
-    const metaKeywords = requestData.get("metaKeywords") as string;
-    const ogImage_get = requestData.get("ogImage") as File; 
-    const twitterImage_get = requestData.get("twitterImage") as File; 
-    const tags = requestData.get("tags") as string;
+    const requestData = await req.json();
+
+    const {
+      title,
+      category,
+      short_desc,
+      slug,
+      blogType,
+      isPublished,
+      metaTitle,
+      metaDescription,
+      description,
+      metaKeywords,
+      ogImage,
+      twitterImage,
+      image,
+      tags,
+    } = requestData;
+
+  
 
     if (!slug) {
       return new NextResponse(
@@ -93,54 +98,26 @@ export async function POST(req: Request) {
       }
       blogToUpdate.slug = update_slug;
     }
+
+
+    console.log(blogToUpdate.ogImage)
+    console.log(isPublished)
    
     if (title) blogToUpdate.title = title;
+    if (twitterImage) blogToUpdate.twitterImage = twitterImage.trim();
+    if (image) blogToUpdate.image = image.trim();
+    if (ogImage) blogToUpdate.ogImage = ogImage.trim();
     if (category) blogToUpdate.category = category;
     if (short_desc) blogToUpdate.short_desc = short_desc;
     if (blogType) blogToUpdate.blogType = blogType;
-    if (isPublished !== undefined) blogToUpdate.isPublished = isPublished;
+    if (isPublished !== undefined) blogToUpdate.isPublished = isPublished ;
     if (metaTitle) blogToUpdate.metaTitle = metaTitle;
     if (metaDescription) blogToUpdate.metaDescription = metaDescription;
     if (description) blogToUpdate.desc = description;
-    if (metaKeywords) blogToUpdate.metaKeywords = metaKeywords.split(",").map((item) => item.trim());
-    if (tags) blogToUpdate.tags = tags.split(",").map((item) => item.trim());
+    if (metaKeywords) blogToUpdate.metaKeywords = metaKeywords.split(",").map((item:string) => item.trim());
+    if (tags) blogToUpdate.tags = tags.split(",").map((item:string) => item.trim());
 
-  
-    if (image_get && image_get instanceof File) {
-      const { success, message, url } = await upload_image(image_get, "blog_image");
-      if (success && url) {
-        blogToUpdate.image = url;
-        console.log("Image uploaded successfully:", url);
-      } else {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: `Image upload failed: ${message}`,
-          }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
-      }
-    }
 
-    if (ogImage_get && ogImage_get instanceof File) {
-      const { success, message, url } = await upload_image(ogImage_get, "blog_image");
-      if (success && url) {
-        blogToUpdate.ogImage = url;
-        console.log("ogImage uploaded successfully:", url);
-      } else {
-        console.error("ogImage upload failed:", message);
-      }
-    }
-
-    if (twitterImage_get && twitterImage_get instanceof File) {
-      const { success, message, url } = await upload_image(twitterImage_get, "blog_image");
-      if (success && url) {
-        blogToUpdate.twitterImage = url;
-        console.log("twitterImage uploaded successfully:", url);
-      } else {
-        console.error("twitterImage upload failed:", message);
-      }
-    }
 
     // Save the updated blog
     await blogToUpdate.save();

@@ -68,6 +68,7 @@ export default async function  Home() {
        {/* <TimeCount /> */}
       </div>
       <HomeFlash featured={page_data.data.featured} />
+<<<<<<< Updated upstream
       <SubHeading title="Categories" />
       <div
         className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
@@ -75,6 +76,9 @@ export default async function  Home() {
        <MainHeading title="Browse by category"/>
       </div>
       <HomeCategories category={page_data.data.category} />
+=======
+      
+>>>>>>> Stashed changes
   
       <SubHeading title="This Month" />
       <div
@@ -103,6 +107,13 @@ export default async function  Home() {
        <MainHeading title="New Arrival"/>
       </div>
       <Featured arrival={page_data.data.arrival} /> 
+      <SubHeading title="Categories" />
+      <div
+        className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"
+      >
+       <MainHeading title="Browse by category"/>
+      </div>
+      <HomeCategories category={page_data.data.category} />
       <SubHeading title="Blog" />
       <div
         className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative"

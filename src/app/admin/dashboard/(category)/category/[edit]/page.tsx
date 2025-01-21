@@ -10,11 +10,12 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditorData } from "@/redux-store/slice/editorSlice";
 import { RootState } from "@/redux-store/redux_store";
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 
 interface IFormData {
   name: string;
   fontawesome: string;
-  image: File | string | null;
+  image: string ;
   isActive: boolean;
   slug: string;
 }
@@ -29,7 +30,7 @@ const EditCategory: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form_data, setFormData] = useState<IFormData>({
     fontawesome: "",
-    image: null,
+    image: '',
     name: "",
     slug: "",
     isActive: true,
@@ -55,13 +56,6 @@ const EditCategory: React.FC = () => {
     return true;
   };
 
-  // Handle Image Change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    if (files) {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
-    }
-  };
 
   const getCategory = async () => {
     try {
@@ -128,22 +122,17 @@ const EditCategory: React.FC = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    const formPayload = new FormData();
-    formPayload.append("slug", urlslug);
-
-
-    formPayload.append("status", String(form_data.isActive));
-    formPayload.append("description", editorContent);
-    formPayload.append("font_awesome_class", form_data.fontawesome);
-    if (form_data.image instanceof File) {
-      formPayload.append("img", form_data.image);
-    }
-
     try {
       setLoading(true);
-      const { data } = await axios.post(category_edit_api, formPayload, {
+      const { data } = await axios.post(category_edit_api, {
+        slug: urlslug,
+        fontawesome: form_data.fontawesome,
+        status: form_data.isActive,
+        description: editorContent,
+        img: form_data.image,
+      }, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -173,6 +162,7 @@ const EditCategory: React.FC = () => {
           }}
           className="space-y-6"
         >
+             <Upload_image_get_link />
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Title
@@ -209,21 +199,17 @@ const EditCategory: React.FC = () => {
                 Image
               </label>
               <input
-                type="file"
+                type="text"
                 id="image"
+                value={form_data.image}
                 name="image"
-                accept="image/*"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
-                onChange={handleImageChange}
+                onChange={handleChange}
               />
               {form_data.image && (
                 <div className="flex justify-center items-center mb-6 mt-4">
                   <Image
-                    src={
-                      form_data.image instanceof File
-                        ? URL.createObjectURL(form_data.image)
-                        : form_data.image
-                    }
+                    src={form_data.image || ''}
                     alt="Category Image"
                     width={200}
                     height={200}

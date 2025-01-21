@@ -9,17 +9,17 @@ import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 
 const AddCategory = () => {
   const [form_data, setForm_data] = useState({
     categoryName: "",
-    categorySlug: "",
     iconClass: "", 
-    image: null as File | null,
+    image: null,
     status: "active" as "active" | "inactive",
   });
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const editorContent = useSelector((state: RootState) => state.editor.content);
   const token = useSelector((state: RootState) => state.user.token);
 
@@ -30,26 +30,17 @@ const AddCategory = () => {
     setForm_data((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "categoryName" && { categorySlug: generateSlug(value) }),
     }));
   };
 
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; 
-    if (file) {
-      setForm_data((prev) => ({
-        ...prev,
-        image: file, 
-      }));
-    }
-  };
+ 
 
   const renderImagePreview = () => {
     if (!form_data.image) return null;
     return (
       <img
-        src={URL.createObjectURL(form_data.image)}
+        src={form_data.image}
         alt="Category image"
         className="w-24 h-24 object-cover rounded-md"
       />
@@ -60,7 +51,8 @@ const AddCategory = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { categoryName, categorySlug, iconClass, status, image } = form_data;
+    const { categoryName, iconClass, status, image } = form_data;
+    console.log(form_data)
 
     if (!categoryName) {
       toast.error("Add Category Name");
@@ -79,25 +71,21 @@ const AddCategory = () => {
       return;
     }
 
-    const f_data = new FormData();
-    f_data.append("name", categoryName);
-    f_data.append("slug", categorySlug);
-    f_data.append("font_awesome_class", iconClass);
-    f_data.append("description", editorContent);
-    f_data.append("status", status === "active" ? "true" : "false");
-
-    if (image) {
-      f_data.append("img", image); 
-    }
     setLoading(true);
 
     try {
       const { data } = await axios.post(
         category_add_api,
-        f_data,
+        {
+          name:categoryName,
+          font_awesome_class:iconClass,
+          description:editorContent,
+          status:status === "active" ? "true" : "false",
+          img:image
+        },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -127,8 +115,10 @@ const AddCategory = () => {
       </h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-         
-          <div>
+        <Upload_image_get_link />
+
+        <div className="grid grid-cols-2 gap-5">
+<div>
             <label
               htmlFor="categoryName"
               className="block text-sm font-medium text-gray-700"
@@ -162,7 +152,10 @@ const AddCategory = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div>
+        </div>
+          
+         <div className="grid grid-cols-2 gap-5">
+         <div>
             <label
               htmlFor="image"
               className="block text-sm font-medium text-gray-700"
@@ -170,10 +163,10 @@ const AddCategory = () => {
               Category Image
             </label>
             <input
-              type="file"
+              type="text"
               id="image"
-              accept="image/*"
-              onChange={handleImageChange}
+              name='image'
+              onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <div className="mt-4 flex space-x-4">{renderImagePreview()}</div>
@@ -207,6 +200,9 @@ const AddCategory = () => {
               </label>
             </div>
           </div>
+         </div>
+       
+          
           <div>
             <label
               htmlFor="description"

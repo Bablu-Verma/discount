@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     // Fetch the blog by slug from the database
-    const blog = await BlogModel.findOne({ slug, isPublished: true });
+    const blog = await BlogModel.findOne({ slug });
    
     
     if (!blog) {

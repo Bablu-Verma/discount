@@ -73,31 +73,13 @@ const BlogSchema = new Schema<IBlog>(
       maxlength: [300, 'Meta description cannot exceed 300 characters'],
     },
     metaKeywords: {
-      type: [String], // Array of keywords
-      validate: {
-        validator: function (keywords: string[]) {
-          return keywords.length <= 10; // Limit to 10 keywords
-        },
-        message: 'You can specify up to 10 meta keywords.',
-      },
+      type: [String], 
     },
     ogImage: {
-      type: String, // Open Graph Image for social media
-      validate: {
-        validator: function (value: string) {
-          return /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/.test(value);
-        },
-        message: 'OG image URL must be valid.',
-      },
+      type: String, 
     },
     twitterImage: {
-      type: String, // Twitter-specific image
-      validate: {
-        validator: function (value: string) {
-          return /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/.test(value);
-        },
-        message: 'Twitter image URL must be valid.',
-      },
+      type: String, 
     },
     tags: {
       type: [String], 

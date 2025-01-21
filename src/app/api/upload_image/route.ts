@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
 import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole";  // This function checks if the user is an admin
+import { isAdmin } from "@/lib/checkUserRole"; // This function checks if the user is an admin
 import { upload_image } from "@/helpers/server/upload_image";
-import { generateSlug } from "@/helpers/client/client_function";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -29,37 +28,16 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the user is an admin
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
+    const requestData = await req.formData();
 
-    if (!is_admin) {
+    let image_ = requestData.get("image");
+    let file_name = requestData.get("file_name") as string;
+
+    if (!image_) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "You are not authorized to add a category.",
-        }),
-        {
-          status: 403,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const requestData = await req.json();
-    const { name, description, img ,status, font_awesome_class } = requestData; 
-
-    console.log(requestData)
-
-
-    // Validate required fields
-    if (!name || !description || !img || !font_awesome_class) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Name, description, image, and Font Awesome class are required.",
+          message: "Image is required",
         }),
         {
           status: 400,
@@ -70,17 +48,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const slug = generateSlug(name)
- 
-    const existingCategory = await CategoryModel.findOne({
-      $or: [{ name }, { slug }],
-    });
-
-    if (existingCategory) {
+    if (!file_name) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "A category with this name or slug already exists.",
+          message: "File name is required",
         }),
         {
           status: 400,
@@ -91,29 +63,33 @@ export async function POST(req: Request) {
       );
     }
 
+    let image_url;
+    if (image_ instanceof File) {
+      const { success, message, url } = await upload_image(
+        image_,
+        file_name || "site_image_upload"
+      );
 
-
-    // Create a new category
-    const newCategory = new CategoryModel({
-      name,
-      description,
-      slug,
-      img,
-      font_awesome_class,
-      status,
-    });
-
-    // Save the category to the database
-    await newCategory.save();
+      if (success) {
+        console.log("Image uploaded successfully:", url);
+        image_url = url;
+      } else {
+        console.error("Image upload failed:", message);
+      }
+    } else {
+      console.error("Invalid image value. Expected a File.");
+    }
 
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Category added successfully.",
-        data: newCategory,
+        message: "your link create successfully.",
+        responce: {
+          url: image_url,
+        },
       }),
       {
-        status: 201,
+        status: 200,
         headers: {
           "Content-Type": "application/json",
         },
@@ -121,11 +97,11 @@ export async function POST(req: Request) {
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to add category:", error.message);
+      console.error("Failed to upload image :", error.message);
       return new NextResponse(
-        JSON.stringify({ 
+        JSON.stringify({
           success: false,
-          message: "Failed to add category.",
+          message: "Failed to upload image.",
           error: error.message,
         }),
         {

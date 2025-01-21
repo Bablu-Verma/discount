@@ -1,6 +1,7 @@
 "use client";
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 import { blogType } from "@/constant";
 
 import { ICategory } from "@/model/CategoryModel";
@@ -18,12 +19,12 @@ interface IFormData {
   short_desc: string;
   blogType: string;
   isPublished: boolean;
-  image: File | null;
+  image: string;
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string[];
-  ogImage: File | null;
-  twitterImage: File | null;
+  ogImage:string;
+  twitterImage: string;
   tags: string[];
 }
 
@@ -40,12 +41,12 @@ const AddBlog = () => {
     short_desc: "",
     blogType: "",
     isPublished: true,
-    image: null,
+    image: '',
     metaTitle: "",
     metaDescription: "",
     metaKeywords: [],
-    ogImage: null,
-    twitterImage: null,
+    ogImage: '',
+    twitterImage: '',
     tags: [],
   });
 
@@ -101,18 +102,7 @@ const AddBlog = () => {
     return true;
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
 
-    console.log(files);
-
-    if (files) {
-      setForm_data((prev) => ({
-        ...prev,
-        [name]: files[0],
-      }));
-    }
-  };
 
   const getCategory = async () => {
     try {
@@ -167,36 +157,25 @@ const AddBlog = () => {
         return;
       }
 
-      const formPayload = new FormData();
-
-      formPayload.append("title", form_data.title);
-      formPayload.append("category", form_data.category);
-      formPayload.append("short_desc", form_data.short_desc);
-      formPayload.append("blogType", form_data.blogType);
-      formPayload.append("isPublished", String(form_data.isPublished));
-      formPayload.append("metaTitle", form_data.metaTitle);
-      formPayload.append("metaDescription", form_data.metaDescription);
-      formPayload.append("description", editorContent);
-
-      formPayload.append(
-        "metaKeywords",
-        JSON.stringify(form_data.metaKeywords)
-      );
-
-      if (form_data.image) {
-        formPayload.append("image", form_data.image); 
-      }
-      if (form_data.ogImage) {
-        formPayload.append("ogImage", form_data.ogImage);
-      }
-      if (form_data.twitterImage) {
-        formPayload.append("twitterImage", form_data.twitterImage); 
-      }
-      formPayload.append("tags", JSON.stringify(form_data.tags));
       setLoading(true);
-      const { data } = await axios.post(add__blog_, formPayload, {
+      const { data } = await axios.post(add__blog_, 
+        {
+          title:form_data.title,
+          category:form_data.category,
+          short_desc:form_data.short_desc,
+          blogType:form_data.blogType,
+          isPublished: String(form_data.isPublished),
+          metaTitle: form_data.metaTitle,
+          metaDescription: form_data.metaDescription,
+          description: editorContent,
+          image: form_data.image,
+          ogImage: form_data.ogImage,
+          twitterImage: form_data.twitterImage,
+          metaKeywords: JSON.stringify(form_data.metaKeywords),
+          tags: JSON.stringify(form_data.tags),
+        }, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -230,6 +209,9 @@ const AddBlog = () => {
           }}
           className="space-y-6"
         >
+          
+           <Upload_image_get_link />
+
           <div>
             <label
               htmlFor="title"
@@ -303,8 +285,7 @@ const AddBlog = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            <div>
-              <div>
+          <div>
                 <label
                   htmlFor="image"
                   className="block text-sm font-medium text-gray-700"
@@ -312,28 +293,14 @@ const AddBlog = () => {
                   Image
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   id="image"
                   name="image"
-                  accept="image/*"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
-              {form_data.image && form_data.image instanceof File && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={URL.createObjectURL(form_data.image)}
-                    alt="Image"
-                    width={200}
-                    height={200}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-            </div>
             <div>
-              <div>
                 <label
                   htmlFor="ogImage"
                   className="block text-sm font-medium text-gray-700"
@@ -341,28 +308,14 @@ const AddBlog = () => {
                   OgImage
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   id="ogImage"
                   name="ogImage"
-                  accept="image/*"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
-              {form_data.ogImage && form_data.ogImage instanceof File && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={URL.createObjectURL(form_data.ogImage)}
-                    alt="Image"
-                    width={200}
-                    height={200}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-            </div>
 
-            <div>
               <div>
                 <label
                   htmlFor="twitterImage"
@@ -371,27 +324,14 @@ const AddBlog = () => {
                   TwitterImage
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   name="twitterImage"
                   id="twitterImage"
-                  accept="image/*"
+                 
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
-              {form_data.twitterImage &&
-                form_data.twitterImage instanceof File && (
-                  <div className="flex justify-center items-center mb-6 mt-4">
-                    <Image
-                      src={URL.createObjectURL(form_data.twitterImage)}
-                      alt="Image"
-                      width={200}
-                      height={200}
-                      className="w-20 h-20 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-            </div>
           </div>
 
           <div className="grid grid-cols-3">
@@ -454,7 +394,7 @@ const AddBlog = () => {
 
             <TextEditor />
           </div>
-
+         
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label className="block text-sm font-medium text-gray-700">

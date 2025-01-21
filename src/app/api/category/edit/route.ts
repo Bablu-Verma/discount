@@ -46,12 +46,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const requestData = await req.formData();
-    const description = requestData.get("description") as string;
-    const slug = requestData.get("slug") as string;
-    const img = requestData.get("img") as File;
-    const font_awesome_class = requestData.get("font_awesome_class") as string;
-    const status = requestData.get("status") === "true";
+    const requestData = await req.json();
+   
+
+const {description,slug,img,font_awesome_class,status}= requestData
+
+
 
     // Validate required fields
     if (!slug) {
@@ -90,21 +90,7 @@ export async function POST(req: Request) {
     if (description) updatedFields.description = description;
 
     if (img) {
-      if (img instanceof File) {
-        const { success, message, url } = await upload_image(
-          img,
-          "site_category"
-        );
-
-        if (success) {
-          console.log("Image uploaded successfully:", url);
-          updatedFields.img = url;
-        } else {
-          console.error("Image upload failed:", message);
-        }
-      } else {
-        console.error("Invalid image value. Expected a File.");
-      }
+      updatedFields.img = img;
     }
 
     if (font_awesome_class)

@@ -2,7 +2,7 @@
 
 import TextEditor from "@/app/admin/_admin_components/TextEditor";
 import { blogType } from "@/constant";
-
+import Upload_image_get_link from "@/app/admin/_admin_components/Upload_image_get_link";
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
 import { setEditorData } from "@/redux-store/slice/editorSlice";
@@ -21,28 +21,27 @@ interface IFormData {
   short_desc: string;
   blogType: string;
   isPublished: boolean;
-  image: File | string | null;
+  image: string | null;
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string[];
-  ogImage: File | null | string;
-  twitterImage: File | string | null;
+  ogImage: null | string;
+  twitterImage: string | null;
   tags: string[];
 }
 
-interface IBlogEditProps {
-}
+interface IBlogEditProps {}
 
-const EditBlog:React.FC<IBlogEditProps> = ({}) => {
+const EditBlog: React.FC<IBlogEditProps> = ({}) => {
   const token = useSelector((state: RootState) => state.user.token);
   const editorContent = useSelector((state: any) => state.editor.content);
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
   const [categoryList, setCategoryList] = useState([]);
   const [loding, setLoading] = useState<boolean>(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-   const urlslug = pathname.split("/").pop() || ""
+  const urlslug = pathname.split("/").pop() || "";
 
   const [form_data, setForm_data] = useState<IFormData>({
     title: "",
@@ -111,16 +110,7 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
     return true;
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
-
-    if (files) {
-      setForm_data((prev) => ({
-        ...prev,
-        [name]: files[0],
-      }));
-    }
-  };
+  
 
   const getCategory = async () => {
     try {
@@ -149,7 +139,7 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
       const { data } = await axios.post(
         blog_details,
         {
-          slug:urlslug,
+          slug: urlslug,
         },
         {
           headers: {
@@ -174,8 +164,8 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
         twitterImage: blogData.twitterImage,
         tags: blogData.tags,
       });
-       dispatch(setEditorData(blogData.desc)); 
-       toast.success("Blog details get successfully");
+      dispatch(setEditorData(blogData.desc));
+      toast.success("Blog details get successfully");
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -186,15 +176,15 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
     }
   };
 
-  useEffect(()=>{
-    getBlogData()
-  },[urlslug])
+  useEffect(() => {
+    getBlogData();
+  }, [urlslug]);
 
   useEffect(() => {
     getCategory();
-    return ()=> {
-    dispatch(setEditorData(''));
-    }
+    return () => {
+      dispatch(setEditorData(""));
+    };
   }, []);
 
   const handleChange = (
@@ -223,48 +213,37 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
         return;
       }
 
-      const formPayload = new FormData();
-
-      formPayload.append("title", form_data.title);
-      formPayload.append("category", form_data.category);
-      formPayload.append("short_desc", form_data.short_desc);
-      formPayload.append("blogType", form_data.blogType);
-      formPayload.append("isPublished", String(form_data.isPublished));
-      formPayload.append("metaTitle", form_data.metaTitle);
-      formPayload.append("metaDescription", form_data.metaDescription);
-      formPayload.append("description", editorContent);
-      formPayload.append("slug", urlslug);
-
-      formPayload.append(
-        "metaKeywords",
-        JSON.stringify(form_data.metaKeywords)
-      );
-
-
-
-      if (form_data.image instanceof File) {
-        formPayload.append("image", form_data.image);
-      }
-      if (form_data.ogImage instanceof File) {
-        formPayload.append("ogImage", form_data.ogImage);
-      }
-      if (form_data.twitterImage instanceof File) {
-        formPayload.append("twitterImage", form_data.twitterImage);
-      }
-
-      formPayload.append("tags", JSON.stringify(form_data.tags));
       setLoading(true);
-      const { data } = await axios.post(blog_edit, formPayload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.post(
+        blog_edit,
+        {
+          title: form_data.title,
+          category: form_data.category,
+          short_desc: form_data.short_desc,
+          blogType: form_data.blogType,
+          isPublished: form_data.isPublished,
+          metaTitle: form_data.metaTitle,
+          metaDescription: form_data.metaDescription,
+          description: editorContent,
+          slug: urlslug,
+          metaKeywords: JSON.stringify(form_data.metaKeywords),
+          ogImage: form_data.ogImage,
+          image: form_data.image,
+          twitterImage: form_data.twitterImage,
+          tags: JSON.stringify(form_data.tags),
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       toast.success("Blog update successfully! we are redirect to blog list");
 
       setTimeout(() => {
-        router.push('/admin/dashboard/blog-list')
+        router.push("/admin/dashboard/blog-list");
       }, 3000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -290,6 +269,7 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
           }}
           className="space-y-6"
         >
+          <Upload_image_get_link />
           <div>
             <label
               htmlFor="title"
@@ -372,26 +352,15 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
                   Image
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   id="image"
+                  value={form_data.image || ""}
                   name="image"
-                  accept="image/*"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
-              {form_data.image && form_data.image instanceof File && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={URL.createObjectURL(form_data.image)}
-                    alt="Image"
-                    width={200}
-                    height={200}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-                           {form_data.image && typeof form_data.image === "string" && (
+              {form_data.image && typeof form_data.image === "string" && (
                 <div className="flex justify-center items-center mb-6 mt-4">
                   <Image
                     src={form_data.image}
@@ -412,27 +381,15 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
                   OgImage
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   id="ogImage"
                   name="ogImage"
-                  accept="image/*"
+                  value={form_data.ogImage || ""}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
-              {form_data.ogImage && form_data.ogImage instanceof File && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={URL.createObjectURL(form_data.ogImage)}
-                    alt="Image"
-                    width={200}
-                    height={200}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-
-             {form_data.ogImage && typeof form_data.ogImage === "string" && (
+              {form_data.ogImage && typeof form_data.ogImage === "string" && (
                 <div className="flex justify-center items-center mb-6 mt-4">
                   <Image
                     src={form_data.ogImage}
@@ -454,19 +411,20 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
                   TwitterImage
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   name="twitterImage"
                   id="twitterImage"
-                  accept="image/*"
+                  value={form_data.twitterImage || ""}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                  onChange={handleImageChange}
+                  onChange={handleChange}
                 />
               </div>
+
               {form_data.twitterImage &&
-                form_data.twitterImage instanceof File && (
+                typeof form_data.twitterImage === "string" && (
                   <div className="flex justify-center items-center mb-6 mt-4">
                     <Image
-                      src={URL.createObjectURL(form_data.twitterImage)}
+                      src={form_data.twitterImage}
                       alt="Image"
                       width={200}
                       height={200}
@@ -474,18 +432,6 @@ const EditBlog:React.FC<IBlogEditProps> = ({}) => {
                     />
                   </div>
                 )}
-
-{form_data.twitterImage && typeof form_data.twitterImage === "string" && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={form_data.twitterImage}
-                    alt="Image"
-                    width={200}
-                    height={200}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                </div>
-              )}
             </div>
           </div>
 

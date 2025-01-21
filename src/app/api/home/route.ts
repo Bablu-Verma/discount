@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const { authenticated, user, message } = await authenticateUser(req);
 
     
-    const banner = await CampaignModel.find({banner:true}).limit(5);
+    const banner = await CampaignModel.find({banner:true}).limit(10);
     const newCampaigns = await CampaignModel.find({new:true}).limit(10);
     const hotCampaigns = await CampaignModel.find({hot:true}).limit(10);
     const featuredCampaigns = await CampaignModel.find({featured:true, expire_time: { $gt: currentDate },}).limit(10);

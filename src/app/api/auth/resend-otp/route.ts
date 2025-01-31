@@ -5,7 +5,8 @@ import {
     generateJwtToken,
     generateOTP,
   } from "@/helpers/server/server_function";
-  import { authenticateUser } from "@/lib/authenticate";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
+ 
   
   import dbConnect from "@/lib/dbConnect";
   import UserModel from "@/model/UserModel";
@@ -17,22 +18,26 @@ import {
   export async function POST(request: Request) {
     await dbConnect();
   
-    const { authenticated, user, message } = await authenticateUser(request);
-  
-    if (!authenticated) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message,
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    const { authenticated, user, usertype, message } =
+              await authenticateAndValidateUser(request);
+        
+            if (!authenticated) {
+              return new NextResponse(
+                JSON.stringify({
+                  success: false,
+                  message: message || "User is not authenticated",
+                }),
+                {
+                  status: 401,
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+            }
+   
+
+
     try {
      
     const findUser = await UserModel.findOne({email: user?.email});

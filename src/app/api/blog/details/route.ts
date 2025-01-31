@@ -9,7 +9,6 @@ export async function POST(req: Request) {
     const requestData = await req.json();
     const { slug } = requestData;
 
-    // Check if the slug is provided
     if (!slug) {
       return new NextResponse(
         JSON.stringify({

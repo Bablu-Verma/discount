@@ -62,9 +62,11 @@ export function isExpiredTime(expiryDate: Date): boolean {
 
 // JwtToken
 const SECRET_KEY = process.env.JWT_SECRET_KEY || 'secret-key';
+
 interface Payload {
   email: string;
 }
+
 export const generateJwtToken = (payload: Payload, expiresIn: string = '1h'): string => {
   return jwt.sign(payload, SECRET_KEY, { expiresIn });
 };

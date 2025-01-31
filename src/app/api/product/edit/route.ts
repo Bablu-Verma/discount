@@ -1,7 +1,7 @@
 import { generateSlug } from "@/helpers/client/client_function";
 import { upload_image } from "@/helpers/server/upload_image";
-import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
+
 import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
 import { NextResponse } from "next/server";
@@ -10,26 +10,36 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
     if (!authenticated) {
-      return new NextResponse(JSON.stringify({ success: false, message }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
-
-    if (!is_admin) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Access denied. Only admins can edit campaigns.",
+          message: message || "User is not authenticated",
         }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    if (!(usertype === "admin" || usertype === "data_editor")) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Access denied: You do not have the required role",
+        }),
+        {
+          status: 403,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -47,7 +57,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const campaign = await CampaignModel.findOne({campaign_id:Number(campaignId)});
+    const campaign = await CampaignModel.findOne({
+      campaign_id: Number(campaignId),
+    });
 
     if (!campaign) {
       return new NextResponse(
@@ -56,7 +68,6 @@ export async function POST(req: Request) {
       );
     }
 
-  
     const imgFiles = requestData.getAll("images") as string[];
     const banner_file = requestData.get("banner_img") as string;
     const description = requestData.get("description");
@@ -80,9 +91,6 @@ export async function POST(req: Request) {
     const arrival = requestData.get("arrival");
     const flash_time = requestData.get("expire_time");
 
-
-   
-   
     if (product_name) {
       const newSlug = generateSlug(product_name);
 
@@ -112,11 +120,11 @@ export async function POST(req: Request) {
       campaign.img = imgFiles;
     }
 
-    if(banner_file) {
-      campaign.banner_img = banner_file
+    if (banner_file) {
+      campaign.banner_img = banner_file;
     }
-    console.log("flash_time",flash_time)
-    campaign.cashback = Number(price) - offer_price
+    console.log("flash_time", flash_time);
+    campaign.cashback = Number(price) - offer_price;
     campaign.title = product_name;
     campaign.calculation_type = calculation_type;
     campaign.price = Number(price);
@@ -136,10 +144,10 @@ export async function POST(req: Request) {
     campaign.tags = tags;
     campaign.add_poster = add_poster == "true" ? true : false;
     campaign.arrival = arrival == "true" ? true : false;
-    if(flash_time){
+    if (flash_time) {
       campaign.expire_time = flash_time;
     }
-  
+
     await campaign.save();
 
     return new NextResponse(
@@ -154,13 +162,20 @@ export async function POST(req: Request) {
     if (error instanceof Error) {
       console.error("Failed to edit campaign:", error.message);
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Failed to edit campaign.", error: error.message }),
+        JSON.stringify({
+          success: false,
+          message: "Failed to edit campaign.",
+          error: error.message,
+        }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     } else {
       console.error("Unexpected error:", error);
       return new NextResponse(
-        JSON.stringify({ success: false, message: "An unexpected error occurred." }),
+        JSON.stringify({
+          success: false,
+          message: "An unexpected error occurred.",
+        }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }

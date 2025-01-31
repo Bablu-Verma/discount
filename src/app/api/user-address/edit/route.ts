@@ -1,30 +1,32 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
-import { authenticateUser } from "@/lib/authenticate";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
+
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { authenticated, user, message } = await authenticateUser(req);
+   const { authenticated, user, usertype, message } =
+         await authenticateAndValidateUser(req);
+   
+       if (!authenticated) {
+         return new NextResponse(
+           JSON.stringify({
+             success: false,
+             message: message || "User is not authenticated",
+           }),
+           {
+             status: 401,
+             headers: {
+               "Content-Type": "application/json",
+             },
+           }
+         );
+       }
 
-    if (!authenticated) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message,
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
 
-    // Extract updated address data from request body
     const requestData = await req.json();
 
     // Dynamically construct the update object

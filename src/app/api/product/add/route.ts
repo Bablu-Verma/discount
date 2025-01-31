@@ -1,7 +1,7 @@
 import { generateSlug } from "@/helpers/client/client_function";
 import { upload_image } from "@/helpers/server/upload_image";
-import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
+
 import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
 
@@ -11,40 +11,39 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { authenticated, user, message } = await authenticateUser(req);
+     const { authenticated, user, usertype, message } =
+         await authenticateAndValidateUser(req);
+   
+       if (!authenticated) {
+         return new NextResponse(
+           JSON.stringify({
+             success: false,
+             message: message || "User is not authenticated",
+           }),
+           {
+             status: 401,
+             headers: {
+               "Content-Type": "application/json",
+             },
+           }
+         );
+       }
+   
+       if (!(usertype === "admin" || usertype === "data_editor")) {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "Access denied: You do not have the required role",
+          }),
+          {
+            status: 403,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
 
-    if (!authenticated) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message,
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
-
-    if (!is_admin) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Access denied. Only admins can add campaigns.",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
 
     const requestData = await req.formData();
     // console.log("Form Data Received:", Object.fromEntries(requestData.entries()));
@@ -115,12 +114,9 @@ export async function POST(req: Request) {
   
     }
 
-   
-
+  
     // Construct campaign data object
     const campaignData: Record<string, any> = {};
-
-   
 
     let offer_price: number = 0;
 
@@ -155,7 +151,7 @@ export async function POST(req: Request) {
     if(flash_time){
       campaignData.expire_time = flash_time;
     }
-    campaignData.user_email = email_check;
+    campaignData.user_email = user?.email;
     campaignData.banner_img = banner_file;
 
     const campaign = new CampaignModel(campaignData);

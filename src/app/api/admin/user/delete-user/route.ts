@@ -1,21 +1,20 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
-import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message,
+          message: message || "User is not authenticated",
         }),
         {
           status: 401,
@@ -26,14 +25,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
-
-    if (!is_admin) {
+    if (usertype !== "admin") {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "You are not authorized to delete a user.",
+          message: '"Access denied: Does not have the required role"',
         }),
         {
           status: 403,

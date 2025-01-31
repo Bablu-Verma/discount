@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
-import { authenticateUser } from "@/lib/authenticate";
-import { loginpayload } from "@/common_type";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
     // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
-    if (!authenticated || !user) {
+    if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message:message || "Authentication failed.",
+          message: message || "User is not authenticated",
         }),
         {
           status: 401,
@@ -26,13 +26,9 @@ export async function POST(req: Request) {
       );
     }
 
+    const user_id = user?._id;
 
-
-
-    let user_:loginpayload = user
-     const user_id = user_.user_id
-
-    const { campaign_id } = await req.json(); 
+    const { campaign_id } = await req.json();
 
     if (!campaign_id) {
       return new NextResponse(
@@ -49,11 +45,9 @@ export async function POST(req: Request) {
       );
     }
 
-   
     let wishlist = await WishlistModel.findOne({ user_id });
 
     if (wishlist) {
-     
       if (wishlist.campaigns.includes(campaign_id)) {
         return new NextResponse(
           JSON.stringify({
@@ -69,17 +63,14 @@ export async function POST(req: Request) {
         );
       }
 
-     
       wishlist.campaigns.push(campaign_id);
     } else {
-      
       wishlist = new WishlistModel({
         user_id,
         campaigns: [campaign_id],
       });
     }
 
-  
     await wishlist.save();
 
     return new NextResponse(

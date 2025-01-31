@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
-import CampaignModel from "@/model/CampaignModel";  // Assuming CampaignModel is already defined
+import CampaignModel from "@/model/CampaignModel";  
 
 export async function POST(req: Request) {
   await dbConnect();

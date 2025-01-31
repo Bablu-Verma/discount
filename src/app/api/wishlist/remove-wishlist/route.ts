@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
-import { authenticateUser } from "@/lib/authenticate";
-import { loginpayload } from "@/common_type";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
     // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
-    if (!authenticated || !user) {
+    if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: message || "Authentication failed.",
+          message: message || "User is not authenticated",
         }),
         {
           status: 401,
@@ -26,8 +26,7 @@ export async function POST(req: Request) {
       );
     }
 
-    let user_: loginpayload = user;
-    const user_id = user_.user_id;
+    const user_id = user?._id;
 
     // Find the user's wishlist
     const wishlist = await WishlistModel.findOne({ user_id });

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import { authenticateUser } from "@/lib/authenticate";
+
 import BlogModel from "@/model/BlogModal";
-import { isAdmin } from "@/lib/checkUserRole";
+
 import { generateSlug } from "@/helpers/client/client_function";
 import { upload_image } from "@/helpers/server/upload_image";
 import { validateField } from "@/helpers/server/g_validation";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 
 
@@ -13,31 +14,38 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
-    if (!authenticated) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message,
-        }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Check if the user is an admin
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
-    if (!is_admin) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "You are not authorized to create blogs.",
-        }),
-        { status: 403, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
+     const { authenticated, user, usertype, message } =
+          await authenticateAndValidateUser(req);
+    
+        if (!authenticated) {
+          return new NextResponse(
+            JSON.stringify({
+              success: false,
+              message: message || "User is not authenticated",
+            }),
+            {
+              status: 401,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+        if (!(usertype === "admin" || usertype === "blog_editor")) {
+          return new NextResponse(
+            JSON.stringify({
+              success: false,
+              message: "Access denied: You do not have the required role",
+            }),
+            {
+              status: 403,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+    
     // Parse form data
     const requestData = await req.json();
 
@@ -182,7 +190,7 @@ export async function POST(req: Request) {
       ogImage,
       twitterImage,
       tags: parsedTags,
-      writer_email: email_check,
+      writer_email: user?.email,
     });
 
     await newBlog.save();

@@ -2,22 +2,22 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
 
-import { authenticateUser } from "@/lib/authenticate";
-import { loginpayload } from "@/common_type";
 import CampaignModel from "@/model/CampaignModel";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate user
-    const { authenticated, user, message } = await authenticateUser(req);
+    // Authenticate the user
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
-    if (!authenticated || !user) {
+    if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: message || "Authentication failed.",
+          message: message || "User is not authenticated",
         }),
         {
           status: 401,
@@ -28,19 +28,21 @@ export async function POST(req: Request) {
       );
     }
 
-    const user_: loginpayload = user;
-    const user_id = user_.user_id;
+    const user_id = user?._id;
 
-    // Fetch the user's watchlist
     const watchlist = await WishlistModel.findOne({ user_id });
 
-    if (!watchlist || !watchlist.campaigns || watchlist.campaigns.length === 0) {
+    if (
+      !watchlist ||
+      !watchlist.campaigns ||
+      watchlist.campaigns.length === 0
+    ) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          data:{
-            count:0,
-            products:[],
+          data: {
+            count: 0,
+            products: [],
           },
           message: "No products found in the watchlist.",
         }),
@@ -54,17 +56,19 @@ export async function POST(req: Request) {
     }
 
     // Fetch product details from the CampaignModel
-    const products = await CampaignModel.find({ campaign_id: { $in: watchlist.campaigns } });
+    const products = await CampaignModel.find({
+      campaign_id: { $in: watchlist.campaigns },
+    });
 
     if (!products || products.length === 0) {
       return new NextResponse(
         JSON.stringify({
-          data:{
-            count:0,
-            products:[],
+          data: {
+            count: 0,
+            products: [],
           },
           success: false,
-        
+
           message: "No product details found for the given watchlist.",
         }),
         {
@@ -82,9 +86,9 @@ export async function POST(req: Request) {
         success: true,
         message: "Watchlist retrieved successfully.",
         data: {
-          wishlist_id: watchlist._id, // Wishlist ID
-          products, // Product details
-          count: products.length, // Count of products
+          wishlist_id: watchlist._id,
+          products, 
+          count: products.length, 
         },
       }),
       {

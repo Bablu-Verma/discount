@@ -1,23 +1,22 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
-import { authenticateUser } from "@/lib/authenticate";
-import { isAdmin } from "@/lib/checkUserRole"; // This function checks if the user is an admin
+
 import { upload_image } from "@/helpers/server/upload_image";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
-    // If the user is not authenticated, return a 401 response
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message,
+          message: message || "User is not authenticated",
         }),
         {
           status: 401,
@@ -27,6 +26,22 @@ export async function POST(req: Request) {
         }
       );
     }
+
+    if (usertype === "user") {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Access denied: You do not have the required role",
+        }),
+        {
+          status: 403,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
 
     const requestData = await req.formData();
 

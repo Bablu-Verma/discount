@@ -23,7 +23,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find the campaign by slug
     const campaign = await CampaignModel.findOne({ slug });
 
     if (!campaign) {

@@ -1,36 +1,36 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CampaignQueryModel from "@/model/CampaignQueryModel";
-import { authenticateUser } from "@/lib/authenticate"; // Authentication middleware
+import { authenticateAndValidateUser } from "@/lib/authenticate"; // Authentication middleware
 import { Types } from "mongoose";
-import { isAdmin } from "@/lib/checkUserRole";
 
 export async function DELETE(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate the user
-    const { authenticated, user, message } = await authenticateUser(req);
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
-    // If the user is not authenticated, return a 401 response
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message,
+          message: message || "User is not authenticated",
         }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
-    const email_check = user?.email || "";
-    const is_admin = await isAdmin(email_check);
-
-    if (!is_admin) {
+    if (usertype !== "admin") {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "You are not authorized to delete.",
+          message: "Access denied: You do not have the required role",
         }),
         {
           status: 403,
@@ -41,10 +41,8 @@ export async function DELETE(req: Request) {
       );
     }
 
-   
     const { queryId } = await req.json();
 
-   
     if (!queryId || !Types.ObjectId.isValid(queryId)) {
       return new NextResponse(
         JSON.stringify({
@@ -55,10 +53,8 @@ export async function DELETE(req: Request) {
       );
     }
 
-    
     const campaignQuery = await CampaignQueryModel.findByIdAndDelete(queryId);
 
-   
     if (!campaignQuery) {
       return new NextResponse(
         JSON.stringify({
@@ -69,7 +65,6 @@ export async function DELETE(req: Request) {
       );
     }
 
-    
     return new NextResponse(
       JSON.stringify({
         success: true,

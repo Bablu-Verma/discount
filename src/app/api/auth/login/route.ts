@@ -15,8 +15,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const body: IRequestBody = await req.json();
     const { email, password } = body;
 
-    
-    console.log("Received data:", body);
 
     if (!email || !password) {
       return new NextResponse(
@@ -88,7 +86,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     let Payload = {
       email,
       role: findUser.role,
-      user_id: findUser._id,
+      _id: findUser._id,
     };
 
     const JwtToken = await generateJwtToken(Payload, "15d");

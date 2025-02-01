@@ -10,6 +10,12 @@ import { RootState } from "@/redux-store/redux_store";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 
+import Quill from "quill";
+
+const BlockEmbed = Quill.import("blots/block");
+
+
+
 interface ISTemplate {
   name: string;
   content: string;
@@ -22,15 +28,16 @@ const TextEditor: React.FC = () => {
   const editorContent = useSelector((state: RootState) => state.editor.content);
   const token = useSelector((state: RootState) => state.user.token);
   const dispatch = useDispatch();
+  const [initialchange, setInitialchange] = useState(true);
 
   const modules = {
     toolbar: "#toolbar",
     history: {
-      delay: 1000,
-      maxStack: 100,
+      delay: 2000,
+      maxStack: 500,
       userOnly: true,
     },
-    table: true, // Enable the table module
+    table: true,
   };
 
   const theme = "snow";
@@ -57,15 +64,61 @@ const TextEditor: React.FC = () => {
     },
   ]);
 
+  useEffect(()=>{
+    class DividerBlot extends BlockEmbed {
+      static blotName = "divider";
+      static tagName = "hr";
+    }
+    Quill.register("formats/divider", DividerBlot);
+    
+  },[])
+
   useEffect(() => {
     if (quill) {
       const toolbar = quill.getModule("toolbar") as any;
+
+
+       // Horizontal Line Handler
+       toolbar.addHandler("hr", () => {
+        const range = quill.getSelection();
+        if (range) {
+          quill.insertEmbed(range.index, "divider", true);
+        }
+      });
+
 
       // Select All
       const selectAllButton = document.querySelector(".ql-select-all");
       if (selectAllButton) {
         selectAllButton.addEventListener("click", () => {
           quill.setSelection(0, quill.getLength());
+        });
+      }
+
+      // Undo/Redo Handlers
+      const undoButton = document.querySelector(".undo__tool");
+      if (undoButton) {
+        undoButton.addEventListener("click", () => {
+          quill.history.undo();
+        });
+      }
+
+      const redoButton = document.querySelector(".redo__tool");
+      if (redoButton) {
+        redoButton.addEventListener("click", () => {
+          quill.history.redo();
+        });
+      }
+
+      // Horizontal Line Handler
+      const dividerButton = document.querySelector(".ql-divider");
+      if (dividerButton) {
+        dividerButton.addEventListener("click", () => {
+          const range = quill.getSelection();
+          if (range) {
+            quill.insertEmbed(range.index, "divider", true);
+            quill.setSelection(range.index + 1, 0); // Move cursor after the divider
+          }
         });
       }
 
@@ -97,12 +150,12 @@ const TextEditor: React.FC = () => {
         dispatch(setEditorData(sanitizedHtml));
       });
 
-      // Load initial content from global state
-      if (editorContent) {
+      if (editorContent && initialchange) {
         quill.clipboard.dangerouslyPasteHTML(editorContent);
+        setInitialchange(false);
       }
     }
-  }, [quill, dispatch, editorContent]);
+  }, [quill, dispatch, editorContent, initialchange]);
 
   const imageUploadHandler = async (file: File) => {
     const formData = new FormData();
@@ -137,7 +190,7 @@ const TextEditor: React.FC = () => {
         className={
           isFullscreen
             ? "fixed top-0 z-[9999] h-[100vh] left-0 w-[100vw] bg-white"
-            : "text-editor relative h-[450px] mb-16"
+            : "text-editor relative h-[450px] mb-12"
         }
       >
         <div className="relative max-w-[200px]">
@@ -209,7 +262,11 @@ const TextEditor: React.FC = () => {
           <button className="ql-clean" />
 
           <button className="ql-select-all" title="Select All">
-            <i className="fa-solid fa-object-group text-sm" />
+            <i className="fa-regular fa-object-ungroup text-sm" />
+          </button>
+
+          <button className="ql-hr" title="Insert Horizontal Line">
+            <i className="fa-solid fa-minus text-sm" />
           </button>
 
           <button
@@ -244,6 +301,23 @@ const TextEditor: React.FC = () => {
             ) : (
               <i className="fa-solid fa-expand text-sm" />
             )}
+          </button>
+
+          <button
+            type="button"
+            title="Undo"
+            style={{ display: "flex" }}
+            className="flex items-center justify-center mr-1 undo__tool"
+          >
+            <i className="fa-solid fa-rotate-left text-sm"></i>
+          </button>
+          <button
+            type="button"
+            title="Redo"
+            style={{ display: "flex" }}
+            className="flex items-center justify-center mr-2 redo__tool"
+          >
+            <i className="fa-solid fa-rotate-right text-sm"></i>
           </button>
         </div>
 

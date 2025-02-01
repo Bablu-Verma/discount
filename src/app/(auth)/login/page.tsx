@@ -73,7 +73,7 @@ const Login = () => {
         password: "",
       });
 
-      console.log("user login successfully:", data);
+      // console.log("user login successfully:", data);
       toast.success("Login success!");
 
 

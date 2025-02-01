@@ -185,8 +185,7 @@ const ProductList = () => {
 
                   <td className="px-6 py-4 flex ">
                     <Link
-                      href={`/blog/${item.slug}`}
-                      target="_blank"
+                      href={`/dashboard/blog_private_view/${item.slug}`}
                       className="px-2 py-1 text-sm text-blue-500 hover:underline "
                     >
                       View

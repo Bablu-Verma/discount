@@ -108,7 +108,7 @@ const AllUser = () => {
       
                   <td className="px-6 py-4">
                     <Link
-                      href={`/admin/dashboard/user/${item.email}`}
+                      href={`/dashboard/user/${item.email}`}
                       className="px-2 py-1 text-sm text-blue-500 hover:underline "
                     >
                       View

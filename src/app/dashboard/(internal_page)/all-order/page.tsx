@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 
 import Link from "next/link";
-import SelectInput from "@/app/admin/_admin_components/SelectInput";
-import PaginationControls from "@/app/admin/_admin_components/PaginationControls";
+
 import {productData} from "@/utils/data"
+import SelectInput from "../../_components/SelectInput";
+import PaginationControls from "../../_components/PaginationControls";
 
 const AllStore = () => {
   const [selectedMonth, setSelectedMonth] = useState("");

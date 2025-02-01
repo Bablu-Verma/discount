@@ -1,0 +1,173 @@
+"use client"
+
+
+import BottomToTop from "@/components/BottomToTop";
+import Footer from "@/components/Footer";
+import MainHeader from "@/components/header/MainHeader";
+import TopHeader from "@/components/header/TopHeader";
+
+import { blog_details } from "@/utils/api_url";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
+import Link from "next/link";
+
+import styles from '@/app/blog/[slug]/blog_page.module.css';
+
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux-store/redux_store";
+
+
+
+const BlogDetailPrivate = () => {
+
+  const token = useSelector((state: RootState) => state.user.token);
+  const pathname = usePathname()
+  const urlslug = pathname.split("/").pop() || "";
+  const [page_data, setPageData]= useState({})
+
+  const GetData = async () => {
+    try {
+      let { data } = await axios.post(
+        blog_details,
+        {
+          slug: urlslug,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setPageData(data.data)
+
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("Error registering user", error.response?.data.message);
+        toast.error(error.response?.data.message);
+      } else {
+        console.error("Unknown error", error);
+      }
+    }
+  };
+
+
+  useEffect(()=>{
+    GetData();
+  },[urlslug])
+
+
+  const formate_date = (item:string)=>{
+    const create_d = new Date(item);
+    return create_d.toDateString();
+  }
+
+const simpal_data = [
+  {
+    title: "Amazon Great Freedom Festival 2024: Get Ready to Save Big",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+  {
+    title: "Lorem ipsum dolor sit amet, consectetur",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+  {
+    title: "Great Freedom Festival 2024: Get Ready to Save Big",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+  {
+    title: "Lorem ipsum dolor sit amet, consectetur",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+  {
+    title: "Lorem ipsum dolor sit amet, consectetur",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+  {
+    title: "Amazon Great Freedom Festival 2024: Get Ready to Save Big",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
+    slug:''
+  },
+]
+
+if (Object.keys(page_data).length === 0) {
+  return null;
+}else{
+  return(
+    <section className="max-w-[1100px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
+    <div className="grid grid-cols-7 gap-8">
+    <div className="col-span-5">
+      <div className="text-gray-600 uppercase flex gap-2"><span>By: {page_data.writer_email}</span> / <span>{page_data.blogType}</span> / <span>{formate_date(page_data.updatedAt)}</span></div>
+      <h1 className="text-3xl font-medium mb-8 mt-2 text-secondary capitalize">{page_data.title}</h1>
+      <Image src={page_data.image} width={500} height={200} className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm" sizes="100vw" alt={page_data.title} />
+      {/* <div className="text-gray-600 uppercase flex gap-2 test-sm"><span>View: <i className="fa-regular fa-eye"></i> {page_data.data.views}</span></div> */}
+      <div className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4">{page_data.short_desc}</div>
+      <div className={`${styles.blog_style} mt-16`} dangerouslySetInnerHTML={{ __html: page_data.desc }}>
+
+      </div>
+
+    </div>
+    <div className="col-span-2">
+    <div className="border-[1px] border-gray-600 px-2 py-3 mb-12">
+        <h3 className="text-2xl text-center mb-4 font-medium text-gray-800 capitalize">Table of Contents</h3>
+        <div>
+          {simpal_data.map((item,i) => (
+            <div key={i+1} className="group  mb-4 flex justify-start gap-1">
+             <span className="group-hover:text-blue-500 text-gray-700">{i+1}.</span> <Link href={`/blog/${item.slug}`} className="text-base font-normal text-gray-700  group-hover:text-blue-500 group-hover:underline line-clamp-2">{item.title}</Link>
+            </div>
+          ))}
+        </div>
+      </div>
+
+
+      <div className="border-[1px] border-gray-600 px-2 py-3">
+        <h3 className="text-2xl text-center mb-4 font-medium text-gray-800 capitalize">Latest Articles</h3>
+        <div>
+          {simpal_data.map((item,i) => (
+            <div key={i+1} className="mb-4 flex justify-start gap-1">
+             <span>{i+1}.</span> <Link href={`/blog/${item.slug}`} className="text-base font-normal text-gray-700  hover:text-gray-900 hover:underline line-clamp-2">{item.title}</Link>
+            </div>
+          ))}
+        </div>
+        <div className="p-[0.5px] my-6 w-full bg-gray-300"></div>
+        <Image alt="" width={100} height={100} sizes="100vw" src={page_data.image} className="w-full h-auto rounded-sm" />
+      </div>
+      
+    </div>
+    </div>
+  </section>
+  )
+}
+};
+
+export default BlogDetailPrivate;
+
+{/* <div className="mb-10">
+            <Image
+              src={page_data.data.image}
+              alt="blog-img"
+              width={200}
+              height={200}
+              sizes="100vw"
+              className="w-full"
+            />
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
+              {page_data.data.title}
+            </h1>
+            <div className="pt-4 text-sm">{page_data.data.short_desc}</div>
+
+            <div
+              className="pt-4 text-sm"
+              dangerouslySetInnerHTML={{ __html: page_data.data.desc }}
+            ></div>
+          </div> */}

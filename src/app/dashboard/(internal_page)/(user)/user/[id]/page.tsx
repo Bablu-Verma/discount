@@ -27,6 +27,7 @@ const AdminProfile = () => {
     (state: RootState) => state.user.user
   ) as IUser | null;
   const dispatch = useDispatch();
+  
 
   const pathname = usePathname()
 
@@ -66,7 +67,6 @@ const AdminProfile = () => {
           },
         }
       );
-     
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message);

@@ -6,7 +6,7 @@ import SelectInput from "./_components/SelectInput";
 import { BarChart } from "./_components/Chart";
 
 
-const AdminDashboard = () => {
+const Dashboard_ = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const months = [
     "January",
@@ -173,4 +173,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default Dashboard_;

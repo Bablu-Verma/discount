@@ -86,7 +86,7 @@ export default function SearchPage() {
       <TopHeader />
       <MainHeader />
       <main className="max-w-[1400px] mx-auto relative min-h-screen">
-        <div className="flex items-center justify-center py-10">
+        <div className="flex items-center justify-center py-4 lg:py-10">
           <div className="relative w-[50%] min-w-[350px] rounded-sm overflow-hidden">
             <input
               type="text"
@@ -104,7 +104,7 @@ export default function SearchPage() {
           </div>
         </div>
 
-        <div className="flex justify-center items-center mt-20">
+        <div className="flex justify-center items-center lg:mt-20">
           {loading && (
             <BallTriangle
               height={100}
@@ -120,10 +120,10 @@ export default function SearchPage() {
 
         {resultProduct.length > 0 && (
           <>
-            <div className="px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
+            <div className="px-2 lg:px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
               <MainHeading title="Products" />
             </div>
-            <div className="px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-4 gap-3 md:gap-6">
+            <div className="px-2 lg:px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-4 gap-3 md:gap-6">
               {resultProduct.map((item, i) => (
                 <ProductCard card_data={item} key={i} />
               ))}

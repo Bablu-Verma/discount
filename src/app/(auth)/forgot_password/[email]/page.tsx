@@ -104,7 +104,7 @@ const ChangePassword = () => {
   return (
     <div className="max-w-[1400px] m-auto min-h-screen pt-20">
       <div className="w-full max-w-[370px] m-auto border-[1px] border-gray-300 rounded-md p-6">
-        <h2 className="text-2xl font-semibold b-3">Reset your password</h2>
+        <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Reset your password</h2>
         <p className="text-sm font-normal mb-10">
         👋 Hi {name_}, Your account is safe
         </p>
@@ -146,7 +146,7 @@ const ChangePassword = () => {
         <div className="flex justify-between mt-10 mb-8">
           <button
             onClick={SubmitData}
-            className="bg-primary text-white text-base font-medium duration-200 p-1.5 min-w-[150px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
+            className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-1.5 min-w-[150px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
           >
             Submit
           </button>
@@ -165,7 +165,7 @@ const ChangePassword = () => {
                 password: "",
               });
         }} className="text-sm font-normal text-red-400 hover:underline">
-         Clear Form
+         Clear Fields
         </button>
        </div>
       </div>

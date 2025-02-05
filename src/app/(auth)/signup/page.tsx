@@ -152,13 +152,13 @@ const Signup = () => {
             />
           </div>
           <div className="col-span-1 flex justify-center items-center ">
-            <div className="w-full max-w-[400px]">
-              <h2 className="text-3xl font-semibold b-3">Create an account</h2>
-              <p className="text-sm font-normal mb-10">
+            <div className="w-full max-w-[400px] px-2">
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Create an account</h2>
+              <p className="text-sm font-normal mb-6">
                 Enter your details below
               </p>
 
-              <div className="flex flex-col gap-4">
+              <form className="flex flex-col gap-4">
                 <input
                   type="text"
                   id="name"
@@ -166,6 +166,7 @@ const Signup = () => {
                   onChange={textChange}
                   value={userData.name}
                   placeholder="Name"
+                  autoComplete="true"
                   className="w-full bg-gray-100 px-3 py-2 outline-none text-base m-  text-black border-b-2 border-gray-500 "
                 />
                 <input
@@ -175,6 +176,7 @@ const Signup = () => {
                   onChange={textChange}
                   value={userData.email}
                   placeholder="Your email"
+                  autoComplete="true"
                   className="w-full bg-gray-100 px-3 py-2 outline-none text-base m-  text-black border-b-2 border-gray-500 "
                 />
                 <div className="relative">
@@ -184,6 +186,7 @@ const Signup = () => {
                     name="password"
                     onChange={textChange}
                     value={userData.password}
+                    autoComplete="true"
                     placeholder="Secure Password"
                     className="w-full bg-gray-100 px-3 py-2 outline-none text-base m-  text-black border-b-2 border-gray-500 "
                   />
@@ -199,7 +202,7 @@ const Signup = () => {
                   </span>
                 </div>
 
-                <div  className="flex items-center mt-3 ml-4">
+                <div  className="lg:flex items-center mt-3 ml-4">
                   <input
                     type="checkbox"
                     id="site_policy_conditions"
@@ -219,12 +222,12 @@ const Signup = () => {
                   <Link href="/terms_conditions" className="text-blue-400 hover:underline pl-1 inline-block text-sm">Terms & Conditions </Link> ,
                   <Link href="/privacy_policy" className="text-blue-400 hover:underline pl-1 inline-block text-sm"> Privacy Policy</Link>
                 </div>
-              </div>
+              </form>
               <div className="flex flex-col gap-2 my-10 ">
-                <button type="button" onClick={SubmitData} className="bg-primary text-white text-base font-medium duration-200 p-2 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl">
+                <button type="button" onClick={SubmitData} className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-2 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl">
                   Create Account
                 </button>
-                <button className="bg-white text-gray-800 text-base font-medium duration-200 p-2 rounded border-[1px] border-gray-600 mt-4 shadow-sm hover:shadow-2xl ">
+                <button className="bg-white text-gray-800 text-sm lg:text-base font-medium duration-200 p-2 rounded border-[1px] border-gray-600 mt-4 shadow-sm hover:shadow-2xl ">
                   <i className="fa-brands fa-google"></i> Sign up with Google
                 </button>
               </div>

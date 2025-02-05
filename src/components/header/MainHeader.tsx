@@ -126,7 +126,7 @@ const MainHeader = () => {
           )}
           <Link
             href={userlogin ? "/wishlist" : "/login"}
-            className="select-none text-primary p-1 px-1.5 mr-1 hover:bg-gray-100 flex justify-center items-center rounded relative"
+            className="select-none text-primary p-1 px-1.5  hover:bg-gray-100 flex justify-center items-center rounded relative"
           >
             <i className="fa-regular fa-heart text-xl"></i>
             {userlogin && wishlist.length > 0 && (
@@ -140,7 +140,7 @@ const MainHeader = () => {
             <>
               <Link
                 href="/profile-edit"
-                className={` font-medium duration-200 ml-5 shadow cursor-pointer hover:opacity-80`}
+                className={` font-medium duration-200 mx-2 lg:ml-5 shadow cursor-pointer hover:opacity-80`}
               >
                 <Image
                   src={
@@ -150,7 +150,7 @@ const MainHeader = () => {
                   alt={user?.email || "User profile"}
                   height={100}
                   width={100}
-                  className="w-9 h-9 rounded-full"
+                  className="w-6 lg:w-9 h-6 lg:h-9 rounded-full"
                 />
               </Link>
             </>

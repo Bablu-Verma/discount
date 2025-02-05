@@ -14,7 +14,6 @@ export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
       category_list_api,
-      {},
       {
         headers: {
           Authorization: token,
@@ -44,11 +43,11 @@ export default async function Category() {
     <TopHeader />
     <MainHeader />
     <main>
-      <div className="max-w-[1400px] m-auto mt-14 mb-16">
+      <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-14 mb-16">
          <div>
             <span>Home</span> / <span>Category</span>
           </div>
-        <div className="grid grid-cols-5 gap-8 mt-10">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-8 mt-6 lg:mt-10">
           {
             page_data.map((item:ICategory) => (
               <CategorieCard item={item}/>

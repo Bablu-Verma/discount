@@ -27,7 +27,6 @@ export const GetData = async (token: string) => {
   try {
     let { data } = await axios.post(
       home_api,
-      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -62,14 +61,14 @@ export default async function Home() {
       />
       <main>
         <SubHeading title="Today's" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
         </div>
         <HomeFlash featured={page_data.data.featured} />
 
         <SubHeading title="This Month" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Best Selling Products" />
         </div>
         <BestSalling best_product={page_data.data.new} />
@@ -78,23 +77,23 @@ export default async function Home() {
           <HomePoster poster={page_data.data.poster} />
         </div>
         <SubHeading title="Our Product" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Explore Our Products" />
         </div>
         <BestSalling best_product={page_data.data.hot} />
 
         <SubHeading title="Featured" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="New Arrival" />
         </div>
         <Featured arrival={page_data.data.arrival} />
         <SubHeading title="Categories" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Browse by category" />
         </div>
         <HomeCategories category={page_data.data.category} />
         <SubHeading title="Blog" />
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Read Our Blog" />
         </div>
         <HomeBlog blogs={page_data.data.blogs} />

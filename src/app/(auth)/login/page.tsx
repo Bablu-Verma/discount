@@ -121,14 +121,14 @@ const Login = () => {
           <div className="col-span-1 lg:col-span-2">
             <img
               src="https://img.freepik.com/premium-vector/woman-red-jacket-holding-shopping-bag-with-quotsalequot-it-second-bag-her-other-hand_150234-136431.jpg"
-              className="w-full h-auto max-h-screen"
+              className="w-full h-auto max-h-screen max-w-3xl"
               alt="Woman holding shopping bags"
             />
           </div>
           <div className="col-span-1 flex justify-center items-center">
-            <div className="w-full max-w-[400px]">
-              <h2 className="text-3xl font-semibold b-3">Login your account</h2>
-              <p className="text-sm font-normal mb-10">
+            <div className="w-full max-w-[400px] px-2">
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Login your account</h2>
+              <p className="text-sm font-normal mb-6">
                 Shop your favorite product
               </p>
 
@@ -168,11 +168,11 @@ const Login = () => {
               <div className="flex justify-between gap-2 my-10">
                 <button
                   onClick={SubmitData}
-                  className="bg-primary text-white text-base font-medium duration-200 p-1.5 min-w-[200px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
+                  className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-1.5 min-w-36 lg:min-w-48 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
                 >
                   Submit
                 </button>
-                <Link href='/forgot_password' className="bg-white text-gray-800 text-base font-normal duration-200 p-2 hover:text-blue-500">
+                <Link href='/forgot_password' className="bg-white text-gray-800 text-sm lg:text-base font-normal duration-200 p-2 hover:text-blue-500">
                   Forgot password?
                 </Link>
               </div>

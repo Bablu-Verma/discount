@@ -135,8 +135,8 @@ const UserVerify = () => {
             />
           </div>
           <div className="col-span-1 flex justify-center items-center">
-            <div className="w-full max-w-[400px]">
-              <h2 className="text-3xl font-semibold b-3">Verify Account</h2>
+            <div className="w-full max-w-[400px] px-2">
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Verify Account</h2>
               <p className="text-sm font-normal mb-10 mt-2 text-gray-600">
                 <i className="fa-regular fa-envelope text-lg text-gray-600"></i>{" "}
                 Check your Email Inbox, verify your account <br />
@@ -176,7 +176,7 @@ const UserVerify = () => {
               <div className="my-10">
                 <button
                   onClick={SubmitData}
-                  className="bg-primary text-white text-base font-medium duration-800 p-1.5 min-w-[240px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
+                  className="bg-primary text-white text-sm lg:text-base font-medium duration-800 p-1.5 min-w-36 lg:min-w-48 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
                 >
                   Submit
                 </button>

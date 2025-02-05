@@ -16,7 +16,6 @@ export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
       product_list_,
-      {},
       {
         headers: {
           Authorization: token,

@@ -20,8 +20,8 @@ const SubFooter = () => {
   ];
   return (
     <div className="max-w-[1400px] mx-auto px-2 sm:px-4 py-14 gap-5 sm:gap-12 mb-5 flex justify-center flex-col sm:flex-row">
-      {sub_footer.map(() => (
-        <div className="flex justify-center text-center flex-col items-center">
+      {sub_footer.map((_,i) => (
+        <div className="flex justify-center text-center flex-col items-center" key={i}>
           <div className="bg-gray-400 rounded-full w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] flex justify-center items-center mb-2">
             <div className="bg-black rounded-full w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[75px] md:h-[75px] flex justify-center items-center">
               <i className="fa-solid fa-van-shuttle text-2xl sm:text-3xl md:text-4xl text-white"></i>

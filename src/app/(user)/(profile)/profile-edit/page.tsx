@@ -111,7 +111,7 @@ const ProfileEdit = () => {
 
   return (
     <>
-      <h3 className="font-semibold mb-4 text-xl sm:text-2xl text-primary">
+      <h3 className="font-semibold mb-4 text-center lg:text-left text-xl sm:text-2xl text-primary">
         Edit Your Profile
       </h3>
       <div className="max-w-[600px] m-auto">
@@ -185,8 +185,8 @@ const ProfileEdit = () => {
             />
           </div>
 
-          <div className="flex justify-between mb-5 ">
-            <div className="">
+          <div className="flex flex-col gap-3 lg:justify-between mb-5 ">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Date of Birth
               </label>
@@ -210,7 +210,7 @@ const ProfileEdit = () => {
               />
             </div>
 
-            <div className="">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Gender
               </label>
@@ -254,11 +254,11 @@ const ProfileEdit = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-10 my-10">
+          <div className="flex justify-evenly lg:justify-end gap-10 my-10">
             <button
               type="button"
               onClick={handleCancel}
-              className="bg-white text-gray-800 text-base font-normal duration-200 p-2 min-w-[120px] md:min-w-[150px] px-10 hover:text-primary"
+              className="bg-white text-gray-800 text-base font-normal border-[1px] border-primary rounded duration-200 p-2 min-w-[120px] md:min-w-[150px] px-10 hover:text-primary"
             >
               Cancel
             </button>

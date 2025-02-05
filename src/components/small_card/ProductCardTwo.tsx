@@ -39,21 +39,21 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
   return (
     <Link href={`/campaign/${card_data?.slug}`}
       title=""
-      className="shadow max-h-[230px] block overflow-hidden rounded-lg relative duration-200 border-[1px] cursor-pointer border-transparent hover:border-pink-300"
+      className="shadow max-h-[230px] mx-2 block overflow-hidden rounded-lg relative duration-200 border-[1px] cursor-pointer border-transparent hover:border-pink-300"
     >
       <div
         style={{
           borderBottomRightRadius: "30px",
           backgroundImage: "linear-gradient(120deg, #f093fb 0%, #f5576c 100%)",
         }}
-        className=" absolute top-2 left-4 text-[14px] font-normal text-white py-.5 px-2 rounded-md shadow flex justify-center items-center gap-2 pr-3"
+        className=" absolute top-1 left-1 text-[14px] font-normal text-white py-.5 px-2 rounded-md shadow flex justify-center items-center gap-2 pr-3"
       >
         <span>Limited time offer</span> | {remainingTime != "EXPIRED" && <span className="">{remainingTime}</span>}
       </div>
 
       <Image
         src={card_data?.banner_img}
-        className="w-full h-[220px]"
+        className="w-full h-[170px] object-cover"
         height={200}
         sizes="100vw"
         width={400}

@@ -88,8 +88,8 @@ const ForgotPassword = () => {
             />
           </div>
           <div className="col-span-1 flex justify-center items-center">
-            <div className="w-full max-w-[400px]">
-              <h2 className="text-3xl font-semibold b-3">
+            <div className="w-full max-w-[400px] px-2">
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">
                 Forgot your Password
               </h2>
               <p className="text-sm font-normal mb-10">
@@ -107,21 +107,21 @@ const ForgotPassword = () => {
                   className="w-full bg-gray-100 px-3 py-2 outline-none text-base text-black border-b-2 border-gray-500"
                 />
               </div>
-              <div className="flex justify-between mt-10 mb-8">
+              <div className="flex justify-between mt-6 mb-8">
                 <button
                   onClick={SubmitData}
-                  className="bg-primary text-white text-base font-medium duration-200 p-1.5 min-w-[150px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
+                  className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-1.5 min-w-[150px] border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
                 >
                   Submit
                 </button>
               </div>
-              <p className="text-sm font-thin">
-                Back you
+              <p className="text-sm font-thin text-center">
+                Back you? 
                 <Link
                   href="/login"
                   className="text-blue-400 font-normal hover:underline"
                 >
-                  login?
+                  login
                 </Link>
               </p>
             </div>

@@ -10,7 +10,7 @@ const HeroCategory:React.FC<HeroCategoryProps> = ({category}) => {
     <div className="px-4 py-2 bg-gray-100 rounded hidden lg:block col-span-1">
       <ul>
         {
-          category.map((item, i)=>{
+          category.slice(0,6).map((item, i)=>{
             return(
               <li className="py-1" key={i}>
               <Link

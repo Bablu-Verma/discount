@@ -16,7 +16,7 @@ const Flash:React.FC<IfleasProp> = ({featured}) => {
 
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 pt-2 mb-4 relative">
+    <div className="max-w-[1400px] mx-auto pt-2 mb-4 relative">
     <div className="absolute right-4 top-[-18%] hidden sm:inline-block">
       <button className="m-2 text-gray-700 opacity-80 hover:opacity-100" onClick={() => swiperRef.current?.slidePrev()}>
         <i className="fa-solid fa-arrow-left text-base md:text-xl"></i>

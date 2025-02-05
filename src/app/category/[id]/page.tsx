@@ -60,8 +60,8 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1400px] mx-auto mt-14 mb-16">
-          <div>
+        <section className="max-w-[1400px] px-2 mx-auto mt-4 lg:mt-14 mb-16">
+          <div className="text-sm lg:text-base">
             <span>Home</span> / <span>Category</span> / <span>{page_data.name}</span>
           </div>
           <div className="mt-8 text-center items-center">
@@ -74,7 +74,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
                 height={500}
               />
             </div>
-            <h1 className="text-xl text-secondary font-medium  mb-3">
+            <h1 className="text-xl text-secondary font-medium  my-3">
               {page_data.name}
             </h1>
             <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: page_data.description }}>

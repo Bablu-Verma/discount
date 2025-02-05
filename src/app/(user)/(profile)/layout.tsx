@@ -46,9 +46,9 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <TopHeader />
       <MainHeader />
-      <main className="max-w-[1400px] mx-auto mt-14 mb-16">
+      <main className="max-w-[1400px] mx-auto mt-8 lg:mt-14 mb-16">
         <section>
-          <div className="flex justify-between mb-16">
+          <div className="flex justify-between mb-6 lg:mb-16">
             <h4 className="text-base pl-2">
               Welcome!{" "}
               <span className="text-primary capitalize">
@@ -57,7 +57,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
             </h4>
           </div>
 
-          <div className="my-12 px-2 flex gap-[2%] justify-between ">
+          <div className="my-2 lg:my-12 px-2 flex gap-[2%] justify-between ">
             <div className=" hidden md:block w-[18%] capitalize">
               <h2 className="text-xl font-semibold mb-2 text-dark">
                 <i className="text-base text-dark fa-solid fa-link"></i> Links

@@ -12,8 +12,6 @@ import "quill/dist/quill.snow.css";
 
 import Quill from "quill";
 
-const BlockEmbed = Quill.import("blots/block");
-
 
 
 interface ISTemplate {
@@ -64,27 +62,14 @@ const TextEditor: React.FC = () => {
     },
   ]);
 
-  useEffect(()=>{
-    class DividerBlot extends BlockEmbed {
-      static blotName = "divider";
-      static tagName = "hr";
-    }
-    Quill.register("formats/divider", DividerBlot);
-    
-  },[])
+ 
 
   useEffect(() => {
     if (quill) {
       const toolbar = quill.getModule("toolbar") as any;
 
 
-       // Horizontal Line Handler
-       toolbar.addHandler("hr", () => {
-        const range = quill.getSelection();
-        if (range) {
-          quill.insertEmbed(range.index, "divider", true);
-        }
-      });
+       
 
 
       // Select All
@@ -116,8 +101,7 @@ const TextEditor: React.FC = () => {
         dividerButton.addEventListener("click", () => {
           const range = quill.getSelection();
           if (range) {
-            quill.insertEmbed(range.index, "divider", true);
-            quill.setSelection(range.index + 1, 0); // Move cursor after the divider
+            quill.clipboard.dangerouslyPasteHTML(range.index + 1, "<hr class='border-t border-gray-400'>");
           }
         });
       }
@@ -265,7 +249,7 @@ const TextEditor: React.FC = () => {
             <i className="fa-regular fa-object-ungroup text-sm" />
           </button>
 
-          <button className="ql-hr" title="Insert Horizontal Line">
+          <button type="button"  className="flex items-center justify-center mr-2 ql-divider" title="Insert Horizontal Line">
             <i className="fa-solid fa-minus text-sm" />
           </button>
 

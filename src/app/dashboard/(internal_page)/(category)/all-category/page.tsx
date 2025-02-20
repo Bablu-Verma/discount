@@ -124,7 +124,7 @@ const CategoryList = () => {
                       View
                     </Link>
                     <Link
-                      href={`/admin/dashboard/category/${item.slug}`}
+                      href={`/dashboard/category/${item.slug}`}
                       className="px-2 py-1 text-sm inline-block ml-5 text-blue-500 hover:underline"
                     >
                       Edit

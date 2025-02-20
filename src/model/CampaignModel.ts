@@ -38,7 +38,8 @@ export interface ICampaign {
   banner_img:string
   expire_time: Date | null;
   createdAt:string,
-  calculation_type:string
+  calculation_type:string,
+  client_url:string
 }
 
 const CampaignSchema = new Schema<ICampaign>(
@@ -74,6 +75,10 @@ const CampaignSchema = new Schema<ICampaign>(
     description: {
       type: String,
       required: [true, "Description is required"],
+    },
+    client_url: {
+      type: String,
+      required: [true, "Client_url is required"],
     },
     img: {
       type: [String],

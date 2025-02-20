@@ -70,6 +70,7 @@ export async function POST(req: Request) {
     const add_poster = requestData.get("add_poster");
     const arrival = requestData.get("arrival");
     const flash_time = requestData.get("flash_time");
+    const client_url = requestData.get("client_url");
 
     if (!imgFiles.length) {
       return new NextResponse(
@@ -80,8 +81,6 @@ export async function POST(req: Request) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-
-    console.log(imgFiles)
 
     const slug = generateSlug(
       typeof product_name === "string" ? product_name : ""
@@ -127,6 +126,7 @@ export async function POST(req: Request) {
     }
 
     campaignData.title = product_name;
+    campaignData.client_url = client_url;
     campaignData.calculation_type = calculation_type;
     campaignData.price = Number(price);
     campaignData.description = description;

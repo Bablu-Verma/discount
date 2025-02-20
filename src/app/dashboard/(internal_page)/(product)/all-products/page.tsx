@@ -169,12 +169,12 @@ const ProductList = () => {
                       alt={product.title}
                       className="w-10 h-10 rounded-md"
                     />
-                    <span className="text-gray-800 line-clamp-2">{product.title}</span>
+                    <Link href={`/dashboard/product/${product.slug}`} className="text-gray-800 text-sm hover:text-blue-400 line-clamp-2">{product.title}</Link>
                   </td>
-                  <td className="px-6 py-4 text-gray-600 ">
+                  <td className="px-6 py-4 text-sm text-gray-600 ">
                     {product.category}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-sm text-gray-600">
                     {product.brand}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
@@ -199,11 +199,12 @@ const ProductList = () => {
                       {product.banner ? "Yes": "No"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">{product.price}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{product.price}</td>
             
                   <td className="px-6 py-4">
-                    <Link href={`/admin/dashboard/product/${product.slug}`} className="px-2 py-1 text-sm text-white bg-gray-500 rounded-md">
-                      View
+                    
+                    <Link href={`/dashboard/product/edit/${product.slug}`} className="px-2 py-1 text-sm text-white bg-yellow-500 rounded-md">
+                      Edit
                     </Link>
                   </td>
                 </tr>

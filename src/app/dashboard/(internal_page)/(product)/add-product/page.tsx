@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 
 interface IFormData {
   product_name: string;
+  client_url: string;
   brand_name: string;
   price: string;
   cashback: string;
@@ -68,6 +69,8 @@ const AddProduct = () => {
     flash_time: null,
     banner: "",
     calculation_type: "",
+    client_url:'',
+   
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,6 +181,7 @@ const AddProduct = () => {
         "meta_description",
         "meta_keywords",
         "tags",
+        'client_url'
       ];
 
       for (const field of requiredFields) {
@@ -293,6 +297,23 @@ const AddProduct = () => {
               value={form_data.product_name}
               onChange={handleChange}
               placeholder="Enter product name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="client_url"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Product url
+            </label>
+            <input
+              type="text"
+              id="client_url"
+              name="client_url"
+              value={form_data.client_url}
+              onChange={handleChange}
+              placeholder="Product url"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>

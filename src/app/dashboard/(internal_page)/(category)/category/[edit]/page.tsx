@@ -138,7 +138,7 @@ const EditCategory: React.FC = () => {
         },
       });
       toast.success("Category updated successfully! Redirecting...");
-      setTimeout(() => router.push("/admin/dashboard/all-category"), 3000);
+      setTimeout(() => router.push("/dashboard/all-category"), 3000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "An error occurred");

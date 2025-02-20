@@ -89,7 +89,7 @@ const Prduct_details = () => {
           <div className="mt-20">
             <Link
               className=" py-2 px-8 bg-yellow-600 text-sm text-white rounded-md"
-              href={`/admin/dashboard/product/edit/${product.slug}`}
+              href={`/dashboard/product/edit/${product.slug}`}
               
             >
               Edit <i className="fa-solid fa-pen-to-square text-base"></i>

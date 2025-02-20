@@ -21,6 +21,7 @@ import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_lin
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 
 interface IFormData {
+  client_url:string;
   _id: string;
   title: string;
   brand_name: string;
@@ -66,6 +67,7 @@ const EditProduct = () => {
     active: "active",
     banner: "active",
     images: [],
+    client_url:'',
     tc: "",
     hot: false,
     meta_title: "",
@@ -124,6 +126,7 @@ const EditProduct = () => {
   useEffect(() => {
     setForm_data({
       _id: productDetails?._id || "",
+      client_url:productDetails?.client_url || "",
       title: productDetails?.title || "",
       brand_name: productDetails?.brand || "",
       price: productDetails?.price || "",
@@ -313,7 +316,7 @@ const EditProduct = () => {
       });
       toast.success("Product updated successfully!");
       setTimeout(()=>{
-        window.location.href = "/admin/dashboard/all-products";
+        window.location.href = "/dashboard/all-products";
       },200)
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -359,6 +362,24 @@ const EditProduct = () => {
               value={form_data.title}
               onChange={handleChange}
               placeholder="Enter product name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+            />
+          </div>
+          <div>
+
+            <label
+              htmlFor="client_url"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Product url
+            </label>
+            <input
+              type="text"
+              id="client_url"
+              name="client_url"
+              value={form_data.client_url}
+              onChange={handleChange}
+              placeholder="Product url"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>

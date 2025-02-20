@@ -244,7 +244,7 @@ const EditBlog: React.FC<IBlogEditProps> = ({}) => {
       toast.success("Blog update successfully! we are redirect to blog list");
 
       setTimeout(() => {
-        router.push("/admin/dashboard/blog-list");
+        router.push("/dashboard/blog-list");
       }, 3000);
     } catch (error) {
       if (axios.isAxiosError(error)) {

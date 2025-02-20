@@ -90,6 +90,7 @@ export async function POST(req: Request) {
     const add_poster = requestData.get("add_poster");
     const arrival = requestData.get("arrival");
     const flash_time = requestData.get("expire_time");
+    const client_url = requestData.get("client_url");
 
     if (product_name) {
       const newSlug = generateSlug(product_name);
@@ -126,6 +127,7 @@ export async function POST(req: Request) {
     console.log("flash_time", flash_time);
     campaign.cashback = Number(price) - offer_price;
     campaign.title = product_name;
+    campaign.client_url = client_url;
     campaign.calculation_type = calculation_type;
     campaign.price = Number(price);
     campaign.description = description;

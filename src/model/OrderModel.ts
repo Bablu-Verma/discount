@@ -1,7 +1,11 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
-const ORDER_STATUSES = ["Redirected", "Completed", "Cancelled"] as const;
-const PAYMENT_STATUSES = ["Pending", "Conform", "Paid", "Failed"] as const;
+
+
+
+const ORDER_STATUSES = ["Redirected", "Order", "Completed", "Cancelled"] as const;
+const PAYMENT_STATUSES = ["Pending", "confirm", "Paid", "Failed"] as const;
 
 interface IHistory {
   status: string;
@@ -14,15 +18,14 @@ interface IRecord extends Document {
   user_id: mongoose.Types.ObjectId;
   product_id: string;
   product_url: string;
+  transaction_id: string; 
   cashback_amount: number;
-  order_status: typeof ORDER_STATUSES[number];
-  payment_status: typeof PAYMENT_STATUSES[number];
-  history: IHistory[];
+  order_status: (typeof ORDER_STATUSES)[number];
+  payment_status: (typeof PAYMENT_STATUSES)[number] | null;
+  order_history: IHistory[];
+  payment_history: IHistory[];
   createdAt?: Date;
   updatedAt?: Date;
-
-  updateStatus(newStatus: typeof ORDER_STATUSES[number], details: string, proofDocument?: string): Promise<void>;
-  updatePaymentStatus(newStatus: typeof PAYMENT_STATUSES[number], details: string): Promise<void>;
 }
 
 // Order Schema
@@ -32,13 +35,20 @@ const RecordSchema = new Schema<IRecord>(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
+      index: true,
     },
     product_id: {
       type: String,
       required: true,
+      index: true,
     },
     product_url: {
       type: String,
+      required: true,
+    },
+    transaction_id: {
+      type: String,
+      unique: true,  
       required: true,
     },
     cashback_amount: {
@@ -54,62 +64,90 @@ const RecordSchema = new Schema<IRecord>(
     payment_status: {
       type: String,
       enum: PAYMENT_STATUSES,
-      default: "Pending",
+      default: null, // Initially null
     },
-    history: [
+    order_history: [
       {
-        status: { type: String, required: true },
+        status: {
+          type: String,
+          required: true,
+          enum: ORDER_STATUSES,
+        },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
-        proof_document: { 
-          type: String, 
-          required: function(this: { status: string }) { 
-            return this.status === "Cancelled" || this.status === "Completed"; 
-          } 
+        proof_document: { type: String },
+      },
+    ],
+    payment_history: [
+      {
+        status: {
+          type: String,
+          required: true,
+          enum: PAYMENT_STATUSES,
         },
+        date: { type: Date, default: Date.now },
+        details: { type: String, required: true },
+        proof_document: { type: String },
       },
     ],
   },
   { timestamps: true }
 );
 
-// Add a method to update order status and track history
-RecordSchema.methods.updateStatus = async function (
-  newStatus: typeof ORDER_STATUSES[number],
-  details: string,
-  proofDocument?: string // Required if order is "Cancelled" or "Completed"
-) {
-  // Validation: Proof document is required for "Cancelled" and "Completed"
-  if ((newStatus === "Cancelled" || newStatus === "Completed") && !proofDocument) {
-    throw new Error("Proof document is required for order completion or cancellation.");
+// Middleware to track history and auto-set payment status
+RecordSchema.pre("save", function (next) {
+  if (this.isNew) {
+     // ✅ Generate a unique transaction ID using UUID
+     this.transaction_id = uuidv4();
+     
+    // Add initial order history
+    this.order_history.push({
+      status: this.order_status,
+      date: new Date(),
+      details: `Order created with status ${this.order_status}`,
+    });
+
+    // Set payment status to "Pending" only if the order is placed
+    if (this.order_status === "Order") {
+      this.payment_status = "Pending";
+      this.payment_history.push({
+        status: "Pending",
+        date: new Date(),
+        details: `Payment status set to Pending as order is placed`,
+      });
+    }
+  } else {
+    if (this.isModified("order_status")) {
+      this.order_history.push({
+        status: this.order_status,
+        date: new Date(),
+        details: `Order status changed to ${this.order_status}`,
+      });
+
+      // Set payment to "Pending" only if order is placed and no previous payment status exists
+      if (this.order_status === "Order" && !this.payment_status) {
+        this.payment_status = "Pending";
+        this.payment_history.push({
+          status: "Pending",
+          date: new Date(),
+          details: `Payment status set to Pending as order is placed`,
+        });
+      }
+    }
+
+    // Log payment status changes
+    if (this.isModified("payment_status") && this.payment_status) {
+      this.payment_history.push({
+        status: this.payment_status,
+        date: new Date(),
+        details: `Payment status changed to ${this.payment_status}`,
+      });
+    }
   }
+  next();
+});
 
-  // Create history entry
-  const historyEntry: IHistory = { status: newStatus, date: new Date(), details };
 
-  // Attach proof document if required
-  if (newStatus === "Cancelled" || newStatus === "Completed") {
-    historyEntry.proof_document = proofDocument;
-  }
-
-  // Update order status and push to history
-  this.order_status = newStatus;
-  this.history.push(historyEntry);
-
-  await this.save();
-};
-
-// Add a method to update payment status and track history
-RecordSchema.methods.updatePaymentStatus = async function (
-  newStatus: typeof PAYMENT_STATUSES[number],
-  details: string
-) {
-  this.payment_status = newStatus;
-  this.history.push({ status: newStatus, date: new Date(), details });
-  await this.save();
-};
-
-// Export Model
 const RecordModel: Model<IRecord> =
   mongoose.models.Record || mongoose.model<IRecord>("Record", RecordSchema);
 

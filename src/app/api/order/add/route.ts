@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import OrderModel from "@/model/OrderModel";
 
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import CampaignModel from "@/model/CampaignModel";
+import RecordModel from "@/model/OrderModel";
 
-export async function POST(req:Request) {
+export async function POST(req: Request) {
   await dbConnect();
 
   try {
@@ -37,45 +37,46 @@ export async function POST(req:Request) {
     }
 
     // Create order with initial status "Redirected"
-    const newOrder = new OrderModel({
+    const newOrder = new RecordModel({
       user_id: user._id,
-      product_id: product._id,
-      affiliate_url: product.affiliate_url,
-      cashback_amount: product.cashback_amount,
-      status: "Redirected",
-      history: [{
-        status: "Redirected",
-        date: new Date(),
-        details: "User clicked on Shop Now",
-      }],
+      product_id: product.campaign_id,
+      product_url: product.client_url,
+      cashback_amount: product.offer_price,
+      order_status: "Redirected",
+      payment_status: null,
+      order_history: [
+        {
+          status: "Redirected",
+          date: new Date(),
+          details:`User clicked on Shop Now and redirect to ${product.brand}`,
+        },
+      ],
+      payment_history: [],
     });
 
-    await newOrder.save();
+  const save_order =  await newOrder.save();
 
-    return new NextResponse(JSON.stringify({ success: true, message: "Order created", data: newOrder }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.redirect(`${product.client_url}/?utm_source=${save_order.transaction_id}`);
   } catch (error) {
     if (error instanceof Error) {
-        console.error("Failed to edit campaign:", error.message);
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: "Failed to edit campaign.",
-            error: error.message,
-          }),
-          { status: 500, headers: { "Content-Type": "application/json" } }
-        );
-      } else {
-        console.error("Unexpected error:", error);
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: "An unexpected error occurred.",
-          }),
-          { status: 500, headers: { "Content-Type": "application/json" } }
-        );
-      }
+      console.error("Failed to create order:", error.message);
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Failed to create order.",
+          error: error.message,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    } else {
+      console.error("Unexpected error:", error);
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "An unexpected error occurred.",
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
   }
 }

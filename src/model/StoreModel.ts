@@ -5,6 +5,9 @@ export interface IStore {
   description: string; 
   slug: string; 
   status: boolean;
+  cashback_status: boolean;
+  store_link:string;
+  cashback:string;
   img: string;
   deleted_store: boolean;
 }
@@ -34,7 +37,16 @@ const StoreSchema = new Schema<IStore>(
       type: String,
       required: [true, "Image is required"],
     },
-   
+    cashback_status:{
+      type: Boolean,
+      default: false,
+    },
+    store_link:{
+      type: String,
+    },
+    cashback:{
+      type:String
+    },
     status: {
       type: Boolean,
       default: true, 

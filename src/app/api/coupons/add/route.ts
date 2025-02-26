@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
+import CouponModel from "@/model/CouponModel";
 import StoreModel from "@/model/StoreModel";
-import { upload_image } from "@/helpers/server/upload_image";
-import { generateSlug } from "@/helpers/client/client_function";
+import CategoryModel from "@/model/CategoryModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
@@ -26,47 +26,60 @@ export async function POST(req: Request) {
     }
 
     const requestData = await req.json();
-    const { name, description, img, cashback_status, store_link, cashback, status } = requestData;
+    const { code, discount, description, expiry_date, store, category, status } = requestData;
 
-    if (!name || !description || !img) {
+    if (!code || !discount || !description || !expiry_date || !store || !category) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Name, description, and image are required." }),
+        JSON.stringify({ success: false, message: "All fields are required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const slug = generateSlug(name);
-
-    const existingStore = await StoreModel.findOne({ $or: [{ name }, { slug }] });
-    if (existingStore) {
+    const existingCoupon = await CouponModel.findOne({ code });
+    if (existingCoupon) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "A store with this name or slug already exists." }),
+        JSON.stringify({ success: false, message: "A coupon with this code already exists." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const newStore = new StoreModel({
-      name,
+    const storeExists = await StoreModel.findById(store);
+    if (!storeExists) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Store not found." }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const categoryExists = await CategoryModel.findById(category);
+    if (!categoryExists) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Category not found." }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const newCoupon = new CouponModel({
+      code,
+      discount,
       description,
-      slug,
-      img,
-      cashback_status,
-      store_link,
-      cashback,
+      expiry_date,
+      store,
+      category,
       status,
     });
 
-    await newStore.save();
+    await newCoupon.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Store added successfully.", data: newStore }),
+      JSON.stringify({ success: true, message: "Coupon added successfully.", data: newCoupon }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to add store:", error.message);
+      console.error("Failed to add coupon:", error.message);
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Failed to add store.", error: error.message }),
+        JSON.stringify({ success: false, message: "Failed to add coupon.", error: error.message }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     } else {

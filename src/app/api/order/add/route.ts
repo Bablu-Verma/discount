@@ -18,6 +18,8 @@ export async function POST(req: Request) {
       });
     }
 
+
+
     // Parse request data
     const { product_id } = await req.json();
     if (!product_id) {
@@ -28,13 +30,17 @@ export async function POST(req: Request) {
     }
 
     // Fetch product details
-    const product = await CampaignModel.findById(product_id);
+    const product = await CampaignModel.findOne({campaign_id:product_id}) 
     if (!product) {
       return new NextResponse(JSON.stringify({ success: false, message: "Product not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
+
+
+    // console.log("user=>",user)
+    // console.log("product=>",product)
 
     // Create order with initial status "Redirected"
     const newOrder = new RecordModel({
@@ -44,19 +50,30 @@ export async function POST(req: Request) {
       cashback_amount: product.offer_price,
       order_status: "Redirected",
       payment_status: null,
-      order_history: [
-        {
-          status: "Redirected",
-          date: new Date(),
-          details:`User clicked on Shop Now and redirect to ${product.brand}`,
-        },
-      ],
+      order_history: [],
       payment_history: [],
     });
 
   const save_order =  await newOrder.save();
 
-    return NextResponse.redirect(`${product.client_url}/?utm_source=${save_order.transaction_id}`);
+  // console.log("save_order",save_order)
+  // ${product.client_url}/?utm_source=${save_order.transaction_id}
+  return  new NextResponse(
+    JSON.stringify({
+      success: true,
+      message: "Order created successfully",
+      order: {
+        url: `${product.client_url}/?utm_source=${save_order.transaction_id}`,
+      },
+    }),
+    {
+      status: 201,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
   } catch (error) {
     if (error instanceof Error) {
       console.error("Failed to create order:", error.message);

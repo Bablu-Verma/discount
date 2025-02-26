@@ -49,6 +49,7 @@ const RecordSchema = new Schema<IRecord>(
     transaction_id: {
       type: String,
       unique: true,  
+      default: uuidv4,
       required: true,
     },
     cashback_amount: {
@@ -98,7 +99,6 @@ const RecordSchema = new Schema<IRecord>(
 RecordSchema.pre("save", function (next) {
   if (this.isNew) {
      // ✅ Generate a unique transaction ID using UUID
-     this.transaction_id = uuidv4();
      
     // Add initial order history
     this.order_history.push({

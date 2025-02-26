@@ -7,12 +7,19 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import { create_order_api } from "@/utils/api_url";
+import { ProgressBar } from "react-loader-spinner";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface IShopNowProps {
   page_data: ICampaign;
 }
 const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
   const token = useSelector((state: RootState) => state.user.token);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  
+  const [modelOpen, setModelOpen] = React.useState<boolean>(false);
 
   const shop_now = async () => {
     if (!token) {
@@ -25,6 +32,8 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       return;
     }
 
+    setModelOpen(true);
+   
     try {
       let { data } = await axios.post(
         create_order_api,
@@ -39,7 +48,11 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
         }
       );
 
-      return data.data;
+      if (data.success == true) {
+        // const fullURL = `${window.location.origin}${pathname}?${searchParams.toString()}`;
+        // window.open(fullURL, "_blank");
+        window.location.href = data.order.url;
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error registering user", error.response?.data.message);
@@ -47,16 +60,45 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       } else {
         console.error("Unknown error", error);
       }
+    } finally {
+      
+      setTimeout(() => {
+        setModelOpen(false);
+      }, 200);
     }
   };
 
   return (
-    <button
-      onClick={shop_now}
-      className=" w-[180px] py-2 text-base text-center rounded-md outline-none border-none text-white  duration-200 bg-primary"
-    >
-      Shop Now
-    </button>
+    <>
+      <button
+        onClick={shop_now}
+        className=" w-[180px] py-2 text-base text-center rounded-md outline-none border-none text-white  duration-200 bg-primary"
+      >
+        Shop Now
+      </button>
+      {modelOpen && (
+        <div
+          style={{ background: "rgba(0,0,0,.5)" }}
+          className="fixed top-0 h-[100vh] w-[100vw] left-0 justify-center items-center flex"
+        >
+          <div className="bg-white rounded-lg pt-5 px-8 pb-10 flex flex-col justify-center items-center">
+            <ProgressBar
+              visible={true}
+              height="60"
+              width="80"
+              barColor="#d85134"
+              borderColor="#0f1336"
+              ariaLabel="progress-bar-loading"
+              wrapperStyle={{ margin: "0px" }}
+              wrapperClass=""
+            />
+            <p className="text-sm text-secondary">
+              Wait we are creating your Order
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

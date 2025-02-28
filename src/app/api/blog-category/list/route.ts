@@ -1,21 +1,53 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-
 import BlogCategoryModel from "@/model/BlogCategoryModel";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
+    const requestData = await req.json();
+    const { name, slug, startDate, endDate, status, page = 1, limit = 10 } = requestData;
+
+    const query: any = {};
     
-    // Fetch categories based on showDeleted flag
-    const categories = await BlogCategoryModel.find({});
+    if (name) {
+      query.name = { $regex: name, $options: "i" }; // Case-insensitive search
+    }
+
+    if (slug) {
+      query.slug = slug;
+    }
+
+    if (status !== undefined) {
+      query.status = status;
+    }
+
+    if (startDate && endDate) {
+      query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    } else if (startDate) {
+      query.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      query.createdAt = { $lte: new Date(endDate) };
+    }
+
+    // Pagination setup
+    const skip = (page - 1) * limit;
+    const categories = await BlogCategoryModel.find(query).skip(skip).limit(limit);
+    const totalCategories = await BlogCategoryModel.countDocuments(query);
+    const totalPages = Math.ceil(totalCategories / limit);
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Categories fetched successfully.",
-        data: categories,  
+        data: categories,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalCategories,
+          limit,
+        },
       }),
       {
         status: 200,

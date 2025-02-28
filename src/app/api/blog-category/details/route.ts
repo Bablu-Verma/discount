@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import CategoryModel from "@/model/CategoryModel";
 import BlogCategoryModel from "@/model/BlogCategoryModel";
+import BlogModel from "@/model/BlogModal";
+
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    
     const requestData = await req.json();
-    const { slug } = requestData; 
+    const { slug, accessType } = requestData;
 
     if (!slug) {
       return new NextResponse(
@@ -19,74 +19,69 @@ export async function POST(req: Request) {
         }),
         {
           status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
-   
-    const category = await BlogCategoryModel.findOne({ slug });
+    const query: any = { slug };
+
+    // Apply accessType filtering for category
+    if (accessType === "normal") {
+      query.status = true; 
+    }
+
+    const category = await BlogCategoryModel.findOne(query);
 
     if (!category) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "blog Category not found.",
+          message: "Blog category not found.",
         }),
         {
           status: 404,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
+    // Fetch related blogs based on category ID
+    const blogQuery: any = { categoryId: category._id };
+
+    if (accessType === "normal") {
+      blogQuery.isPublished = true; // Normal users only see published blogs
+    }
+
+    const relatedBlogs = await BlogModel.find(blogQuery).limit(5); // Fetch top 5 related blogs
+
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "blog Category fetched successfully.",
-        data: category, 
+        message: "Blog category fetched successfully.",
+        data: {
+          ...category.toObject(),
+          relatedBlogs, // Add related blogs
+        },
       }),
       {
         status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Failed to fetch blog category:", error.message);
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Failed to fetch blog category.",
-          error: error.message,
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    } else {
-      console.error("Unexpected error:", error);
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "An unexpected error occurred.",
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    console.error("Failed to fetch blog category:", error);
+
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        message: "Failed to fetch blog category.",
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

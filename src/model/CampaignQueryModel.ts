@@ -9,6 +9,7 @@ export interface ICampaignQuery {
   whatsapp_number: string;
   location: string;
   deleted_query: boolean;
+  solvequery:boolean
 }
 
 
@@ -44,6 +45,10 @@ const CampaignQuerySchema = new Schema<ICampaignQuery>(
       default: false,
       type: Boolean,
     },
+    solvequery:{
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true } 
 );

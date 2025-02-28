@@ -21,9 +21,13 @@ export async function POST(req: Request) {
       query.slug = slug;
     }
 
-    // Status Filter
-    if (status !== undefined) {
-      query.status = status;
+    // Apply status filtering
+    if (status === "PUBLISH") {
+      query.status = true; 
+    } else if (status === "PUBLISH_OF") {
+      query.status = false; 
+    } else if (status === "ALL") {
+      query.status = { $in: [true, false] }; 
     }
 
     // Date Filter

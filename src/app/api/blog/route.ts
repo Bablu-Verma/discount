@@ -10,13 +10,11 @@ const getPaginationParams = (req: Request) => {
   return { page, limit };
 };
 
-// Helper function to apply filters based on request body
 const getFilterParams = async (req: Request) => {
   const filter_ = await req.json();
 
   const filters: any = {};
   const sortOptions: any = { createdAt: -1 }; 
-
 
   if (filter_.category) {
     filters.category = filter_.category;
@@ -30,21 +28,23 @@ const getFilterParams = async (req: Request) => {
     filters.blogType = filter_.blogType;
   }
 
-
   if (filter_.writer_email) {
     filters.writer_email = filter_.writer_email;
   }
 
-  
   if (filter_.views) {
     filters.views = { $gte: filter_.views }; 
   }
 
-  
-  if (filter_.isPublished !== undefined) {
-    filters.isPublished = filter_.isPublished;
+  // Handle isPublished filter
+  if (filter_.isPublished === "ALL") {
+    // No filter applied
+  } else if (filter_.isPublished === "PUBLISHED") {
+    filters.isPublished = true;
+  } else if (filter_.isPublished === "PUBLISHED_FALSE") {
+    filters.isPublished = false;
   } else {
-    filters.isPublished = true; // Default filter
+    filters.isPublished = true; 
   }
 
   // Date Range Filtering (Created At)

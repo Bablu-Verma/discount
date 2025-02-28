@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { coupon_id } = await req.json(); // Extract coupon_id from request body
+    const { coupon_id, status = "ALL", deleted_coupon = "ALL" } = await req.json(); // Extract filters
 
     if (!coupon_id) {
       return new NextResponse(
@@ -15,8 +15,23 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find coupon with related store and category details
-    const coupon = await CouponModel.findOne({ _id: coupon_id, deleted_coupon: false })
+    const query: any = { _id: coupon_id };
+
+    // ✅ Filter by status (ACTIVE, OFF, ALL)
+    if (status !== "ALL") {
+      query.status = status === "ACTIVE";
+    }
+
+    // ✅ Filter by deleted_coupon (DELETE, ACTIVE, ALL)
+    if (deleted_coupon !== "ALL") {
+      query.deleted_coupon = deleted_coupon === "DELETE";
+    }
+
+    // ✅ Find coupon with store and category details
+    const coupon = await CouponModel.findOne(query)
+      .populate("store", "name img slug")
+      .populate("category", "name")
+      .lean();
 
     if (!coupon) {
       return new NextResponse(
@@ -30,18 +45,14 @@ export async function POST(req: Request) {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Failed to fetch coupon details:", error.message);
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Failed to fetch coupon details.", error: error.message }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    } else {
-      console.error("Unexpected error:", error);
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "An unexpected error occurred." }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    console.error("Failed to fetch coupon details:", error);
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        message: "Failed to fetch coupon details.",
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

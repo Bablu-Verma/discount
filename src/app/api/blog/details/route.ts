@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     // Define the filter based on accessType
     const filter: any = { slug };
 
-    if (accessType === "normal") {
+    if (accessType === "NORMAL_TYPE") {
       // Normal users can only access published blogs
       filter.isPublished = true;
     }
@@ -40,8 +40,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Increment view count only if accessType is "normal"
-    if (accessType === "normal") {
+    // Increment view count only if accessType is "NORMAL_TYPE"
+    if (accessType === "NORMAL_TYPE") {
       blog.views = (blog.views || 0) + 1;
       await blog.save();
     }

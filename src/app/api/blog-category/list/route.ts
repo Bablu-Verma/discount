@@ -12,15 +12,19 @@ export async function POST(req: Request) {
     const query: any = {};
     
     if (name) {
-      query.name = { $regex: name, $options: "i" }; // Case-insensitive search
+      query.name = { $regex: name, $options: "i" }; 
     }
 
     if (slug) {
       query.slug = slug;
     }
 
-    if (status !== undefined) {
-      query.status = status;
+    if (status === "PUBLISH") {
+      query.status = true; 
+    } else if (status === "PUBLISH_OF") {
+      query.status = false; 
+    } else if (status === "ALL") {
+      query.status = { $in: [true, false] }; 
     }
 
     if (startDate && endDate) {
@@ -31,7 +35,6 @@ export async function POST(req: Request) {
       query.createdAt = { $lte: new Date(endDate) };
     }
 
-    // Pagination setup
     const skip = (page - 1) * limit;
     const categories = await BlogCategoryModel.find(query).skip(skip).limit(limit);
     const totalCategories = await BlogCategoryModel.countDocuments(query);

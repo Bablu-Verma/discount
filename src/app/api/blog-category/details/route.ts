@@ -3,7 +3,6 @@ import dbConnect from "@/lib/dbConnect";
 import BlogCategoryModel from "@/model/BlogCategoryModel";
 import BlogModel from "@/model/BlogModal";
 
-
 export async function POST(req: Request) {
   await dbConnect();
 
@@ -26,9 +25,9 @@ export async function POST(req: Request) {
 
     const query: any = { slug };
 
-    // Apply accessType filtering for category
-    if (accessType === "normal") {
-      query.status = true; 
+    // 🔹 Apply accessType filtering for category
+    if (accessType === "NORMAL_TYPE") {
+      query.status = true; // Normal users can only access published categories
     }
 
     const category = await BlogCategoryModel.findOne(query);
@@ -46,10 +45,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // Fetch related blogs based on category ID
+    // 🔹 Fetch related blogs based on category ID
     const blogQuery: any = { categoryId: category._id };
 
-    if (accessType === "normal") {
+    if (accessType === "NORMAL_TYPE") {
       blogQuery.isPublished = true; // Normal users only see published blogs
     }
 

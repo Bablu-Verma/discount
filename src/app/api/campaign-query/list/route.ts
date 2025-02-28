@@ -38,7 +38,17 @@ export async function POST(req: Request) {
 
     // Extract filter and pagination parameters
     const requestData = await req.json();
-    const { user_id, subject, campaign_id, whatsapp_number, startDate, endDate, page = 1, limit = 10 } = requestData;
+    const {
+      user_id,
+      subject,
+      campaign_id,
+      whatsapp_number,
+      startDate,
+      endDate,
+      solvequery, // New field added for filtering
+      page = 1,
+      limit = 10,
+    } = requestData;
 
     const query: any = {};
 
@@ -55,9 +65,17 @@ export async function POST(req: Request) {
       query.createdAt = { $lte: new Date(endDate) };
     }
 
+    // ✅ Solve Query Filter
+    if (solvequery === "DONE") {
+      query.solvequery = true; // Fetch only solved queries
+    } else if (solvequery === "NOT_DONE") {
+      query.solvequery = false; // Fetch only unsolved queries
+    }
+    // If "ALL", do nothing (fetch both solved and unsolved queries)
+
     // Pagination calculations
     const skip = (page - 1) * limit;
-    
+
     const campaignQueries = await CampaignQueryModel.find(query)
       .populate("campaign_id", "name slug image active status")
       .skip(skip)

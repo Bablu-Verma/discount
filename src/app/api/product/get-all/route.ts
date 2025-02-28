@@ -2,72 +2,100 @@ import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
 import { NextResponse } from "next/server";
 
-type TSortOrder = Record<number, 1 | -1>;
+type TSortOrder = Record<string, 1 | -1>;
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
     const requestData = await req.json();
-
     const {
       page = 1,
       limit = 20,
       filterData,
+      search = "",
     } = requestData;
 
     console.log(filterData);
 
+    // ✅ Construct Filter Conditions
     const filterConditions: Record<string, any> = {};
-    const filterConditions1: Record<string, any> = {};
 
+    // 🔹 Search by title, user_email, brand, category
+    if (search) {
+      filterConditions.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { user_email: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 🔹 Filter by campaign_id
+    if (filterData?.campaign_id) {
+      filterConditions.campaign_id = filterData.campaign_id;
+    }
+
+    // 🔹 Active status filter (ACTIVE | ALL | DE_ACTIVE)
+    if (filterData?.active && filterData.active !== "ALL") {
+      filterConditions.active = filterData.active === "ACTIVE";
+    }
+
+    // 🔹 Deleted campaign filter (DELETE | ALL | ACTIVE)
+    if (filterData?.deleted_campaign && filterData.deleted_campaign !== "ALL") {
+      filterConditions.deleted_campaign = filterData.deleted_campaign === "DELETE";
+    }
+
+    // 🔹 Boolean filters (banner, hot, featured, new)
+    if (filterData?.banner === true) filterConditions.banner = true;
+    if (filterData?.hot === true) filterConditions.hot = true;
+    if (filterData?.featured === true) filterConditions.featured = true;
+    if (filterData?.new === true) filterConditions.new = true;
+
+    // 🔹 Category filter
     if (filterData?.categories?.length > 0) {
-      filterConditions1.category = { $in: filterData.categories };
+      filterConditions.category = { $in: filterData.categories };
     }
 
-    if (filterData?.trends?.length > 0) {
-      filterData.trends.forEach((trend: string) => {
-        if (trend === "hot") filterConditions1.hot = true;  
-        if (trend === "new") filterConditions1.new = true;
-        if (trend === "featured") filterConditions1.featured = true;
-      });
-    }
-
+    // 🔹 Date Filter (Created within X days)
     if (filterData?.day) {
       const daysAgo = new Date();
       daysAgo.setDate(daysAgo.getDate() - filterData.day);
-      filterConditions1.createdAt = { $gte: daysAgo };
+      filterConditions.createdAt = { $gte: daysAgo };
     }
 
+    // 🔹 Price Range Filter
     if (filterData?.amount?.length === 2) {
       const [minPrice, maxPrice] = filterData.amount;
       filterConditions.price = { $gte: minPrice, $lte: maxPrice };
     }
 
-    console.log("Filter conditions1:", filterConditions1);
+    console.log("Final Filter Conditions:", filterConditions);
 
-    const sortOrder: TSortOrder = (() => {
-      if (filterData?.price === "low_high") return { price: 1 };
-      if (filterData?.price === "high_low") return { price: -1 };
-      return { createdAt: -1 }; 
-    })();
+    const sortOrder: TSortOrder = {};
 
+    if (filterData?.price === "low_high") {
+      sortOrder.price = 1;
+    } else if (filterData?.price === "high_low") {
+      sortOrder.price = -1;
+    } else {
+      sortOrder.createdAt = -1; // Default sorting by latest created campaigns
+    }
     console.log("Sort order:", sortOrder);
 
-    // Pagination setup
+    // ✅ Pagination Setup
     const skip = (page - 1) * limit;
 
-    // Query campaigns
-    const campaigns = await CampaignModel.find(filterConditions1)
+    // ✅ Fetch Campaigns
+    const campaigns = await CampaignModel.find(filterConditions)
       .skip(skip)
       .limit(limit)
       .sort(sortOrder);
 
-
     console.log("Retrieved campaigns:", campaigns);
 
-    // Total count
-    const totalCount = await CampaignModel.countDocuments(filterConditions1);
+    // ✅ Get Total Count
+    const totalCount = await CampaignModel.countDocuments(filterConditions);
 
     return new NextResponse(
       JSON.stringify({

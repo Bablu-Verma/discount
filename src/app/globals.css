@@ -54,3 +54,49 @@ input:checked {
   background-color: #d85134;
 }
 
+/* editor css  */
+
+.editor-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.toolbar button,
+.toolbar select,
+.toolbar input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.toolbar button.is-active {
+  background: #000;
+  color: #fff;
+}
+
+.editor-content {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+  min-height: 300px;
+}
+
+.output {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

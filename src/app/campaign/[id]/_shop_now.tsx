@@ -15,8 +15,8 @@ interface IShopNowProps {
 }
 const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
   const token = useSelector((state: RootState) => state.user.token);
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  // const pathname = usePathname();
+  // const searchParams = useSearchParams();
 
   
   const [modelOpen, setModelOpen] = React.useState<boolean>(false);
@@ -49,9 +49,12 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       );
 
       if (data.success == true) {
-        // const fullURL = `${window.location.origin}${pathname}?${searchParams.toString()}`;
-        // window.open(fullURL, "_blank");
-        window.location.href = data.order.url;
+        
+        setTimeout(() => {
+          setModelOpen(false);
+          window.open(data.order.url, "_blank");
+          // window.location.reload();
+        }, 8000);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -60,12 +63,10 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       } else {
         console.error("Unknown error", error);
       }
-    } finally {
-      
       setTimeout(() => {
         setModelOpen(false);
-      }, 200);
-    }
+      }, 1000);
+    } 
   };
 
   return (

@@ -1,57 +1,39 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import StoreModel from "@/model/StoreModel";
 import CouponModel from "@/model/CouponModel";
-import CampaignModel from "@/model/CampaignModel";
-
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { slug } = await req.json();
+    const { coupon_id } = await req.json(); // Extract coupon_id from request body
 
-    if (!slug) {
+    if (!coupon_id) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store slug is required." }),
+        JSON.stringify({ success: false, message: "Coupon ID is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Find store by slug
-    const store = await StoreModel.findOne({ slug });
+    // Find coupon with related store and category details
+    const coupon = await CouponModel.findOne({ _id: coupon_id, deleted_coupon: false })
 
-    if (!store) {
+    if (!coupon) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store not found." }),
+        JSON.stringify({ success: false, message: "Coupon not found." }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const coupons = await CouponModel.find({ store: store._id, status: true })
-      .sort({ createdAt: -1 });
-
-   
-    const deals = await CampaignModel.find({ store: store._id, status: true })
-      .sort({ createdAt: -1 });
-
     return new NextResponse(
-      JSON.stringify({
-        success: true,
-        message: "Store details fetched successfully.",
-        data: {
-          store,
-          coupons,
-          deals,
-        },
-      }),
+      JSON.stringify({ success: true, message: "Coupon details fetched successfully.", data: coupon }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to fetch store details:", error.message);
+      console.error("Failed to fetch coupon details:", error.message);
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Failed to fetch store details.", error: error.message }),
+        JSON.stringify({ success: false, message: "Failed to fetch coupon details.", error: error.message }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     } else {

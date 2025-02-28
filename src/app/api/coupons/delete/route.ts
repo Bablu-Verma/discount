@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import StoreModel from "@/model/StoreModel";
+import CouponModel from "@/model/CouponModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
@@ -18,40 +18,42 @@ export async function POST(req: Request) {
 
     if (usertype !== "admin") {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
+        JSON.stringify({ success: false, message: "Access denied: Only admins can delete coupons" }),
         { status: 403, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const { storeId } = await req.json();
+    const { coupon_id } = await req.json();
 
-    if (!storeId) {
+    if (!coupon_id) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store ID is required." }),
+        JSON.stringify({ success: false, message: "Coupon ID is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const store = await StoreModel.findById(storeId);
-    if (!store) {
+    const coupon = await CouponModel.findById(coupon_id);
+
+    if (!coupon || coupon.deleted_coupon) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store not found." }),
+        JSON.stringify({ success: false, message: "Coupon not found or already deleted." }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    store.deleted_store = true;
-    await store.save();
+    // Soft delete the coupon
+    coupon.deleted_coupon = true;
+    await coupon.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Store deleted successfully." }),
+      JSON.stringify({ success: true, message: "Coupon deleted successfully." }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to delete store:", error.message);
+      console.error("Failed to delete coupon:", error.message);
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Failed to delete store.", error: error.message }),
+        JSON.stringify({ success: false, message: "Failed to delete coupon.", error: error.message }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     } else {

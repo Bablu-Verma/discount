@@ -10,9 +10,7 @@ interface LayoutProps {
 const InternalLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <InternalProvider>
-    
       <DashboardUI children={children} />
-     
     </InternalProvider>
   );
 };

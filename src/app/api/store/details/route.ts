@@ -3,23 +3,39 @@ import dbConnect from "@/lib/dbConnect";
 import StoreModel from "@/model/StoreModel";
 import CouponModel from "@/model/CouponModel";
 import CampaignModel from "@/model/CampaignModel";
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { slug } = await req.json();
+
+    
+    // Extracting slug and access_type from request body
+    const { slug, store_status } = await req.json();
 
     if (!slug) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store slug is required." }),
+        JSON.stringify({ success: false, message: "Slug is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Find store by slug
-    const store = await StoreModel.findOne({ slug });
+    
+    const query: any = { slug };
+
+
+    if (store_status === "ALL" ) {
+      query.store_status = { $in: ["ACTIVE", "INACTIVE", "REMOVED"] }; 
+    } else if (["ACTIVE", "INACTIVE", "REMOVED"].includes(store_status)) {
+      query.store_status = store_status; 
+    }
+   
+    
+
+   
+    const store = await StoreModel.findOne(query);
 
     if (!store) {
       return new NextResponse(
@@ -28,26 +44,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const coupons = await CouponModel.find({ store: store._id, status: true })
-      .sort({ createdAt: -1 });
-
-   
-    const deals = await CampaignModel.find({ store: store._id, status: true })
-      .sort({ createdAt: -1 });
-
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Store details fetched successfully.",
-        data: {
-          store,
-          coupons,
-          deals,
-        },
+        message: "Store fetched successfully.",
+        data: store,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error: unknown) {
+  }  catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to fetch store details:", error.message);
       return new NextResponse(

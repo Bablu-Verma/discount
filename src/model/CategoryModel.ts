@@ -1,13 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ICategory {
-  name: string; 
-  description: string; 
-  slug: string; 
-  status: boolean;
-  img: string;
-  font_awesome_class: string; 
-  deleted_category:boolean;
+  name: string;
+  description: string;
+  slug: string;
+  imges: string[]; 
+  status: "ACTIVE" | "INACTIVE" | "REMOVED"; 
 }
 
 // Create the Category schema
@@ -31,22 +29,12 @@ const CategorySchema = new Schema<ICategory>(
       lowercase: true,
       trim: true,
     },
-    img:{
-        type: String,
-        required: [true, "Image is required"],
-    },
-    font_awesome_class:{
-        type: String,
-        required: [true, "Font Awesome class is required"],
-    },
+    imges:[{type: String},{type: String}],
     status: {
-        type: Boolean,
-        default: true, 
-      },
-      deleted_category: {
-        type: Boolean,
-        default: false,  
-      }
+        type:String,
+        default: 'ACTIVE', 
+        enum: ['ACTIVE', 'INACTIVE', 'REMOVED'],
+    },
   },
   { timestamps: true } 
 );

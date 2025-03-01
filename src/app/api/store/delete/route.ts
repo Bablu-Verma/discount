@@ -23,16 +23,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const { storeId } = await req.json();
+    const { slug } = await req.json();
 
-    if (!storeId) {
+    if (!slug) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store ID is required." }),
+        JSON.stringify({ success: false, message: "Slug is required to delete the store." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const store = await StoreModel.findById(storeId);
+    // Find the store by slug
+    const store = await StoreModel.findOne({ slug });
+
     if (!store) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Store not found." }),
@@ -40,11 +42,16 @@ export async function POST(req: Request) {
       );
     }
 
-    store.deleted_store = true;
+    // Perform soft delete by updating store_status
+    store.store_status = "REMOVED";
     await store.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Store deleted successfully." }),
+      JSON.stringify({
+        success: true,
+        message: "Store removed successfully (soft delete).",
+        data: store,
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {

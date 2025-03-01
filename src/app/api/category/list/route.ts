@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
   try {
     const requestData = await req.json();
-    const { name, slug, status, startDate, endDate, deleted_category, page = 1, limit = 10 } = requestData;
+    const { name, status, startDate, endDate, page = 1, limit = 10 } = requestData;
 
     const query: any = {};
 
@@ -16,18 +16,11 @@ export async function POST(req: Request) {
       query.name = { $regex: name, $options: "i" };
     }
 
-    // Slug Filter
-    if (slug) {
-      query.slug = slug;
-    }
-
     // Apply status filtering
-    if (status === "PUBLISH") {
-      query.status = true; 
-    } else if (status === "PUBLISH_OF") {
-      query.status = false; 
-    } else if (status === "ALL") {
-      query.status = { $in: [true, false] }; 
+    if (status && ["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
+      query.status = status;
+    } else {
+      query.status = { $in: ["ACTIVE", "INACTIVE", "REMOVED"] };
     }
 
     // Date Filter
@@ -39,10 +32,7 @@ export async function POST(req: Request) {
       query.createdAt = { $lte: new Date(endDate) };
     }
 
-    // Deleted Category Filter
-    if (deleted_category !== undefined) {
-      query.deleted_category = deleted_category;
-    }
+   
 
     // Pagination
     const skip = (page - 1) * limit;

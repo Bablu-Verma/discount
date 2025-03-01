@@ -45,130 +45,141 @@ export async function POST(req: Request) {
       }
 
 
-    const requestData = await req.formData();
-    // console.log("Form Data Received:", Object.fromEntries(requestData.entries()));
+  
+      const requestData = await req.json();
+    const requiredFields = [
+      "title",
+      "actual_price",
+      "offer_price",
+      "store",
+      "category",
+      "description",
+      "redirect_url",
+      "img_array",
+      "calculation_mode",
+      "t_and_c",
+      "meta_title",
+      "meta_description",
+      "meta_keywords",
+      "product_status",
+    ];
 
-    const imgFiles = requestData.getAll("images") as string[];
-    const banner_file = requestData.get("banner") as string;
-    const description = requestData.get("description");
-    const calculation_type = requestData.get("calculation_type");
-    const product_name = requestData.get("product_name");
-    const brand_name = requestData.get("brand_name");
-    const price = requestData.get("price");
-    const cashback = requestData.get("cashback");
-    const product_status = requestData.get("product_status");
-    const banner_status = requestData.get("banner_status");
-    const category = requestData.get("category");
-    const terms = requestData.get("terms");
-    const meta_title = requestData.get("meta_title");
-    const meta_description = requestData.get("meta_description");
-    const meta_keywords = requestData.get("meta_keywords");
-    const tags = requestData.get("tags");
-    const new_p = requestData.get("new_p");
-    const featured_p = requestData.get("featured_p");
-    const hot_p = requestData.get("hot_p");
-    const add_poster = requestData.get("add_poster");
-    const arrival = requestData.get("arrival");
-    const flash_time = requestData.get("flash_time");
-    const client_url = requestData.get("client_url");
-
-    if (!imgFiles.length) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "At least one image is required.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    const slug = generateSlug(
-      typeof product_name === "string" ? product_name : ""
-    );
-
-   const find_product = await CampaignModel.findOne({slug:slug})
-
-    if (find_product) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Product with this name already exists.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    if(add_poster == "true"? true:false){
-      const find_arrival_count = await CampaignModel.find({arrival:true})
-
-      if (find_arrival_count.length > 4) {
+    // Validate Required Fields
+    for (const field of requiredFields) {
+      if (!requestData[field] || (Array.isArray(requestData[field]) && requestData[field].length === 0)) {
         return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: "You can also add $ product in arrival mode.",
-          }),
+          JSON.stringify({ success: false, message: `${field} is required.` }),
           { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
-  
     }
 
-  
-    // Construct campaign data object
-    const campaignData: Record<string, any> = {};
+    const {
+      title,
+      actual_price,
+      offer_price,
+      store,
+      category,
+      description,
+      redirect_url,
+      img_array,
+      calculation_mode,
+      t_and_c,
+      meta_title,
+      meta_description,
+      meta_keywords,
+      product_status,
+      product_tags,
+      log_poster,
+      main_banner,
+      premium_product,
+      flash_sale,
+      slug_type,
+      meta_robots,
+      canonical_url,
+      structured_data,
+      og_image,
+      og_title,
+      og_description,
+    } = requestData;
 
-    let offer_price: number = 0;
-
-    if (calculation_type === "Subtract") {
-      offer_price = Number(price) - Number(cashback);
-    } else if (calculation_type === "Division") {
-      offer_price = Number(price) * (1 - Number(cashback) / 100);
+    // Validate Number Fields
+    if (isNaN(Number(actual_price)) || isNaN(Number(offer_price))) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "actual_price and offer_price must be valid numbers." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    campaignData.title = product_name;
-    campaignData.client_url = client_url;
-    campaignData.calculation_type = calculation_type;
-    campaignData.price = Number(price);
-    campaignData.description = description;
-    campaignData.offer_price = offer_price;
-    campaignData.brand = brand_name;
-    campaignData.category = category;
-    campaignData.img = imgFiles;
-    campaignData.active = product_status === "active" ? true : false;
-    campaignData.tc = terms;
-    campaignData.cashback = Number(price) - offer_price;
-    campaignData.banner = banner_status === "active" ? true : false;
-    campaignData.hot = hot_p == "true" ? true : false;
-    campaignData.featured = featured_p == "true" ? true : false;
-    campaignData.new = new_p == "true" ? true : false;
-    campaignData.slug = slug;
-    campaignData.meta_title = meta_title;
-    campaignData.meta_description = meta_description;
-    campaignData.meta_keywords = meta_keywords;
-    campaignData.tags = tags;
-    campaignData.add_poster = add_poster == "true" ? true : false;
-    campaignData.arrival = arrival == "true" ? true : false;
-    if(flash_time){
-      campaignData.expire_time = flash_time;
-    }
-    campaignData.user_email = user?.email;
-    campaignData.banner_img = banner_file;
+    // Validate Slug Uniqueness
+    const slug = generateSlug(title);
+    const existingProduct = await CampaignModel.findOne({ product_slug: slug });
 
-    const campaign = new CampaignModel(campaignData);
-    await campaign.save();
+    if (existingProduct) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Product with this title already exists." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    
+    if (premium_product === true) {
+      const premiumCount = await CampaignModel.countDocuments({ premium_product: true });
+      if (premiumCount >= 4) {
+        return new NextResponse(
+          JSON.stringify({ success: false, message: "You can only add up to 4 premium products." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Calculate Cashback Price
+    let cashback_price = 0;
+    if (calculation_mode === "FIX") {
+      cashback_price = Number(actual_price) - Number(offer_price);
+    } else if (calculation_mode === "PERCENTAGE") {
+      cashback_price = Number(actual_price) * (1 - Number(offer_price) / 100);
+    }
+
+    // Create New Campaign
+    const newCampaign = new CampaignModel({
+      title,
+      actual_price,
+      offer_price,
+      cashback_between:cashback_price,
+      user_email: user?.email,
+      store,
+      category,
+      description,
+      redirect_url,
+      img_array,
+      product_tags,
+      log_poster,
+      main_banner,
+      premium_product,
+      flash_sale,
+      calculation_mode,
+      cashback_price,
+      t_and_c,
+      product_slug: slug,
+      slug_type,
+      meta_title,
+      meta_description,
+      meta_keywords,
+      meta_robots,
+      canonical_url,
+      structured_data,
+      og_image,
+      og_title,
+      og_description,
+      product_status,
+    });
+
+    await newCampaign.save();
 
     return new NextResponse(
-      JSON.stringify({
-        success: true,
-        message: "Campaign added successfully",
-        data: campaign,
-      }),
-      {
-        status: 201,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      JSON.stringify({ success: true, message: "Campaign added successfully", data: newCampaign }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     if (error instanceof Error) {

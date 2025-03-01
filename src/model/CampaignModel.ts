@@ -3,165 +3,201 @@ const AutoIncrementFactory = require("mongoose-sequence");
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
-// Define the interface for the Campaign model
-export interface ICampaign {
-  _id: string;
-  user_email: string;
+interface ICampaign {
   title: string;
-  price: string;
+  actual_price: string;
   offer_price: string;
-  cashback: string;
-  campaign_id: number;
+  cashback_between: string;
+  user_email: string;
+  store: string;
   category: string;
   description: string;
-  img: Array<string>;
-  new: boolean;
-  featured: boolean;
-  add_poster: boolean;
-  arrival: boolean;
-  hot: boolean;
-  active: boolean;
-  tc: string; 
-  created_at: Date;
-  review: number;
-  start_date: Date; 
-  end_date: Date; 
-  slug: string; 
-  discount_percentage: number; 
-  tags: string; 
-  meta_title: string; 
-  meta_description: string; 
-  meta_keywords: string; 
-  deleted_campaign: boolean;
-  brand: string;
-  banner: boolean;
-  banner_img:string
-  expire_time: Date | null;
-  createdAt:string,
-  calculation_type:string,
-  client_url:string
+  redirect_url: string;
+  img_array: string[];
+  product_tags?: ("new" | "hot" | "best" | "fast selling")[];
+  log_poster: { is_active: boolean; image: string }[];
+  main_banner: { is_active: boolean; image: string }[];
+  premium_product: { is_active: boolean; image: string }[];
+  flash_sale: { is_active: boolean; image: string; end_time: string }[];
+  calculation_mode: "PERCENTAGE" | "FIX";
+  t_and_c: string;
+  product_slug: string;
+  slug_type: "INTERNAL" | "EXTERNAL";
+  tags?: string[];
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string[];
+  meta_robots?: "index, follow" | "noindex, nofollow";
+  canonical_url?: string;
+  structured_data?: string;
+  og_image?: string;
+  og_title?: string;
+  og_description?: string;
+  product_id?: number;
+  product_status: "ACTIVE" | "PAUSE" | "DELETE";
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const CampaignSchema = new Schema<ICampaign>(
   {
-    title: {
-      type: String,
-      required: [true, "Title is required"],
-    },
-    price: {
-      type: String,
-      required: [true, "Price is required"],
-    },
-    cashback: {
+    title: { type: String, required: [true, "Title is required"] },
+    actual_price: { type: String, required: [true, "Price is required"] },
+    offer_price: { type: String, required: [true, "Offer price is required"] },
+    cashback_between: {
       type: String,
       required: [true, "Cashback is required"],
     },
-    user_email:{
-      type: String,
-      required: [true, "email is required"],
-    },
-    offer_price: {
-      type: String,
-      required: [true, "Offer price is required"],
-    },
-    brand: {
-      type: String,
-      required: [true, "Brand is required"],
-    },
-    category: {
-      type: String,
-      required: [true, "Category is required"],
-    },
-    description: {
-      type: String,
-      required: [true, "Description is required"],
-    },
-    client_url: {
-      type: String,
-      required: [true, "Client_url is required"],
-    },
-    img: {
+    user_email: { type: String, required: [true, "Email is required"] },
+    store: { type: String, required: [true, "Store is required"] },
+    category: { type: String, required: [true, "Category is required"] },
+    description: { type: String, required: [true, "Description is required"] },
+    redirect_url: { type: String, required: [true, "Client URL is required"] },
+    img_array: { type: [String], required: [true, "Images are required"] },
+
+    product_tags: {
       type: [String],
-      required: [true, "Images are required"],
+      enum: ["new", "hot", "best", "fast selling"],
+      default: [],
     },
-    new: {
-      type: Boolean,
-      default: false,
+
+    log_poster: {
+      type: [
+        {
+          is_active: { type: Boolean, default: false },
+          image: { type: String },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (value: { is_active: boolean; image: string }[]) {
+          return value.every((item) => !item.is_active || !!item.image);
+        },
+        message: "Image is required when log_poster is active",
+      },
     },
-    add_poster: {
-      type: Boolean,
-      default: false,
+
+    main_banner: {
+      type: [
+        {
+          is_active: { type: Boolean, default: false },
+          image: { type: String },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (value: { is_active: boolean; image: string }[]) {
+          return value.every((item) => !item.is_active || !!item.image);
+        },
+        message: "Image is required when main_banner is active",
+      },
     },
-    banner_img:{
+
+    premium_product: {
+      type: [
+        {
+          is_active: { type: Boolean, default: false },
+          image: { type: String },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (value: { is_active: boolean; image: string }[]) {
+          return value.every((item) => !item.is_active || !!item.image);
+        },
+        message: "Image is required when premium_product is active",
+      },
+    },
+
+    flash_sale: {
+      type: [
+        {
+          is_active: { type: Boolean, default: false },
+          image: { type: String },
+          end_time: { type: String },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (
+          value: { is_active: boolean; image: string; end_time: string }[]
+        ) {
+          return value.every(
+            (item) =>
+              !item.is_active || (!!item.image && !!item.end_time)
+          );
+        },
+        message:
+          "Image and end_time are required when flash_sale is active",
+      },
+    },
+
+    calculation_mode: {
       type: String,
+      enum: ["PERCENTAGE", "FIX"],
+      required: [true, "Calculation mode is required"],
     },
-    arrival: {
-      type: Boolean,
-      default: false,
-    },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
-    calculation_type:{
-      type: String,
-      required: [true, "Calculation type is required"],
-    },
-    hot: {
-      type: Boolean,
-      default: false,
-    },
-    tc: {
+
+    t_and_c: {
       type: String,
       required: [true, "Terms and conditions are required"],
-    },     
-    slug: {
+    },
+
+    product_slug: {
       type: String,
       required: [true, "Slug is required"],
       unique: true,
     },
-    tags: {
+
+    slug_type: {
       type: String,
+      enum: ["INTERNAL", "EXTERNAL"],
+      default: "INTERNAL",
     },
-    meta_title: {
-      type: String,
-      required: [true, "Meta title is required"],
-    },
+
+    meta_title: { type: String, required: [true, "Meta title is required"] },
+
     meta_description: {
       type: String,
       required: [true, "Meta description is required"],
     },
+
     meta_keywords: {
-      type: String,
+      type: [String],
       required: [true, "Meta keywords are required"],
     },
-    campaign_id: { 
-      type: Number 
+
+    meta_robots: { type: String, enum: ["index, follow", "noindex, nofollow"] },
+
+    canonical_url: { type: String },
+
+    structured_data: { type: String },
+
+    og_image: { type: String },
+
+    og_title: { type: String },
+
+    og_description: { type: String },
+
+    product_id: { type: Number },
+
+    product_status: {
+      type: String,
+      enum: ["ACTIVE", "PAUSE", "DELETE"],
+      default: "ACTIVE",
+      required: [true, "Product status is required"],
     },
-    banner: {
-      type: Boolean,
-      default: false,
-    },
-    active: {
-      type: Boolean,
-      default: false,
-      required: [true, "Active status is required"],
-    },
-    deleted_campaign: {
-      type: Boolean,
-      default: false,
-    },
-    expire_time: { 
-      type: Date, 
-      default: null 
-    },
-    
   },
   { timestamps: true }
 );
 
-CampaignSchema.plugin(AutoIncrement, { inc_field: "campaign_id", start_seq: 100 });
+CampaignSchema.plugin(AutoIncrement, {
+  inc_field: "product_id",
+  start_seq: 100,
+});
 
-const CampaignModel = mongoose.models.Campaign || mongoose.model<ICampaign>("Campaign", CampaignSchema);
+const CampaignModel =
+  mongoose.models.Campaign ||
+  mongoose.model<ICampaign>("Campaign", CampaignSchema);
 
 export default CampaignModel;

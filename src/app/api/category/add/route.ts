@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import CategoryModel from "@/model/CategoryModel";
+import CategoryModel, { ICategory } from "@/model/CategoryModel";
 
 import { upload_image } from "@/helpers/server/upload_image";
 import { generateSlug } from "@/helpers/client/client_function";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -43,27 +44,15 @@ export async function POST(req: Request) {
        );
      }
  
-    const requestData = await req.json();
-    const { name, description, img ,status, font_awesome_class } = requestData; 
+     const { name, description, imges, status }: ICategory = await req.json();
 
-    console.log(requestData)
-
-
-    // Validate required fields
-    if (!name || !description || !img || !font_awesome_class) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Name, description, image, and Font Awesome class are required.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+     // Validate required fields
+     if (!name || !description || !imges || !Array.isArray(imges)) {
+       return new NextResponse(
+         JSON.stringify({ success: false, message: "All fields are required and 'imges' must be an array." }),
+         { status: 400, headers: { "Content-Type": "application/json" } }
+       );
+     }
 
     const slug = generateSlug(name)
  
@@ -86,15 +75,12 @@ export async function POST(req: Request) {
       );
     }
 
-
-
     // Create a new category
     const newCategory = new CategoryModel({
       name,
       description,
       slug,
-      img,
-      font_awesome_class,
+      imges,
       status,
     });
 

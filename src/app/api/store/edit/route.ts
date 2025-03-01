@@ -23,17 +23,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const requestData = await req.json();
-    const { storeId, name, description, img, cashback_status, store_link, cashback, status } = requestData;
+    const { slug, description, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } =
+      await req.json();
 
-    if (!storeId) {
+    if (!slug) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Store ID is required." }),
+        JSON.stringify({ success: false, message: "Slug is required to update the store." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const store = await StoreModel.findById(storeId);
+    // Find the store by slug
+    const store = await StoreModel.findOne({ slug });
 
     if (!store) {
       return new NextResponse(
@@ -42,18 +43,23 @@ export async function POST(req: Request) {
       );
     }
 
-    if (name) store.name = name;
-    if (description) store.description = description;
-    if (img) store.img = img;
-    if (cashback_status !== undefined) store.cashback_status = cashback_status;
-    if (store_link) store.store_link = store_link;
-    if (cashback) store.cashback = cashback;
-    if (status !== undefined) store.status = status;
+    // Update only allowed fields (excluding name)
+    if (description !== undefined && description !== "") store.description = description;
+    if (store_img !== undefined && store_img !== "") store.store_img = store_img;
+    if (cashback_status !== undefined && cashback_status !== "") store.cashback_status = cashback_status;
+    if (store_link !== undefined && store_link !== "") store.store_link = store_link;
+    if (cashback_type !== undefined && cashback_type !== "") store.cashback_type = cashback_type;
+    if (cashback_amount !== undefined && cashback_amount !== "") store.cashback_amount = cashback_amount;
+    if (store_status !== undefined && store_status !== "") store.store_status = store_status;
 
     await store.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Store updated successfully.", data: store }),
+      JSON.stringify({
+        success: true,
+        message: "Store updated successfully.",
+        data: store,
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {

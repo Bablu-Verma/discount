@@ -9,8 +9,9 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
+    // Authenticate User
     const { authenticated, usertype, message } = await authenticateAndValidateUser(req);
-    
+
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({ success: false, message: message || "User is not authenticated" }),
@@ -18,42 +19,49 @@ export async function POST(req: Request) {
       );
     }
 
+    // Only Admins Can Create a Store
     if (usertype !== "admin") {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
+        JSON.stringify({ success: false, message: "Access denied: Requires admin role" }),
         { status: 403, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    // Extract Request Data
     const requestData = await req.json();
-    const { name, description, img, cashback_status, store_link, cashback, status } = requestData;
+    const { name, description, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } = requestData;
 
-    if (!name || !description || !img) {
+    // Validate Required Fields
+    if (!name || !description || !store_img || !store_link || !cashback_type) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Name, description, and image are required." }),
+        JSON.stringify({ success: false, message: "Missing required fields: name, description, store_img, store_link, cashback_type" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    // Generate Slug
     const slug = generateSlug(name);
 
+    // Check for Existing Store
     const existingStore = await StoreModel.findOne({ $or: [{ name }, { slug }] });
     if (existingStore) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "A store with this name or slug already exists." }),
+        JSON.stringify({ success: false, message: "Store with this name or slug already exists." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    // Create Store
     const newStore = new StoreModel({
       name,
       description,
       slug,
-      img,
+      store_img,
       cashback_status,
       store_link,
-      cashback,
-      status,
+      cashback_type,
+      cashback_amount,
+      store_status,
     });
 
     await newStore.save();
@@ -62,7 +70,7 @@ export async function POST(req: Request) {
       JSON.stringify({ success: true, message: "Store added successfully.", data: newStore }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error: unknown) {
+  }  catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to add store:", error.message);
       return new NextResponse(

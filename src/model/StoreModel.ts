@@ -1,25 +1,34 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
+const AutoIncrementFactory = require("mongoose-sequence");
 
-export interface IStore {
-  name: string; 
-  description: string; 
-  slug: string; 
-  status: boolean;
-  cashback_status: boolean;
-  store_link:string;
-  cashback:string;
-  img: string;
-  deleted_store: boolean;
+const AutoIncrement = AutoIncrementFactory(mongoose);
+
+
+
+export interface IStore extends Document {
+  name: string;
+  description: string;
+  slug: string;
+  store_id?: number; 
+  store_img: string;
+  cashback_status: "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK";
+  store_link: string;
+  cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
+  cashback_amount?: string;
+  store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
 }
-
 
 const StoreSchema = new Schema<IStore>(
   {
     name: {
       type: String,
       required: [true, "Store name is required"],
-      unique: true, 
-      trim: true, 
+      unique: true,
+      trim: true,
+    },
+    store_id: {
+      type: Number,
+      unique: true,
     },
     description: {
       type: String,
@@ -29,36 +38,47 @@ const StoreSchema = new Schema<IStore>(
     slug: {
       type: String,
       required: [true, "Slug is required"],
-      unique: true, 
+      unique: true,
       lowercase: true,
       trim: true,
     },
-    img: {
+    store_img: {
       type: String,
       required: [true, "Image is required"],
     },
-    cashback_status:{
-      type: Boolean,
-      default: false,
+    cashback_status: {
+      type: String,
+      default: "ACTIVE_CASHBACK",
+      enum: ["ACTIVE_CASHBACK", "INACTIVE_CASHBACK"],
     },
-    store_link:{
+    store_link: {
+      type: String,
+      required: true,
+    },
+    cashback_type: {
+      type: String,
+      enum: ["PERCENTAGE", "FLAT_AMOUNT"],
+      required: true,
+    },
+    cashback_amount: {
       type: String,
     },
-    cashback:{
-      type:String
+    store_status: {
+      type: String,
+      default: "ACTIVE",
+      enum: ["ACTIVE", "INACTIVE", "REMOVED"],
     },
-    status: {
-      type: Boolean,
-      default: true, 
-    },
-    deleted_store: {
-      type: Boolean,
-      default: false,  
-    }
+   
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
-const StoreModel = mongoose.models.Store || mongoose.model<IStore>("Store", StoreSchema);
+StoreSchema.plugin(AutoIncrement, {
+  inc_field: "store_id",
+  start_seq: 1,
+});
+
+const StoreModel =
+  mongoose.models.Store || mongoose.model<IStore>("Store", StoreSchema);
 
 export default StoreModel;

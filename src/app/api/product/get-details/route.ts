@@ -6,13 +6,13 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { slug } = await req.json(); 
+    const { product_slug, product_status } = await req.json(); 
 
-    if (!slug) {
+    if (!product_slug) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Campaign slug is required.",
+          message: "Product slug is required.",
         }),
         {
           status: 400,
@@ -23,13 +23,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const campaign = await CampaignModel.findOne({ slug });
+    // Filter condition
+    let filters: any = { product_slug };
 
-    if (!campaign) {
+    if (product_status && product_status !== "ALL") {
+      filters.product_status = product_status;
+    }
+
+    const product = await CampaignModel.findOne(filters);
+
+    if (!product) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Campaign not found.",
+          message: "Product not found.",
         }),
         {
           status: 404,
@@ -43,8 +50,8 @@ export async function POST(req: Request) {
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Campaign details retrieved successfully.",
-        data: campaign,
+        message: "Product details retrieved successfully.",
+        data: product,
       }),
       {
         status: 200,
@@ -55,11 +62,11 @@ export async function POST(req: Request) {
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to retrieve campaign details:", error.message);
+      console.error("Failed to retrieve product details:", error.message);
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Failed to retrieve campaign details.",
+          message: "Failed to retrieve product details.",
           error: error.message,
         }),
         {

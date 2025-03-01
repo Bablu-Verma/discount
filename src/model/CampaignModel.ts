@@ -5,9 +5,11 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 interface ICampaign {
   title: string;
-  actual_price: string;
-  offer_price: string;
-  cashback_between: string;
+  actual_price: Number;
+  offer_price: Number;
+  cashback_: Number;
+  calculated_cashback: Number;
+  calculation_mode: "PERCENTAGE" | "FIX";
   user_email: string;
   store: string;
   category: string;
@@ -15,11 +17,10 @@ interface ICampaign {
   redirect_url: string;
   img_array: string[];
   product_tags?: ("new" | "hot" | "best" | "fast selling")[];
-  log_poster: { is_active: boolean; image: string }[];
+  long_poster: { is_active: boolean; image: string }[];
   main_banner: { is_active: boolean; image: string }[];
   premium_product: { is_active: boolean; image: string }[];
   flash_sale: { is_active: boolean; image: string; end_time: string }[];
-  calculation_mode: "PERCENTAGE" | "FIX";
   t_and_c: string;
   product_slug: string;
   slug_type: "INTERNAL" | "EXTERNAL";
@@ -42,11 +43,20 @@ interface ICampaign {
 const CampaignSchema = new Schema<ICampaign>(
   {
     title: { type: String, required: [true, "Title is required"] },
-    actual_price: { type: String, required: [true, "Price is required"] },
-    offer_price: { type: String, required: [true, "Offer price is required"] },
-    cashback_between: {
-      type: String,
+    actual_price: { type: Number, required: [true, "Price is required"] },
+    offer_price: { type: Number, required: [true, "Offer price is required"] },
+    cashback_: {
+      type: Number,
       required: [true, "Cashback is required"],
+    },
+    calculated_cashback:{
+      type: Number,
+      required: [true, "Calculated Cashback is required"],
+    },
+    calculation_mode: {
+      type: String,
+      enum: ["PERCENTAGE", "FIX"],
+      required: [true, "Calculation mode is required"],
     },
     user_email: { type: String, required: [true, "Email is required"] },
     store: { type: String, required: [true, "Store is required"] },
@@ -61,7 +71,7 @@ const CampaignSchema = new Schema<ICampaign>(
       default: [],
     },
 
-    log_poster: {
+    long_poster: {
       type: [
         {
           is_active: { type: Boolean, default: false },
@@ -132,11 +142,7 @@ const CampaignSchema = new Schema<ICampaign>(
       },
     },
 
-    calculation_mode: {
-      type: String,
-      enum: ["PERCENTAGE", "FIX"],
-      required: [true, "Calculation mode is required"],
-    },
+   
 
     t_and_c: {
       type: String,

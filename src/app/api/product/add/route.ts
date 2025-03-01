@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const requiredFields = [
       "title",
       "actual_price",
-      "offer_price",
+      "cashback_",
       "store",
       "category",
       "description",
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     const {
       title,
       actual_price,
-      offer_price,
+      cashback_,
       store,
       category,
       description,
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
       meta_keywords,
       product_status,
       product_tags,
-      log_poster,
+      long_poster,
       main_banner,
       premium_product,
       flash_sale,
@@ -103,16 +103,12 @@ export async function POST(req: Request) {
       og_description,
     } = requestData;
 
-    // Validate Number Fields
-    if (isNaN(Number(actual_price)) || isNaN(Number(offer_price))) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "actual_price and offer_price must be valid numbers." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+   
 
     // Validate Slug Uniqueness
     const slug = generateSlug(title);
+
+    
     const existingProduct = await CampaignModel.findOne({ product_slug: slug });
 
     if (existingProduct) {
@@ -133,21 +129,34 @@ export async function POST(req: Request) {
       }
     }
 
-    // Calculate Cashback Price
-    let cashback_price = 0;
-    if (calculation_mode === "FIX") {
-      cashback_price = Number(actual_price) - Number(offer_price);
-    } else if (calculation_mode === "PERCENTAGE") {
-      cashback_price = Number(actual_price) * (1 - Number(offer_price) / 100);
+     // Validate Number Fields
+     if (isNaN(Number(actual_price)) || isNaN(Number(cashback_))) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "actual_price and cashback_ must be valid numbers." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
+
+    let calculated_cashback_ = 0
+    let offer_price_ = Number(actual_price)
+
+    if (calculation_mode === "FIX") {
+      calculated_cashback_ =  Number(cashback_) ;
+    } else if (calculation_mode === "PERCENTAGE") {
+      calculated_cashback_ = Number(actual_price) * Number(cashback_) / 100;
+    }
+
+     offer_price_ = actual_price - calculated_cashback_
 
 
     // Create New Campaign
     const newCampaign = new CampaignModel({
       title,
       actual_price,
-      offer_price,
-      cashback_between:cashback_price,
+      offer_price:offer_price_,
+      cashback_:cashback_,
+      calculated_cashback:calculated_cashback_,
+      calculation_mode,
       user_email: user?.email,
       store,
       category,
@@ -155,12 +164,10 @@ export async function POST(req: Request) {
       redirect_url,
       img_array,
       product_tags,
-      log_poster,
+      long_poster,
       main_banner,
       premium_product,
       flash_sale,
-      calculation_mode,
-      cashback_price,
       t_and_c,
       product_slug: slug,
       slug_type,

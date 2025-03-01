@@ -58,29 +58,25 @@ export async function DELETE(req: Request) {
       );
     }
 
-    // Find and delete the campaign by ID
-    const deletedCampaign = await CampaignModel.findByIdAndDelete(id);
+    // Find the campaign by ID
+    const campaign_ = await CampaignModel.findById(id);
 
-    if (!deletedCampaign) {
+    if (!campaign_) {
       return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Campaign not found.",
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        JSON.stringify({ success: false, message: "Campaign not found." }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    campaign_.product_status = "DELETE";
+    await campaign_.save();
+
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Campaign deleted successfully.",
-        data: deletedCampaign,
+        // data: campaign_,
       }),
       {
         status: 200,

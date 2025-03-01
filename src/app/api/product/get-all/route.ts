@@ -8,110 +8,86 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const requestData = await req.json();
-    const {
-      page = 1,
-      limit = 20,
-      filterData,
-      search = "",
-    } = requestData;
+    const { 
+      page = 1, 
+      limit = 10, 
+      title, 
+      calculation_mode, 
+      user_email, 
+      store, 
+      category, 
+      product_tags, 
+      long_poster, 
+      main_banner, 
+      premium_product, 
+      flash_sale, 
+      slug_type, 
+      product_id, 
+      product_status, 
+      startDate, 
+      endDate 
+    } = await req.json();
 
-    console.log(filterData);
+    const filters: any = {};
 
-    // ✅ Construct Filter Conditions
-    const filterConditions: Record<string, any> = {};
-
-    // 🔹 Search by title, user_email, brand, category
-    if (search) {
-      filterConditions.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { user_email: { $regex: search, $options: "i" } },
-        { brand: { $regex: search, $options: "i" } },
-        { category: { $regex: search, $options: "i" } },
-      ];
+    // Title (Partial Match)
+    if (title) {
+      filters.title = { $regex: title, $options: "i" };
     }
 
-    // 🔹 Filter by campaign_id
-    if (filterData?.campaign_id) {
-      filterConditions.campaign_id = filterData.campaign_id;
+    if (calculation_mode) {
+      filters.calculation_mode = calculation_mode; 
     }
 
-    // 🔹 Active status filter (ACTIVE | ALL | DE_ACTIVE)
-    if (filterData?.active && filterData.active !== "ALL") {
-      filterConditions.active = filterData.active === "ACTIVE";
+    // Direct Match Filters
+    if (user_email) filters.user_email = user_email;
+    if (store) filters.store = store;
+    if (category) filters.category = category;
+    if (slug_type) filters.slug_type = slug_type;
+    if (product_id) filters._id = product_id;
+
+    // Product Tags
+    if (product_tags?.length) {
+      filters.product_tags = { $in: product_tags };
     }
 
-    // 🔹 Deleted campaign filter (DELETE | ALL | ACTIVE)
-    if (filterData?.deleted_campaign && filterData.deleted_campaign !== "ALL") {
-      filterConditions.deleted_campaign = filterData.deleted_campaign === "DELETE";
+    // Boolean Filters
+    if (long_poster === true) filters.long_poster = { $exists: true, $ne: [] };
+    if (main_banner === true) filters.main_banner = { $exists: true, $ne: [] };
+    if (premium_product === true) filters.premium_product = { $exists: true, $ne: [] };
+    if (flash_sale === true) filters.flash_sale = { $exists: true, $ne: [] };
+
+    // Product Status Handling
+    if (product_status && product_status !== "ALL") {
+      filters.product_status = product_status;
     }
 
-    // 🔹 Boolean filters (banner, hot, featured, new)
-    if (filterData?.banner === true) filterConditions.banner = true;
-    if (filterData?.hot === true) filterConditions.hot = true;
-    if (filterData?.featured === true) filterConditions.featured = true;
-    if (filterData?.new === true) filterConditions.new = true;
-
-    // 🔹 Category filter
-    if (filterData?.categories?.length > 0) {
-      filterConditions.category = { $in: filterData.categories };
+    // Time Range Filter
+    if (startDate || endDate) {
+      filters.createdAt = {};
+      if (startDate) filters.createdAt.$gte = new Date(startDate);
+      if (endDate) filters.createdAt.$lte = new Date(endDate);
     }
 
-    // 🔹 Date Filter (Created within X days)
-    if (filterData?.day) {
-      const daysAgo = new Date();
-      daysAgo.setDate(daysAgo.getDate() - filterData.day);
-      filterConditions.createdAt = { $gte: daysAgo };
-    }
+    // Pagination
+    const skip = (Number(page) - 1) * Number(limit);
 
-    // 🔹 Price Range Filter
-    if (filterData?.amount?.length === 2) {
-      const [minPrice, maxPrice] = filterData.amount;
-      filterConditions.price = { $gte: minPrice, $lte: maxPrice };
-    }
-
-    console.log("Final Filter Conditions:", filterConditions);
-
-    const sortOrder: TSortOrder = {};
-
-    if (filterData?.price === "low_high") {
-      sortOrder.price = 1;
-    } else if (filterData?.price === "high_low") {
-      sortOrder.price = -1;
-    } else {
-      sortOrder.createdAt = -1; // Default sorting by latest created campaigns
-    }
-    console.log("Sort order:", sortOrder);
-
-    // ✅ Pagination Setup
-    const skip = (page - 1) * limit;
-
-    // ✅ Fetch Campaigns
-    const campaigns = await CampaignModel.find(filterConditions)
+    // Fetch Products with Pagination
+    const products = await CampaignModel.find(filters)
       .skip(skip)
-      .limit(limit)
-      .sort(sortOrder);
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
 
-    console.log("Retrieved campaigns:", campaigns);
-
-    // ✅ Get Total Count
-    const totalCount = await CampaignModel.countDocuments(filterConditions);
+    // Get Total Count
+    const total = await CampaignModel.countDocuments(filters);
 
     return new NextResponse(
-      JSON.stringify({
-        success: true,
-        message: "Campaigns retrieved successfully",
-        data: campaigns,
-        totalCount,
-        page,
-        totalPages: Math.ceil(totalCount / limit),
+      JSON.stringify({ 
+        success: true, 
+        data: products, 
+        pagination: { total, page, limit } 
       }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Error retrieving campaigns:", error);

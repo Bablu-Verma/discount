@@ -45,7 +45,7 @@ export async function DELETE(req: Request) {
     const requestData = await req.json();
     const { categoryId } = requestData;
 
-    // Validate required fields
+   
     if (!categoryId) {
       return new NextResponse(
         JSON.stringify({
@@ -79,14 +79,21 @@ export async function DELETE(req: Request) {
       );
     }
 
-   
-    category.deleted_category = true;
+    if (category.status === "REMOVED") {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Category is already removed." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Update the deleted_category field to true (soft delete)
+    category.status = 'REMOVED';
     await category.save();
 
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: " blog Category deleted successfully.",
+        message: "Category deleted successfully.",
       }),
       {
         status: 200,
@@ -97,7 +104,7 @@ export async function DELETE(req: Request) {
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to delete blog category:", error.message);
+      console.error("Failed to delete category:", error.message);
       return new NextResponse(
         JSON.stringify({
           success: false,

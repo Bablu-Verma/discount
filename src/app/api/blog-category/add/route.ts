@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-
-
-import { upload_image } from "@/helpers/server/upload_image";
 import { generateSlug } from "@/helpers/client/client_function";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-import BlogCategoryModel from "@/model/BlogCategoryModel";
+import BlogCategoryModel, { IBCategory } from "@/model/BlogCategoryModel";
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -44,27 +42,15 @@ export async function POST(req: Request) {
        );
      }
  
-    const requestData = await req.json();
-    const { name, description, img ,status } = requestData; 
+     const { name, description, imges, status }: IBCategory = await req.json();
 
-    console.log(requestData)
-
-
-    // Validate required fields
-    if (!name || !description || !img ) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Name, description, image, and Font Awesome class are required.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+     // Validate required fields
+     if (!name || !description || !imges || !Array.isArray(imges)) {
+       return new NextResponse(
+         JSON.stringify({ success: false, message: "All fields are required and 'imges' must be an array." }),
+         { status: 400, headers: { "Content-Type": "application/json" } }
+       );
+     }
 
     const slug = generateSlug(name)
  
@@ -87,14 +73,12 @@ export async function POST(req: Request) {
       );
     }
 
-
-
     // Create a new category
     const newCategory = new BlogCategoryModel({
       name,
       description,
       slug,
-      img,
+      imges,
       status,
     });
 
@@ -104,7 +88,7 @@ export async function POST(req: Request) {
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Blog Category added successfully.",
+        message: "Category added successfully.",
         data: newCategory,
       }),
       {
@@ -116,11 +100,11 @@ export async function POST(req: Request) {
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Failed to add blog category:", error.message);
+      console.error("Failed to add category:", error.message);
       return new NextResponse(
         JSON.stringify({ 
           success: false,
-          message: "Failed to add blog category.",
+          message: "Failed to add category.",
           error: error.message,
         }),
         {

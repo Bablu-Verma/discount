@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     const requestData = await req.json();
 
-    const { description, slug, img, font_awesome_class, status } = requestData;
+    const { description, slug, imges, status } = requestData;
 
     // Validate required fields
     if (!slug) {
@@ -76,22 +76,22 @@ export async function POST(req: Request) {
         }
       );
     }
+// Object to store fields to update
+const updatedFields: any = {};
 
-    const updatedFields: any = {};
+// Only update fields that have a valid value
+if (description && description.trim() !== "") updatedFields.description = description;
+if (status && ["ACTIVE", "INACTIVE"].includes(status)) updatedFields.status = status;
 
-    if (description) updatedFields.description = description;
+// Update images if an array of valid image links is provided
+if (Array.isArray(imges) && imges.every(img => typeof img === "string" && img.trim() !== "")) {
+  updatedFields.imges = imges;
+}
 
-    if (img) {
-      updatedFields.img = img;
-    }
 
-    if (font_awesome_class)
-      updatedFields.font_awesome_class = font_awesome_class;
-    if (status !== undefined) updatedFields.status = status;
-
-    Object.assign(category, updatedFields);
-
-    await category.save();
+// Update category
+Object.assign(category, updatedFields);
+await category.save();
 
     return new NextResponse(
       JSON.stringify({

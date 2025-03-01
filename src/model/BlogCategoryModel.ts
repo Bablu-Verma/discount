@@ -1,47 +1,40 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IBCategory {
-  name: string; 
-  description: string; 
-  slug: string; 
-  status: boolean;
-  img: string;
-  deleted_category:boolean;
+  name: string;
+  description: string;
+  slug: string;
+  imges: string[]; 
+  status: "ACTIVE" | "INACTIVE" | "REMOVED"; 
+ 
 }
 
-// Create the Category schema
 const BlogCategorySchema = new Schema<IBCategory>(
   {
     name: {
       type: String,
-      required: [true, "Category name is required"],
+      required: [true, "blog Category name is required"],
       unique: true, 
       trim: true, 
     },
     description: {
       type: String,
-      required: [true, "Category description is required"],
+      required: [true, "blog Category description is required"],
       trim: true,
     },
     slug: {
       type: String,
-      required: [true, "Slug is required"],
+      required: [true, "blog Slug is required"],
       unique: true, 
       lowercase: true,
       trim: true,
     },
-    img:{
-        type: String,
-        required: [true, "Image is required"],
-    },
+    imges:[{type: String},{type: String}],
     status: {
-        type: Boolean,
-        default: true, 
-      },
-      deleted_category: {
-        type: Boolean,
-        default: false,  
-      }
+        type:String,
+        default: 'ACTIVE', 
+        enum: ['ACTIVE', 'INACTIVE', 'REMOVED'],
+    },
   },
   { timestamps: true } 
 );

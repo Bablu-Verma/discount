@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 
-import { upload_image } from "@/helpers/server/upload_image";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import BlogCategoryModel from "@/model/BlogCategoryModel";
 
@@ -44,7 +43,7 @@ export async function POST(req: Request) {
 
     const requestData = await req.json();
 
-    const { description, slug, img, status } = requestData;
+    const { description, slug, imges, status } = requestData;
 
     // Validate required fields
     if (!slug) {
@@ -77,25 +76,27 @@ export async function POST(req: Request) {
         }
       );
     }
+// Object to store fields to update
+const updatedFields: any = {};
 
-    const updatedFields: any = {};
+// Only update fields that have a valid value
+if (description && description.trim() !== "") updatedFields.description = description;
+if (status && ["ACTIVE", "INACTIVE"].includes(status)) updatedFields.status = status;
 
-    if (description) updatedFields.description = description;
+// Update images if an array of valid image links is provided
+if (Array.isArray(imges) && imges.every(img => typeof img === "string" && img.trim() !== "")) {
+  updatedFields.imges = imges;
+}
 
-    if (img) {
-      updatedFields.img = img;
-    }
 
-    if (status !== undefined) updatedFields.status = status;
-
-    Object.assign(category, updatedFields);
-
-    await category.save();
+// Update category
+Object.assign(category, updatedFields);
+await category.save();
 
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "blog Category updated successfully.",
+        message: "Category updated successfully.",
         data: category,
       }),
       {
@@ -111,7 +112,7 @@ export async function POST(req: Request) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Failed to update blog category.",
+          message: "Failed to update category.",
           error: error.message,
         }),
         {

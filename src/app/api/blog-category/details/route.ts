@@ -1,86 +1,63 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
+
+import { authenticateAndValidateUser } from "@/lib/authenticate";
 import BlogCategoryModel from "@/model/BlogCategoryModel";
-import BlogModel from "@/model/BlogModal";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
+
+      const { authenticated, usertype, message } = await authenticateAndValidateUser(req);
+    // Parse request body
     const requestData = await req.json();
-    const { slug, accessType } = requestData;
+    const {
+      slug,
+      status, 
+    } = requestData;
 
     if (!slug) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Category slug is required.",
+          message: "Slug is required.",
         }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    // Construct filter query
     const query: any = { slug };
 
-    // 🔹 Apply accessType filtering for category
-    if (accessType === "NORMAL_TYPE") {
-      query.status = true; // Normal users can only access published categories
+
+    if (status === "ALL" ) {
+      query.status = { $in: ["ACTIVE", "INACTIVE", "REMOVED"] }; 
+    } else if (["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
+      query.status = status; 
     }
+   
 
-    const category = await BlogCategoryModel.findOne(query);
-
-    if (!category) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Blog category not found.",
-        }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // 🔹 Fetch related blogs based on category ID
-    const blogQuery: any = { categoryId: category._id };
-
-    if (accessType === "NORMAL_TYPE") {
-      blogQuery.isPublished = true; // Normal users only see published blogs
-    }
-
-    const relatedBlogs = await BlogModel.find(blogQuery).limit(5); // Fetch top 5 related blogs
+    // Fetch data
+    const category_details = await BlogCategoryModel.find(query).lean();
 
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Blog category fetched successfully.",
-        data: {
-          ...category.toObject(),
-          relatedBlogs, // Add related blogs
-        },
+        message: "Categories details fetched successfully.",
+        data: category_details,
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
-    console.error("Failed to fetch blog category:", error);
-
+    console.error("Error fetching categories:", error);
     return new NextResponse(
       JSON.stringify({
         success: false,
-        message: "Failed to fetch blog category.",
+        message: "Failed to fetch categories.",
         error: error instanceof Error ? error.message : "Unknown error",
       }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

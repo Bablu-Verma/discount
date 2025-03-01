@@ -7,26 +7,23 @@ export async function POST(req: Request) {
 
   try {
     const requestData = await req.json();
-    const { name, slug, startDate, endDate, status, page = 1, limit = 10 } = requestData;
+    const { name, status, startDate, endDate, page = 1, limit = 10 } = requestData;
 
     const query: any = {};
-    
+
+    // Name Filter (Case-Insensitive Search)
     if (name) {
-      query.name = { $regex: name, $options: "i" }; 
+      query.name = { $regex: name, $options: "i" };
     }
 
-    if (slug) {
-      query.slug = slug;
+    // Apply status filtering
+    if (status && ["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
+      query.status = status;
+    } else {
+      query.status = { $in: ["ACTIVE", "INACTIVE", "REMOVED"] };
     }
 
-    if (status === "PUBLISH") {
-      query.status = true; 
-    } else if (status === "PUBLISH_OF") {
-      query.status = false; 
-    } else if (status === "ALL") {
-      query.status = { $in: [true, false] }; 
-    }
-
+    // Date Filter
     if (startDate && endDate) {
       query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
     } else if (startDate) {
@@ -35,6 +32,9 @@ export async function POST(req: Request) {
       query.createdAt = { $lte: new Date(endDate) };
     }
 
+   
+
+    // Pagination
     const skip = (page - 1) * limit;
     const categories = await BlogCategoryModel.find(query).skip(skip).limit(limit);
     const totalCategories = await BlogCategoryModel.countDocuments(query);
@@ -52,43 +52,17 @@ export async function POST(req: Request) {
           limit,
         },
       }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Failed to fetch categories:", error.message);
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Failed to fetch categories.",
-          error: error.message,
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    } else {
-      console.error("Unexpected error:", error);
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "An unexpected error occurred.",
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    console.error("Failed to fetch categories:", error);
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        message: "Failed to fetch categories.",
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

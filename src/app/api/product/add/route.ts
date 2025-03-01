@@ -141,6 +141,7 @@ export async function POST(req: Request) {
       cashback_price = Number(actual_price) * (1 - Number(offer_price) / 100);
     }
 
+
     // Create New Campaign
     const newCampaign = new CampaignModel({
       title,

@@ -1,9 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
-
-
-
 const ORDER_STATUSES = ["Redirected", "Order", "Completed", "Cancelled"] as const;
 const PAYMENT_STATUSES = ["Pending", "confirm", "Paid", "Failed"] as const;
 

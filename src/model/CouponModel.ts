@@ -1,16 +1,17 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, model, Types } from "mongoose";
 import { IStore } from "@/model/StoreModel";
 import { ICategory } from "@/model/CategoryModel";
+
+export type CouponStatus = "ACTIVE" | "INACTIVE" | "REMOVED";
 
 export interface ICoupon {
   code: string;
   discount: string;
   description: string;
   expiry_date: Date;
-  store: mongoose.Types.ObjectId | IStore;
-  category: mongoose.Types.ObjectId | ICategory;
-  status: boolean;
-  deleted_coupon: boolean;
+  store: Types.ObjectId | IStore;
+  category: Types.ObjectId | ICategory;
+  status: CouponStatus;
 }
 
 const CouponSchema = new Schema<ICoupon>(
@@ -43,17 +44,14 @@ const CouponSchema = new Schema<ICoupon>(
       required: true,
     },
     status: {
-      type: Boolean,
-      default: true,
-    },
-    deleted_coupon: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: "ACTIVE",
+      enum: ["ACTIVE", "INACTIVE", "REMOVED"],
     },
   },
   { timestamps: true }
 );
 
-const CouponModel = mongoose.models.Coupon || mongoose.model<ICoupon>("Coupon", CouponSchema);
+const CouponModel = mongoose.models.Coupon || model<ICoupon>("Coupon", CouponSchema);
 
 export default CouponModel;

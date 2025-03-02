@@ -1,134 +1,150 @@
-import { blogType } from '@/constant';
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema, model, Types } from 'mongoose';
 
+export type BlogType = 'Article' | 'Tutorial' | 'Case Study' | 'Review' | 'Interview';
+export type BlogStatus = 'ACTIVE' | 'INACTIVE' | 'REMOVED';
 
-export interface IBlog  {
+export interface IBlog {
   title: string;
   slug: string;
   short_desc: string;
   desc: string;
-  createdAt: string;
-  category: string;
-  blogType: string;
-  isPublished: boolean;
-  image?: string;
-  writer_email: string;
-  metaTitle?: string;
-  metaDescription?: string;
-  metaKeywords?: string[];
-  ogImage?: string;
-  twitterImage?: string;
+  blog_category: string;
+  blog_type: BlogType;
+  image: string[];
   tags?: string[];
   views: number;
-  publishedAt?: Date;
-  updatedAt?: Date;
+  writer_email: string;
+  reading_time?: number;
+  keywords: string[];
+  publish_schedule?: Date;
+  word_count?: number;
+  status: BlogStatus;
+  related_blogs?: Types.ObjectId[];
+
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string[];
+  canonical_url?: string;
+  og_image?: string;
+  og_title?: string;
+  og_description?: string;
+  twitter_card?: 'summary' | 'summary_large_image';
+  schema_markup?: Record<string, any>;
 }
 
 const BlogSchema = new Schema<IBlog>(
   {
     title: {
       type: String,
-      required: [true, 'Title is required'],
+      required: true,
       trim: true,
       maxlength: [150, 'Title cannot exceed 150 characters'],
     },
     slug: {
       type: String,
-      trim: true,
+      required: true,
       unique: true,
+      trim: true,
+      lowercase: true,
     },
     short_desc: {
       type: String,
-      required: [true, 'Short description is required'],
+      required: true,
     },
     desc: {
       type: String,
-      required: [true, 'Description is required'],
+      required: true,
     },
-    category: {
+    blog_category: {
       type: String,
-      required: [true, 'Category is required'],
+      required: true,
     },
-    blogType: {
+    blog_type: {
       type: String,
-      required: [true, 'Blog type is required'],
-      enum: blogType,
-    },
-    isPublished: {
-      type: Boolean,
-      default: false,
+      required: true,
+      enum: ['Article', 'Tutorial', 'Case Study', 'Review', 'Interview'],
     },
     image: {
-      type: String,
-      required: [true, 'Blog image is required'],
-    },
-    metaTitle: {
-      type: String,
-      trim: true,
-      maxlength: [150, 'Meta title cannot exceed 150 characters'],
-    },
-    metaDescription: {
-      type: String,
-      trim: true,
-      maxlength: [300, 'Meta description cannot exceed 300 characters'],
-    },
-    metaKeywords: {
-      type: [String], 
-    },
-    ogImage: {
-      type: String, 
-    },
-    twitterImage: {
-      type: String, 
+      type: [String],
+      required: true,
     },
     tags: {
-      type: [String], 
-      validate: {
-        validator: function (tags: string[]) {
-          return tags.length <= 15; 
-        },
-        message: 'You can specify up to 15 tags.',
-      },
+      type: [String],
     },
     views: {
       type: Number,
       default: 0,
     },
-   
     writer_email: {
       type: String,
-      required: [true, 'Writer email is required'],
-      validate: {
-        validator: function (value: string) {
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        },
-        message: 'Writer email must be a valid email address.',
+      required: true,
+    },
+    reading_time: {
+      type: Number,
+      default: 0,
+    },
+    keywords: {
+      type: [String],
+      default: [],
+    },
+    publish_schedule: {
+      type: Date,
+    },
+    word_count: {
+      type: Number,
+      default: 0,
+    },
+    status: {
+      type: String,
+      default: 'ACTIVE',
+      enum: ['ACTIVE', 'INACTIVE', 'REMOVED'],
+    },
+    related_blogs: [
+      {
+        type: Types.ObjectId,
+        ref: 'Blog',
       },
+    ],
+    // SEO Fields
+    meta_title: {
+      type: String,
+      maxlength: [60, 'Meta title cannot exceed 60 characters'],
     },
-    publishedAt: {
-      type: Date,
+    meta_description: {
+      type: String,
+      maxlength: [160, 'Meta description cannot exceed 160 characters'],
     },
-    updatedAt: {
-      type: Date,
+    meta_keywords: {
+      type: [String],
+      default: [],
+    },
+    canonical_url: {
+      type: String,
+    },
+    og_image: {
+      type: String,
+    },
+    og_title: {
+      type: String,
+    },
+    og_description: {
+      type: String,
+    },
+    twitter_card: {
+      type: String,
+      enum: ['summary', 'summary_large_image'],
+      default: 'summary_large_image',
+    },
+    schema_markup: {
+      type: Object,
+      default: {},
     },
   },
   { timestamps: true }
 );
 
-// Indexes
-BlogSchema.index({ title: 1, category: 1 });
-BlogSchema.index({ tags: 1 }); 
 
-// Hooks
-BlogSchema.pre('save', function (next) {
-  
-  if (this.isPublished && !this.publishedAt) {
-    this.publishedAt = new Date();
-  }
-
-  this.updatedAt = new Date(); // Update the updatedAt field
-  next();
-});
 
 const BlogModel = mongoose.models.Blog || model<IBlog>('Blog', BlogSchema);
 

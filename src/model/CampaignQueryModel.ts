@@ -1,23 +1,24 @@
 import mongoose, { Schema, model, models, Types } from "mongoose";
 
+// Enum for Query Status
+export type QueryStatus = "NOTSTART" | "OPEN" | "CLOSED" | "REMOVED";
+
 // Interface for Campaign Query
 export interface ICampaignQuery {
-  user_id: Types.ObjectId; 
-  message: string; 
-  subject: string; 
-  campaign_id: Types.ObjectId; 
-  whatsapp_number: string;
+  user_id: Types.ObjectId;
+  message: string;
+  subject: string;
+  product_id:Number;
+  number: Number;
   location: string;
-  deleted_query: boolean;
-  solvequery:boolean
+  query_status: QueryStatus;
 }
-
 
 const CampaignQuerySchema = new Schema<ICampaignQuery>(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
+      ref: "User",
       required: true,
     },
     message: {
@@ -28,29 +29,26 @@ const CampaignQuerySchema = new Schema<ICampaignQuery>(
       type: String,
       required: true,
     },
-    campaign_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Campaign", 
+    product_id: {
+      type: Number,
+      ref: "Campaign",
       required: true,
     },
-    whatsapp_number: {
-        type: String,
-        required: true,
+    number: {
+      type: Number,
+      required: true,
     },
     location: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    deleted_query: {
-      default: false,
-      type: Boolean,
+    query_status: {
+      type: String,
+      default: "NOTSTART",
+      enum: ["NOTSTART", "OPEN", "CLOSED", "REMOVED"],
     },
-    solvequery:{
-      type: Boolean,
-      default: false,
-    }
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 // Create or retrieve the model

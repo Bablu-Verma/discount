@@ -9,6 +9,7 @@ export interface IContactUs {
   phone_number?: string;
   location?: string;
   createdAt:string;
+  action_status: "NOTSTART" | "OPEN" | "CLOSED" | "REMOVED";
 }
 
 const ContactUsSchema = new Schema<IContactUs>(
@@ -37,6 +38,11 @@ const ContactUsSchema = new Schema<IContactUs>(
     location: {
       type: String,
       required: false,
+    },
+    action_status: {
+      type: String,
+      default: "NOTSTART",
+      enum: ["NOTSTART", "OPEN", "CLOSED", "REMOVED"],
     },
   },
   { timestamps: true } 

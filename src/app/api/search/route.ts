@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
+
+import StoreModel from "@/model/StoreModel";
 import CategoryModel from "@/model/CategoryModel";
-import CampaignModel from "@/model/CampaignModel";  
+import CouponModel from "@/model/CouponModel";
+import CampaignModel from "@/model/CampaignModel";
+import BlogModel from "@/model/BlogModal";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -17,45 +21,38 @@ export async function POST(req: Request) {
           success: false,
           message: "Search query is required.",
         }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-   
-    const categories = await CategoryModel.find({
-      $or: [
-        { name: { $regex: query, $options: "i" } },  
-      ],
-    });
+    // Common search filter (case-insensitive search + only active items)
+    const searchFilter = {
+      $regex: query,
+      $options: "i", // Case insensitive search
+    };
 
-    const campaigns = await CampaignModel.find({
-      $or: [
-        { title: { $regex: query, $options: "i" } },  
-        { description: { $regex: query, $options: "i" } }
-      ],
-    });
+    // Fetching active results with a limit of 10 per category
+    const [blogs, stores, categories, coupons, campaigns] = await Promise.all([
+      BlogModel.find({ title: searchFilter, status: "ACTIVE" }).limit(10),
+      StoreModel.find({ name: searchFilter, store_status: "ACTIVE" }).limit(10),
+      CategoryModel.find({ name: searchFilter, status: "ACTIVE" }).limit(10),
+      CouponModel.find({ code: searchFilter, status: "ACTIVE" }).limit(10),
+      CampaignModel.find({ title: searchFilter, product_status: "ACTIVE" }).limit(10),
+    ]);
 
-    // Return the search results
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Search results retrieved successfully.",
         data: {
+          blogs,
+          stores,
           categories,
+          coupons,
           campaigns,
         },
       }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -66,12 +63,7 @@ export async function POST(req: Request) {
           message: "Failed to perform search.",
           error: error.message,
         }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     } else {
       console.error("Unexpected error:", error);
@@ -80,12 +72,7 @@ export async function POST(req: Request) {
           success: false,
           message: "An unexpected error occurred.",
         }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   }

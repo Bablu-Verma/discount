@@ -11,42 +11,40 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-     const { authenticated, user, usertype, message } =
-         await authenticateAndValidateUser(req);
-   
-       if (!authenticated) {
-         return new NextResponse(
-           JSON.stringify({
-             success: false,
-             message: message || "User is not authenticated",
-           }),
-           {
-             status: 401,
-             headers: {
-               "Content-Type": "application/json",
-             },
-           }
-         );
-       }
-   
-       if (!(usertype === "admin" || usertype === "data_editor")) {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: "Access denied: You do not have the required role",
-          }),
-          {
-            status: 403,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
+    if (!authenticated) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: message || "User is not authenticated",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
-  
-      const requestData = await req.json();
+    if (!(usertype === "admin" || usertype === "data_editor")) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Access denied: You do not have the required role",
+        }),
+        {
+          status: 403,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const requestData = await req.json();
     const requiredFields = [
       "title",
       "actual_price",
@@ -66,7 +64,10 @@ export async function POST(req: Request) {
 
     // Validate Required Fields
     for (const field of requiredFields) {
-      if (!requestData[field] || (Array.isArray(requestData[field]) && requestData[field].length === 0)) {
+      if (
+        !requestData[field] ||
+        (Array.isArray(requestData[field]) && requestData[field].length === 0)
+      ) {
         return new NextResponse(
           JSON.stringify({ success: false, message: `${field} is required.` }),
           { status: 400, headers: { "Content-Type": "application/json" } }
@@ -103,59 +104,81 @@ export async function POST(req: Request) {
       og_description,
     } = requestData;
 
-   
-
     // Validate Slug Uniqueness
     const slug = generateSlug(title);
 
-    
     const existingProduct = await CampaignModel.findOne({ product_slug: slug });
 
     if (existingProduct) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Product with this title already exists." }),
+        JSON.stringify({
+          success: false,
+          message: "Product with this title already exists.",
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    
     if (premium_product === true) {
-      const premiumCount = await CampaignModel.countDocuments({ premium_product: true });
+      const premiumCount = await CampaignModel.countDocuments({
+        premium_product: true,
+      });
       if (premiumCount >= 4) {
         return new NextResponse(
-          JSON.stringify({ success: false, message: "You can only add up to 4 premium products." }),
+          JSON.stringify({
+            success: false,
+            message: "You can only add up to 4 premium products.",
+          }),
           { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
     }
 
-     // Validate Number Fields
-     if (isNaN(Number(actual_price)) || isNaN(Number(cashback_))) {
+    // Validate Number Fields
+    const actualPriceNum = Number(actual_price);
+    const cashbackNum = Number(cashback_);
+
+    // Ensure both values are valid numbers
+    if (isNaN(actualPriceNum) || actualPriceNum < 0) {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "actual_price and cashback_ must be valid numbers." }),
+        JSON.stringify({
+          success: false,
+          message: "Invalid actual_price. Must be a positive number.",
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    let calculated_cashback_ = 0
-    let offer_price_ = Number(actual_price)
-
-    if (calculation_mode === "FIX") {
-      calculated_cashback_ =  Number(cashback_) ;
-    } else if (calculation_mode === "PERCENTAGE") {
-      calculated_cashback_ = Number(actual_price) * Number(cashback_) / 100;
+    if (isNaN(cashbackNum) || cashbackNum < 0) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Invalid cashback_. Must be a non-negative number.",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-     offer_price_ = actual_price - calculated_cashback_
+    // Calculate cashback and offer price
+    let calculated_cashback_ = 0;
+    let offer_price_ = actualPriceNum;
 
+    if (calculation_mode === "FIX") {
+      calculated_cashback_ = cashbackNum;
+    } else if (calculation_mode === "PERCENTAGE") {
+      calculated_cashback_ = (actualPriceNum * cashbackNum) / 100;
+    }
+
+    // Ensure offer price does not go negative
+    offer_price_ = Math.max(0, actualPriceNum - calculated_cashback_);
 
     // Create New Campaign
     const newCampaign = new CampaignModel({
       title,
       actual_price,
-      offer_price:offer_price_,
-      cashback_:cashback_,
-      calculated_cashback:calculated_cashback_,
+      offer_price: offer_price_,
+      cashback_: cashback_,
+      calculated_cashback: calculated_cashback_,
       calculation_mode,
       user_email: user?.email,
       store,
@@ -186,7 +209,11 @@ export async function POST(req: Request) {
     await newCampaign.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Campaign added successfully", data: newCampaign }),
+      JSON.stringify({
+        success: true,
+        message: "Campaign added successfully",
+        data: newCampaign,
+      }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {

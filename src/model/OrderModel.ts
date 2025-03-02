@@ -15,8 +15,12 @@ interface IRecord extends Document {
   user_id: mongoose.Types.ObjectId;
   product_id: string;
   product_url: string;
-  transaction_id: string; 
-  cashback_amount: number;
+  price: Number;
+  offer_price: Number;
+  cashback_: Number;
+  calculated_cashback: Number;
+  calculation_mode: "PERCENTAGE" | "FIX";
+  transaction_id: string;
   order_status: (typeof ORDER_STATUSES)[number];
   payment_status: (typeof PAYMENT_STATUSES)[number] | null;
   order_history: IHistory[];
@@ -49,10 +53,20 @@ const RecordSchema = new Schema<IRecord>(
       default: uuidv4,
       required: true,
     },
-    cashback_amount: {
+    price: { type: Number, required: [true, "Price is required"] },
+    offer_price: { type: Number, required: [true, "Offer price is required"] },
+    calculated_cashback:{
       type: Number,
-      default: 0,
-      min: 0,
+      required: [true, "Calculated Cashback is required"],
+    },
+    calculation_mode: {
+      type: String,
+      enum: ["PERCENTAGE", "FIX"],
+      required: [true, "Calculation mode is required"],
+    },
+    cashback_: {
+      type: Number,
+      required: [true, "Cashback is required"],
     },
     order_status: {
       type: String,
@@ -95,51 +109,12 @@ const RecordSchema = new Schema<IRecord>(
 // Middleware to track history and auto-set payment status
 RecordSchema.pre("save", function (next) {
   if (this.isNew) {
-     // ✅ Generate a unique transaction ID using UUID
-     
-    // Add initial order history
     this.order_history.push({
       status: this.order_status,
       date: new Date(),
       details: `Order created with status ${this.order_status}`,
     });
 
-    // Set payment status to "Pending" only if the order is placed
-    if (this.order_status === "Order") {
-      this.payment_status = "Pending";
-      this.payment_history.push({
-        status: "Pending",
-        date: new Date(),
-        details: `Payment status set to Pending as order is placed`,
-      });
-    }
-  } else {
-    if (this.isModified("order_status")) {
-      this.order_history.push({
-        status: this.order_status,
-        date: new Date(),
-        details: `Order status changed to ${this.order_status}`,
-      });
-
-      // Set payment to "Pending" only if order is placed and no previous payment status exists
-      if (this.order_status === "Order" && !this.payment_status) {
-        this.payment_status = "Pending";
-        this.payment_history.push({
-          status: "Pending",
-          date: new Date(),
-          details: `Payment status set to Pending as order is placed`,
-        });
-      }
-    }
-
-    // Log payment status changes
-    if (this.isModified("payment_status") && this.payment_status) {
-      this.payment_history.push({
-        status: this.payment_status,
-        date: new Date(),
-        details: `Payment status changed to ${this.payment_status}`,
-      });
-    }
   }
   next();
 });

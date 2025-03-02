@@ -18,8 +18,8 @@ export async function POST(req: Request) {
 
     // ✅ Extract filters from request body
     const {
-      order_status = "ALL",
-      payment_status = "ALL",
+      order_status ,
+      payment_status ,
       user_id,
       product_id,
       transaction_id,
@@ -32,35 +32,37 @@ export async function POST(req: Request) {
     const pageNumber = Math.max(1, parseInt(page, 10));
     const pageSize = Math.max(1, parseInt(limit, 10));
 
-    // ✅ Construct the query object
     const query: any = {};
 
-    if (order_status !== "ALL") {
+    // ✅ Only add fields if they are non-empty
+    if (order_status && order_status !== "ALL") {
       query.order_status = order_status;
     }
-
-    if (payment_status !== "ALL") {
+    
+    if (payment_status && payment_status !== "ALL") {
       query.payment_status = payment_status;
     }
-
+    
     if (user_id) {
       query.user_id = user_id;
     }
-
+    
     if (product_id) {
       query.product_id = product_id;
     }
-
+    
     if (transaction_id) {
       query.transaction_id = transaction_id;
     }
-
-    // ✅ Filter by date range
+    
+    // ✅ Filter by date range only if both startDate & endDate are provided
     if (startDate && endDate) {
-      query.createdAt = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate),
-      };
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+    
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+        query.createdAt = { $gte: start, $lte: end };
+      }
     }
 
     // ✅ Fetch orders with pagination

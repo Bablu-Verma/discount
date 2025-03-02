@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     const coupon = await CouponModel.findById(coupon_id);
 
-    if (!coupon || coupon.deleted_coupon) {
+    if (!coupon || coupon.status == 'REMOVED') {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Coupon not found or already deleted." }),
         { status: 404, headers: { "Content-Type": "application/json" } }
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     }
 
     // Soft delete the coupon
-    coupon.deleted_coupon = true;
+    coupon.status = 'REMOVED'
     await coupon.save();
 
     return new NextResponse(

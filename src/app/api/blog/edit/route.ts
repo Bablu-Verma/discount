@@ -7,130 +7,129 @@ import { generateSlug } from "@/helpers/client/client_function";
 import { upload_image } from "@/helpers/server/upload_image";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
-
-
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
+    // Authenticate user
     const { authenticated, user, usertype, message } =
-             await authenticateAndValidateUser(req);
-       
-           if (!authenticated) {
-             return new NextResponse(
-               JSON.stringify({
-                 success: false,
-                 message: message || "User is not authenticated",
-               }),
-               {
-                 status: 401,
-                 headers: {
-                   "Content-Type": "application/json",
-                 },
-               }
-             );
-           }
-           if (!(usertype === "admin" || usertype === "blog_editor")) {
-             return new NextResponse(
-               JSON.stringify({
-                 success: false,
-                 message: "Access denied: You do not have the required role",
-               }),
-               {
-                 status: 403,
-                 headers: {
-                   "Content-Type": "application/json",
-                 },
-               }
-             );
-           }
-       
-    // Parse form data
-    const requestData = await req.json();
+      await authenticateAndValidateUser(req);
 
-    const {
-      title,
-      category,
-      short_desc,
-      slug,
-      blogType,
-      isPublished,
-      metaTitle,
-      metaDescription,
-      description,
-      metaKeywords,
-      ogImage,
-      twitterImage,
-      image,
-      tags,
-    } = requestData;
-
-  
-
-    if (!slug) {
+    if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "Slug is required to identify the blog.",
+          message: message || "User is not authenticated",
         }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    if (!(usertype === "admin" || usertype === "blog_editor")) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Access denied: You do not have the required role",
+        }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Parse request data
+    const requestData = await req.json();
+
+    const {
+      blog_id,
+      title,
+      short_desc,
+      desc,
+      blog_category,
+      blog_type,
+      image,
+      tags,
+      reading_time,
+      keywords,
+      publish_schedule,
+      word_count,
+      status,
+      related_blogs,
+      meta_title,
+      meta_description,
+      meta_keywords,
+      canonical_url,
+      og_image,
+      og_title,
+      og_description,
+      twitter_card,
+      schema_markup,
+    } = requestData;
+
+    if (!blog_id) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "blog_id is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
- 
-    // Find the blog by slug
-    const blogToUpdate = await BlogModel.findOne({ slug });
+    // Find the blog
+    const blogToUpdate = await BlogModel.findById(blog_id);
     if (!blogToUpdate) {
       return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Blog not found.",
-        }),
+        JSON.stringify({ success: false, message: "Blog not found." }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const update_slug = generateSlug(title);
-
-
-    if(update_slug != slug) {
-      const blogcheck = await BlogModel.findOne({ slug:update_slug });
-      if (blogcheck) {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            message: "This slug already exists use diffrent Title",
-          }),
-          { status: 404, headers: { "Content-Type": "application/json" } }
-        );
+    // Update slug only if title is provided
+    if (title) {
+      const newSlug = generateSlug(title);
+      if (newSlug !== blogToUpdate.slug) {
+        const existingBlog = await BlogModel.findOne({ slug: newSlug });
+        if (existingBlog) {
+          return new NextResponse(
+            JSON.stringify({
+              success: false,
+              message: "This slug already exists. Use a different title.",
+            }),
+            { status: 400, headers: { "Content-Type": "application/json" } }
+          );
+        }
+        blogToUpdate.slug = newSlug;
       }
-      blogToUpdate.slug = update_slug;
+      blogToUpdate.title = title;
     }
 
-
-    console.log(blogToUpdate.ogImage)
-    console.log(isPublished)
-   
-    if (title) blogToUpdate.title = title;
-    if (twitterImage) blogToUpdate.twitterImage = twitterImage.trim();
-    if (image) blogToUpdate.image = image.trim();
-    if (ogImage) blogToUpdate.ogImage = ogImage.trim();
-    if (category) blogToUpdate.category = category;
+    // Update only the fields that are provided
     if (short_desc) blogToUpdate.short_desc = short_desc;
-    if (blogType) blogToUpdate.blogType = blogType;
-    if (isPublished !== undefined) blogToUpdate.isPublished = isPublished ;
-    if (metaTitle) blogToUpdate.metaTitle = metaTitle;
-    if (metaDescription) blogToUpdate.metaDescription = metaDescription;
-    if (description) blogToUpdate.desc = description;
-    if (metaKeywords) blogToUpdate.metaKeywords = metaKeywords.split(",").map((item:string) => item.trim());
-    if (tags) blogToUpdate.tags = tags.split(",").map((item:string) => item.trim());
-
-
+    if (desc) blogToUpdate.desc = desc;
+    if (blog_category) blogToUpdate.blog_category = blog_category;
+    if (blog_type) blogToUpdate.blog_type = blog_type;
+    if (image) blogToUpdate.image = image.trim();
+    if (tags)
+      blogToUpdate.tags = tags.split(",").map((item: string) => item.trim());
+    if (reading_time) blogToUpdate.reading_time = reading_time;
+    if (keywords)
+      blogToUpdate.keywords = keywords
+        .split(",")
+        .map((item: string) => item.trim());
+    if (publish_schedule) blogToUpdate.publish_schedule = publish_schedule;
+    if (word_count) blogToUpdate.word_count = word_count;
+    if (status) blogToUpdate.status = status;
+    if (meta_title) blogToUpdate.meta_title = meta_title;
+    if (meta_description) blogToUpdate.meta_description = meta_description;
+    if (meta_keywords)
+      blogToUpdate.meta_keywords = meta_keywords
+        .split(",")
+        .map((item: string) => item.trim());
+    if (canonical_url) blogToUpdate.canonical_url = canonical_url;
+    if (og_image) blogToUpdate.og_image = og_image.trim();
+    if (og_title) blogToUpdate.og_title = og_title;
+    if (og_description) blogToUpdate.og_description = og_description;
+    if (twitter_card) blogToUpdate.twitter_card = twitter_card;
+    if (schema_markup) blogToUpdate.schema_markup = schema_markup;
 
     // Save the updated blog
     await blogToUpdate.save();
 
-    // Return success response
     return new NextResponse(
       JSON.stringify({
         success: true,

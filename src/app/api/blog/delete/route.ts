@@ -52,9 +52,9 @@ export async function POST(req: Request) {
     }
 
     // Attempt to delete the blog post with the given slug
-    const deletedBlog = await BlogModel.findOneAndDelete({ slug });
+    const blog_ = await BlogModel.findOne({ slug });
 
-    if (!deletedBlog) {
+    if (!blog_) {
       return new NextResponse(
         JSON.stringify({
           success: false,
@@ -64,12 +64,16 @@ export async function POST(req: Request) {
       );
     }
 
+    blog_.status = 'REMOVED'
+
+    await blog_.save()
+
     // Return success response
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: `Blog with slug "${slug}" deleted successfully.`,
-        data: deletedBlog,
+        data: blog_,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

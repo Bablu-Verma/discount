@@ -7,54 +7,41 @@ export async function POST(req: Request) {
 
   try {
     const requestData = await req.json();
-    const { slug, accessType } = requestData;
+    const { slug, status } = requestData;
 
     if (!slug) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Blog slug is required.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return NextResponse.json({ success: false, message: "Blog slug is required." }, { status: 400 });
     }
 
-    // Define the filter based on accessType
+    // Define the filter object
     const filter: any = { slug };
 
-    if (accessType === "NORMAL_TYPE") {
-      // Normal users can only access published blogs
-      filter.isPublished = true;
+    // Apply status filter if it's not "ALL"
+    if (status && status !== "ALL") {
+      if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
+        return NextResponse.json({ success: false, message: "Invalid status value." }, { status: 400 });
+      }
+      filter.status = status;
     }
 
-    // Fetch the blog by slug with applied filter
+    // Fetch the blog with the applied filter
     const blog = await BlogModel.findOne(filter);
 
     if (!blog) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Blog not found.",
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
+      return NextResponse.json({ success: false, message: "Blog not found." }, { status: 404 });
     }
 
-    // Increment view count only if accessType is "NORMAL_TYPE"
-    if (accessType === "NORMAL_TYPE") {
-      blog.views = (blog.views || 0) + 1;
-      await blog.save();
-    }
+    blog.views = +1
 
-    return new NextResponse(
-      JSON.stringify({
-        success: true,
-        message: "Blog post fetched successfully.",
-        data: blog,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
-  } catch (error) {
+   await blog.save()
+
+    return NextResponse.json({
+      success: true,
+      message: "Blog post fetched successfully.",
+      data: blog,
+    }, { status: 200 });
+
+  }  catch (error) {
     console.error("Error fetching blog post:", error);
 
     return new NextResponse(

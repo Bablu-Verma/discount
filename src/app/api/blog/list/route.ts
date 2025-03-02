@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import BlogModel from "@/model/BlogModal";
 import { NextResponse } from "next/server";
 
-// Helper function to handle pagination params
+// Helper function to extract pagination parameters
 const getPaginationParams = (req: Request) => {
   const { searchParams } = new URL(req.url);
   const page = Math.max(Number(searchParams.get("page")) || 1, 1);
@@ -10,44 +10,34 @@ const getPaginationParams = (req: Request) => {
   return { page, limit };
 };
 
+// Function to process filter parameters
 const getFilterParams = async (req: Request) => {
   const filter_ = await req.json();
 
   const filters: any = {};
-  const sortOptions: any = { createdAt: -1 }; 
+  const sortOptions: any = { createdAt: -1 }; // Default sorting (newest first)
 
-  if (filter_.category) {
-    filters.category = filter_.category;
+  // Filtering by status
+  if (filter_.status && filter_.status !== "ALL") {
+    if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(filter_.status)) {
+      throw new Error("Invalid status value.");
+    }
+    filters.status = filter_.status;
   }
 
-  if (filter_.title) {
-    filters.title = { $regex: filter_.title, $options: "i" }; 
+  if (filter_.search) {
+    filters.$or = [
+      { title: { $regex: filter_.search, $options: "i" } }, // Case-insensitive title search
+      { slug: filter_.search } // Exact match for slug
+    ];
   }
 
-  if (filter_.blogType) {
-    filters.blogType = filter_.blogType;
-  }
-
+  // Filtering by writer email
   if (filter_.writer_email) {
     filters.writer_email = filter_.writer_email;
   }
 
-  if (filter_.views) {
-    filters.views = { $gte: filter_.views }; 
-  }
-
-  // Handle isPublished filter
-  if (filter_.isPublished === "ALL") {
-    // No filter applied
-  } else if (filter_.isPublished === "PUBLISHED") {
-    filters.isPublished = true;
-  } else if (filter_.isPublished === "PUBLISHED_FALSE") {
-    filters.isPublished = false;
-  } else {
-    filters.isPublished = true; 
-  }
-
-  // Date Range Filtering (Created At)
+  // Filtering by date range
   if (filter_.startDate && filter_.endDate) {
     filters.createdAt = { $gte: new Date(filter_.startDate), $lte: new Date(filter_.endDate) };
   } else if (filter_.startDate) {
@@ -56,11 +46,11 @@ const getFilterParams = async (req: Request) => {
     filters.createdAt = { $lte: new Date(filter_.endDate) };
   }
 
-  // Sorting Option (If provided)
+  // Sorting Options (if provided)
   if (filter_.sortBy === "views") {
-    sortOptions.views = -1; // Highest views first
+    sortOptions.views = -1; // Sort by most viewed
   } else if (filter_.sortBy === "createdAt") {
-    sortOptions.createdAt = -1; // Newest first
+    sortOptions.createdAt = -1; // Sort by newest first
   }
 
   return { filters, sortOptions };
@@ -84,8 +74,8 @@ export async function POST(req: Request) {
 
     const totalBlogs = await BlogModel.countDocuments(filters);
 
-    return new NextResponse(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: true,
         message: "Blog posts fetched successfully.",
         data: blogs,
@@ -95,21 +85,18 @@ export async function POST(req: Request) {
           limit,
           totalPages: Math.ceil(totalBlogs / limit),
         },
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      },
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error fetching blog posts:", error);
-    return new NextResponse(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: false,
         message: "An error occurred while fetching blog posts.",
         error: error instanceof Error ? error.message : "Unknown error",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      },
+      { status: 500 }
     );
   }
 }

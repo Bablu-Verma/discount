@@ -17,10 +17,7 @@ export interface IBlog {
   reading_time?: number;
   keywords: string[];
   publish_schedule?: Date;
-  word_count?: number;
   status: BlogStatus;
-  related_blogs?: Types.ObjectId[];
-
   // SEO Fields
   meta_title?: string;
   meta_description?: string;
@@ -91,21 +88,13 @@ const BlogSchema = new Schema<IBlog>(
     publish_schedule: {
       type: Date,
     },
-    word_count: {
-      type: Number,
-      default: 0,
-    },
+  
     status: {
       type: String,
       default: 'ACTIVE',
       enum: ['ACTIVE', 'INACTIVE', 'REMOVED'],
     },
-    related_blogs: [
-      {
-        type: Types.ObjectId,
-        ref: 'Blog',
-      },
-    ],
+   
     // SEO Fields
     meta_title: {
       type: String,

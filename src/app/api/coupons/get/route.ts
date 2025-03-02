@@ -11,8 +11,7 @@ export async function POST(req: Request) {
     const {
       page = 1,
       limit = 10,
-      status = "ALL",
-      deleted_coupon = "ALL",
+      status ,
       category,
       store,
       startDate,
@@ -22,15 +21,10 @@ export async function POST(req: Request) {
 
     const query: any = {};
 
-    // ✅ Filter by status (ACTIVE, OFF, ALL)
-    if (status !== "ALL") {
-      query.status = status === "ACTIVE";
+    if (status && status !== "ALL") {
+      query.status = status; 
     }
 
-    // ✅ Filter by deleted_coupon (DELETE, ACTIVE, ALL)
-    if (deleted_coupon !== "ALL") {
-      query.deleted_coupon = deleted_coupon === "DELETE";
-    }
 
     // ✅ Filter by category
     if (category) {

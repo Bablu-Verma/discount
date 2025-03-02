@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { coupon_id, status = "ALL", deleted_coupon = "ALL" } = await req.json(); // Extract filters
+    const { coupon_id, status} = await req.json(); // Extract filters
 
     if (!coupon_id) {
       return new NextResponse(
@@ -17,15 +17,10 @@ export async function POST(req: Request) {
 
     const query: any = { _id: coupon_id };
 
-    // ✅ Filter by status (ACTIVE, OFF, ALL)
-    if (status !== "ALL") {
-      query.status = status === "ACTIVE";
+    if (status && status !== "ALL") {
+      query.status = status; 
     }
-
-    // ✅ Filter by deleted_coupon (DELETE, ACTIVE, ALL)
-    if (deleted_coupon !== "ALL") {
-      query.deleted_coupon = deleted_coupon === "DELETE";
-    }
+  
 
     // ✅ Find coupon with store and category details
     const coupon = await CouponModel.findOne(query)

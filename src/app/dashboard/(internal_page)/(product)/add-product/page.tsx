@@ -273,7 +273,9 @@ const AddProduct = () => {
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
         Add Product
       </h1>
+      
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
+       
         <form
           onSubmit={(e) => {
             e.preventDefault();

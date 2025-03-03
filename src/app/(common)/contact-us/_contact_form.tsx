@@ -1,5 +1,6 @@
 "use client";
 
+import TextEditor from "@/app/dashboard/_components/TextEditor";
 import { contact_form_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
@@ -193,6 +194,7 @@ const ContactForm = () => {
         className="w-full px-3 py-2 text-sm border min-h-60 border-gray-300 rounded-md focus:outline-none focus:border-primary"
         placeholder="Your Message"
       ></textarea>
+       <TextEditor />
       <div className="flex justify-end w-full mt-4">
         <button
           type="submit"

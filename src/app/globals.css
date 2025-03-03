@@ -64,6 +64,18 @@ input:checked {
   border-radius: 8px;
 }
 
+.tiptap{
+  min-height: 400px; 
+  background-color: #f4f4f4c4;
+  padding: 8px;
+}
+.tiptap.ProseMirror-focused{
+  outline: none;
+  border: none;
+}
+.editor_tool_bar button, .editor_tool_bar select, .editor_tool_bar label{
+  font-size: 13px ;
+}
 
 .tiptap table {
   border-collapse: collapse;

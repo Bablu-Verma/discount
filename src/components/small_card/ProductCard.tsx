@@ -12,7 +12,7 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
   const timeAgo = getTimeAgo(card_data.createdAt);
 
   return (
-    <div className="shadow overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:shadow-lg hover:border-gray-100 hover:border-[1px] ">
+    <div className="shadow overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:shadow-lg hover:border-gray-100 hover:border-[1px] bg-[#fff]">
       {card_data?.new ? (
         <span className="absolute top-2 left-2 bg-green-600 py-[1px] px-5 text-[12px] rounded-md shadow-md text-white font-medium z-10 select-none">
           New

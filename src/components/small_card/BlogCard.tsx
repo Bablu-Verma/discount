@@ -20,7 +20,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
   // console.log("date", diffTime);
 
   return (
-    <div className="shadow rounded-md overflow-hidden relative hover:shadow-lg duration-200 group">
+    <div className="shadow rounded-md overflow-hidden relative hover:shadow-lg duration-200 group bg-[#fff]">
       {diffTime < 12 && (
         <span className="absolute top-2 left-2 bg-green-600 py-[2px] px-2 text-[12px] rounded-md shadow-md text-white font-medium z-20 select-none">
           New

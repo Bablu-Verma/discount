@@ -248,7 +248,7 @@ const AddProduct = () => {
 
       const { data } = await axios.post(add_product, formPayload, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -671,7 +671,7 @@ const AddProduct = () => {
               Product Description
             </label>
 
-            <TextEditor />
+            {/* <TextEditor /> */}
           </div>
 
           <div>

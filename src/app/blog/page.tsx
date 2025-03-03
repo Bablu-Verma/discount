@@ -40,11 +40,9 @@ const AllBlog = async () => {
     <>
       <TopHeader />
       <MainHeader />
-      <main className="">
-        <section className="max-w-[1400px] mx-auto  mb-16 p-2 xl:p-0">
-          <div>
+      <main>
+      <div className="max-w-[1400px] mx-auto">
             <Image
-              style={{ objectFit: "contain" }}
               sizes="100vw"
               priority
               unoptimized
@@ -52,9 +50,11 @@ const AllBlog = async () => {
               alt="blog"
               height={200}
               width={500}
-              className="h-auto w-full"
+              className="h-40 object-cover lg:h-auto w-full"
             />
           </div>
+        <section className="max-w-[1400px] mx-auto  mb-16 p-2 xl:p-0">
+      
          <ClientBlog blog={blogs} />
         </section>
 

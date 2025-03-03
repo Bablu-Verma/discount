@@ -54,7 +54,7 @@ input:checked {
   background-color: #d85134;
 }
 
-/* editor css  */
+/* tip tap editor style  */
 
 .editor-container {
   max-width: 800px;
@@ -64,39 +64,28 @@ input:checked {
   border-radius: 8px;
 }
 
-.toolbar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+
+.tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
 }
 
-.toolbar button,
-.toolbar select,
-.toolbar input {
+.tiptap th, .tiptap td {
+  border: 1px solid #ddd;
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
+  text-align: left;
 }
 
-.toolbar button.is-active {
-  background: #000;
-  color: #fff;
+.tiptap th {
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
 
-.editor-content {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 16px;
-  min-height: 300px;
+.tiptap tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-.output {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.tiptap tr:hover {
+  background-color: #e2e2e2;
 }

@@ -18,18 +18,32 @@ import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import { useState } from "react";
 
-import { FaUndo, FaRedo, FaRegCopy, FaBold, FaItalic, FaUnderline, FaStrikethrough,FaImage, FaLink, FaCode, FaTable
-,FaPaintBrush,FaAlignLeft,FaAlignCenter,FaAlignRight,FaAlignJustify,FaQuora,FaList,FaListOl, FaListAlt
-
+import {
+  FaUndo,
+  FaRedo,
+  FaRegCopy,
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaStrikethrough,
+  FaImage,
+  FaLink,
+  FaCode,
+  FaTable,
+  FaPaintBrush,
+  FaAlignLeft,
+  FaAlignCenter,
+  FaAlignRight,
+  FaAlignJustify,
+  FaQuora,
+  FaList,
+  FaListOl,
+  FaListAlt,
 } from "react-icons/fa";
-import { FiMinimize, FiMaximize  } from "react-icons/fi";
+import { FiMinimize, FiMaximize } from "react-icons/fi";
 import { MdSelectAll } from "react-icons/md";
 
-
-
-
-const TiptapEditor = () => {
-  const [editorContent, setEditorContent] = useState("");
+const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Dispatch<React.SetStateAction<string>>;}> = ({ editorContent, setEditorContent }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCode, setShowCode] = useState<boolean>(false);
 
@@ -74,7 +88,8 @@ const TiptapEditor = () => {
   if (!editor) return null;
 
   // Utility Functions
-  const addTable = () => editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
+  const addTable = () =>
+    editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
   const addRow = () => editor.chain().focus().addRowAfter().run();
   const addColumn = () => editor.chain().focus().addColumnAfter().run();
   const deleteRow = () => editor.chain().focus().deleteRow().run();
@@ -82,8 +97,10 @@ const TiptapEditor = () => {
   const undo = () => editor.chain().focus().undo().run();
   const redo = () => editor.chain().focus().redo().run();
   const selectAll = () => editor.chain().focus().selectAll().run();
-  const setFontFamily = (font: string) => editor.chain().focus().setFontFamily(font).run();
-  const setColor = (color: string) => editor.chain().focus().setColor(color).run();
+  const setFontFamily = (font: string) =>
+    editor.chain().focus().setFontFamily(font).run();
+  const setColor = (color: string) =>
+    editor.chain().focus().setColor(color).run();
   const addLink = () => {
     const url = prompt("Enter URL");
     if (url)
@@ -93,7 +110,8 @@ const TiptapEditor = () => {
     const url = prompt("Enter image URL");
     if (url) editor.chain().focus().setImage({ src: url }).run();
   };
-  const setHighlight = (color: string) => editor.chain().focus().toggleHighlight({ color }).run();
+  const setHighlight = (color: string) =>
+    editor.chain().focus().toggleHighlight({ color }).run();
   const clearMarks = () => editor.chain().focus().unsetAllMarks().run();
   const setTextAlign = (align: "left" | "center" | "right" | "justify") =>
     editor.chain().focus().setTextAlign(align).run();
@@ -115,17 +133,17 @@ const TiptapEditor = () => {
             onClick={undo}
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-           <FaUndo />
+            <FaUndo />
           </button>
           <button
-          title="redo"
+            title="redo"
             type="button"
             onClick={redo}
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
             <FaRedo />
           </button>
-         
+
           <button
             type="button"
             title="select all"
@@ -136,15 +154,15 @@ const TiptapEditor = () => {
           </button>
 
           <button
-          title="bold"
+            title="bold"
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-           <FaBold />
+            <FaBold />
           </button>
           <button
-          title="italic"
+            title="italic"
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className="bg-gray-200 text-black px-2 py-1 rounded"
@@ -157,24 +175,24 @@ const TiptapEditor = () => {
             title="underline"
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-          <FaUnderline />
+            <FaUnderline />
           </button>
           <button
             type="button"
-title="strike through"
+            title="strike through"
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-         <FaStrikethrough />
+            <FaStrikethrough />
           </button>
 
           <button
             type="button"
             title="add link"
             onClick={addLink}
-            className='bg-gray-200 text-black px-2 py-1 rounded'
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-         <FaLink />
+            <FaLink />
           </button>
           <button
             type="button"
@@ -225,8 +243,6 @@ title="strike through"
             />
           </div>
 
-         
-
           <div className="flex flex-nowrap items-center gap-2">
             <label htmlFor="bg_color">Background</label>
             <input
@@ -245,7 +261,6 @@ title="strike through"
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
             <FaList />
-
           </button>
           <button
             type="button"
@@ -253,7 +268,7 @@ title="strike through"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-           <FaListOl />
+            <FaListOl />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleTaskList().run()}
@@ -261,7 +276,7 @@ title="strike through"
             type="button"
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-           <FaListAlt />
+            <FaListAlt />
           </button>
 
           {/* Blockquote */}
@@ -273,8 +288,6 @@ title="strike through"
           >
             <FaQuora />
           </button>
-
-         
 
           {/* Text Align */}
           <button
@@ -305,60 +318,58 @@ title="strike through"
           >
             <FaAlignJustify />
           </button>
-         <span className='inline-flex justify-between gap-2'>
-         <button
-            type="button"
-            onClick={addTable}
-            title="Insert table"
-            className="bg-gray-200 text-black px-2 py-1 rounded"
-          >
-          <FaTable />
-          </button>
-          <button
-            type="button"
-            title="Table add row"
-            onClick={addRow}
-            className="bg-gray-200 text-black px-2 py-1 rounded"
-          >
-            TAR
-          </button>
-          <button
-            type="button"
+          <span className="inline-flex justify-between gap-2">
+            <button
+              type="button"
+              onClick={addTable}
+              title="Insert table"
+              className="bg-gray-200 text-black px-2 py-1 rounded"
+            >
+              <FaTable />
+            </button>
+            <button
+              type="button"
+              title="Table add row"
+              onClick={addRow}
+              className="bg-gray-200 text-black px-2 py-1 rounded"
+            >
+              TAR
+            </button>
+            <button
+              type="button"
+              title="Table add column"
+              onClick={addColumn}
+              className="bg-gray-200 text-black px-2 py-1 rounded"
+            >
+              TAC
+            </button>
+            <button
+              type="button"
+              title="table delete row"
+              onClick={deleteRow}
+              className="bg-red-500 text-white px-2 py-1 rounded"
+            >
+              TDR
+            </button>
+            <button
+              title="Table delete column"
+              type="button"
+              onClick={deleteColumn}
+              className="bg-red-500 text-white px-2 py-1 rounded"
+            >
+              TDC
+            </button>
+          </span>
 
-            title="Table add column"
-            onClick={addColumn}
-            className="bg-gray-200 text-black px-2 py-1 rounded"
-          >
-            TAC
-          </button>
-          <button
-            type="button"
-            title="table delete row"
-            onClick={deleteRow}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            TDR
-          </button>
-          <button
-          title="Table delete column"
-            type="button"
-            onClick={deleteColumn}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            TDC
-          </button>
-
-         </span>
-
-         
           <button
             type="button"
             title={`${showCode ? "Hide" : "Show"} Code`}
             onClick={() => setShowCode(!showCode)}
-            className={` ${showCode?"bg-gray-600":'bg-gray-200'} text-black px-2 py-1 rounded`}
+            className={` ${
+              showCode ? "bg-gray-600" : "bg-gray-200"
+            } text-black px-2 py-1 rounded`}
           >
             <FaCode />
-            
           </button>
 
           <button
@@ -366,7 +377,7 @@ title="strike through"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="bg-purple-500 text-white px-2 py-1 rounded"
           >
-            {isFullscreen ? <FiMinimize />: <FiMaximize />}
+            {isFullscreen ? <FiMinimize /> : <FiMaximize />}
           </button>
           <button
             type="button"
@@ -376,8 +387,6 @@ title="strike through"
             <FaPaintBrush />
           </button>
         </div>
-
-       
       </div>
 
       {/* Editor Content */}

@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_link";
 import { ICategory } from "@/model/CategoryModel";
@@ -41,12 +39,10 @@ interface IFormData {
 
 const AddProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
-  const editorContent = useSelector((state: any) => state.editor.content);
-
   const [categoryList, setCategoryList] = useState([]);
   const [images, setImages] = useState<string>("");
   const [loding, setLoading] = useState<boolean>(false);
-
+const [editorContent, setEditorContent] = useState("");
   const [form_data, setForm_data] = useState<IFormData>({
     product_name: "",
     brand_name: "",
@@ -117,10 +113,9 @@ const AddProduct = () => {
     try {
       const { data } = await axios.post(
         category_list_api,
-        {},
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -141,132 +136,115 @@ const AddProduct = () => {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const target = e.target;
-
-    setForm_data((prev) => {
-      if (target instanceof HTMLInputElement) {
-        if (target.type === "checkbox") {
-          return { ...prev, [target.name]: target.checked };
-        } else {
-          return { ...prev, [target.name]: target.value };
-        }
-      } else if (
-        target instanceof HTMLTextAreaElement ||
-        target instanceof HTMLSelectElement
-      ) {
-        return { ...prev, [target.name]: target.value };
-      }
-      return prev;
-    });
+    const { name, type, value, checked } = e.target as HTMLInputElement;
+  
+    setForm_data((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
+  
 
-  const handleSubmit = async () => {
-    try {
-      const requiredFields = [
-        "product_name",
-        "brand_name",
-        "price",
-        "calculation_type",
-        "cashback",
-        "category",
-        "product_status",
-        "banner_status",
-        "terms",
-        "tags",
-        "meta_title",
-        "meta_description",
-        "meta_keywords",
-        "tags",
-        'client_url'
-      ];
+const handleSubmit = async () => {
+  try {
+    const requiredFields = [
+      "product_name",
+      "brand_name",
+      "price",
+      "calculation_type",
+      "cashback",
+      "category",
+      "product_status",
+      "banner_status",
+      "terms",
+      "tags",
+      "meta_title",
+      "meta_description",
+      "meta_keywords",
+      "client_url",
+    ];
 
-      for (const field of requiredFields) {
-        if (!form_data[field as keyof typeof form_data]) {
-          toast.error(`${field.replace("_", " ")} is required.`);
-          return;
-        }
-      }
-
-      if (!editorContent.trim()) {
-        toast.error("Description is required.");
+    for (const field of requiredFields) {
+      if (!form_data[field as keyof typeof form_data]) {
+        toast.error(`${field.replace("_", " ")} is required.`);
         return;
       }
-
-      if (!form_data.images || form_data.images.length < 3) {
-        toast.error("Please select at least three images.");
-        return;
-      }
-      
-      if (!form_data.images || form_data.images.length > 5) {
-        toast.error("You can select a maximum of five images.");
-        return;
-      }
-
-      const formPayload = new FormData();
-      if (Array.isArray(form_data.images)) {
-        form_data.images.forEach((image) => {
-          formPayload.append("images", image); 
-        });
-      } else {
-        toast.error("Invalid file input.");
-        return;
-      }
-
-      if (
-        form_data.banner_status === "active" ||
-        form_data.featured_p ||
-        form_data.add_poster
-      ) {
-        if (form_data.banner == null) {
-          toast.error("Please select one banner type image.");
-          return;
-        } else {
-          formPayload.append("banner", form_data.banner);
-        }
-      }
-
-      Object.entries(form_data).forEach(([key, value]) => {
-        if (key !== "images" && value !== undefined && value !== null) {
-          formPayload.append(key, String(value));
-        }
-      });
-
-      if (form_data.featured_p) {
-        if (form_data.flash_time == null) {
-          toast.error("Flash sale time is required.");
-          return;
-        } else {
-          console.log(form_data.flash_time);
-        }
-      }
-      formPayload.append("description", editorContent);
-      setLoading(true);
-
-      const { data } = await axios.post(add_product, formPayload, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Product added successfully!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 4000);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "An error occurred");
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    } finally {
-      setLoading(false);
     }
-  };
+
+    if (!editorContent.trim()) {
+      toast.error("Description is required.");
+      return;
+    }
+
+    if (!form_data.images || form_data.images.length < 3) {
+      toast.error("Please select at least three images.");
+      return;
+    }
+
+    if (form_data.images.length > 5) {
+      toast.error("You can select a maximum of five images.");
+      return;
+    }
+
+    const formPayload = new FormData();
+    if (Array.isArray(form_data.images)) {
+      form_data.images.forEach((image) => {
+        formPayload.append("images", image);
+      });
+    } else {
+      toast.error("Invalid file input.");
+      return;
+    }
+
+    if (form_data.banner_status === "active" || form_data.featured_p || form_data.add_poster) {
+      if (!form_data.banner) {
+        toast.error("Please select one banner type image.");
+        return;
+      }
+      formPayload.append("banner", form_data.banner);
+    }
+
+    Object.entries(form_data).forEach(([key, value]) => {
+      if (key !== "images" && value !== undefined && value !== null) {
+        formPayload.append(key, String(value));
+      }
+    });
+
+    if (form_data.featured_p && !form_data.flash_time) {
+      toast.error("Flash sale time is required.");
+      return;
+    }
+
+    formPayload.append("description", editorContent);
+
+    console.log(formPayload)
+    return
+    setLoading(true);
+
+    const { data } = await axios.post(add_product, formPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    toast.success("Product added successfully!");
+    setTimeout(() => {
+      // Instead of reloading the page, reset form_data
+      setForm_data(form_data);
+    }, 2000);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data?.message || "An error occurred");
+    } else {
+      console.error("Unexpected error:", error);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <>
@@ -400,8 +378,8 @@ const AddProduct = () => {
                 <option value="" disabled selected>
                   Calculation type
                 </option>
-                <option value="Subtract">Subtract</option>
-                <option value="Division">Division</option>
+                <option value="Subtract">By Numbers</option>
+                <option value="Division">By Percentage</option>
               </select>
             </div>
             <div className="col-span-2">
@@ -673,7 +651,7 @@ const AddProduct = () => {
               Product Description
             </label>
 
-            {/* <TextEditor /> */}
+            <TextEditor editorContent={editorContent} setEditorContent={setEditorContent}/>
           </div>
 
           <div>

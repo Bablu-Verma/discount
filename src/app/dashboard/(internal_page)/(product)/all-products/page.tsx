@@ -10,9 +10,9 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import { product_list_ } from "@/utils/api_url";
-import { ICampaign } from "@/model/CampaignModel";
 import SelectInput from "@/app/dashboard/_components/SelectInput";
 import PaginationControls from "@/app/dashboard/_components/PaginationControls";
+import { IProduct } from "@/common_type";
 
 const ProductList = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -43,7 +43,6 @@ const ProductList = () => {
     try {
       const { data } = await axios.post(
         product_list_,
-        {},
         {
           headers: {
             "Content-Type": "application/json",
@@ -161,7 +160,7 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody>
-              {produt_list.map((product:ICampaign,i) => (
+              {produt_list.map((product: IProduct,i) => (
                 <tr className="bg-white hover:bg-gray-100" key={i}>
                   <td className="px-6 py-4 flex items-center gap-4">
                     <img

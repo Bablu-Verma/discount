@@ -18,7 +18,6 @@ const CategoryList = () => {
     try {
       const { data } = await axios.post(
         category_list_api,
-        {},
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -75,9 +74,9 @@ const CategoryList = () => {
                   Slug
                 </th>
 
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                {/* <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Font awsom  Class
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
                 </th>
@@ -88,7 +87,7 @@ const CategoryList = () => {
                 <tr key={i} className="bg-white hover:bg-gray-100">
                   <td className="px-6 py-4">
                     <img
-                      src={item.img}
+                      src={item.imges[0]}
                       alt={item.name}
                       className="w-10 h-10 rounded-md"
                     />
@@ -104,17 +103,17 @@ const CategoryList = () => {
                         item.status == true ? "bg-green-500" : "bg-red-500"
                       }`}
                     >
-                      {item.status == true ? "Active" : "InActive"}
+                      {item.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-gray-800">{item.slug}</span>
                   </td>
 
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     <span className="text-gray-800">{item.font_awesome_class
                     }</span>
-                  </td>
+                  </td> */}
 
                   <td className="px-6 py-4">
                     <Link

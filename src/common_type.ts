@@ -25,9 +25,19 @@ export interface ICategory {
   description: string; 
   slug: string; 
   status: boolean;
-  img: string;
-  font_awesome_class: string; 
+  imges: string;
   deleted_category:boolean;
+}
+export interface IProduct {
+  brand: string;
+  title: string; 
+  slug: string; 
+  status: boolean;
+  banner: boolean;
+  price: number;
+  active: boolean;
+  img: string;
+  category:boolean;
 }
 export interface loginpayload {
   email?: string;

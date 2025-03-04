@@ -19,7 +19,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { useState } from "react";
 
 import { FaUndo, FaRedo, FaRegCopy, FaBold, FaItalic, FaUnderline, FaStrikethrough,FaImage, FaLink, FaCode, FaTable
-,FaPaintBrush,FaAlignLeft,FaAlignCenter,FaAlignRight,FaAlignJustify
+,FaPaintBrush,FaAlignLeft,FaAlignCenter,FaAlignRight,FaAlignJustify,FaQuora,FaList,FaListOl, FaListAlt
 
 } from "react-icons/fa";
 import { FiMinimize, FiMaximize  } from "react-icons/fi";
@@ -240,42 +240,41 @@ title="strike through"
           {/* List Buttons */}
           <button
             type="button"
+            title="un ordered list"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Bullet List
+            <FaList />
+
           </button>
           <button
             type="button"
+            title="order list"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Numbered List
+           <FaListOl />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleTaskList().run()}
+            title="Task list"
             type="button"
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Task List
+           <FaListAlt />
           </button>
 
           {/* Blockquote */}
           <button
             type="button"
+            title="blockquote"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Blockquote
+            <FaQuora />
           </button>
 
-          <button
-            type="button"
-            onClick={clearMarks}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            <FaPaintBrush />
-          </button>
+         
 
           {/* Text Align */}
           <button
@@ -350,6 +349,8 @@ title="strike through"
           </button>
 
          </span>
+
+         
           <button
             type="button"
             title={`${showCode ? "Hide" : "Show"} Code`}
@@ -366,6 +367,13 @@ title="strike through"
             className="bg-purple-500 text-white px-2 py-1 rounded"
           >
             {isFullscreen ? <FiMinimize />: <FiMaximize />}
+          </button>
+          <button
+            type="button"
+            onClick={clearMarks}
+            className="bg-red-500 text-white px-2 py-1 rounded"
+          >
+            <FaPaintBrush />
           </button>
         </div>
 

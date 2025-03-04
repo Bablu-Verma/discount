@@ -101,3 +101,68 @@ input:checked {
 .tiptap tr:hover {
   background-color: #e2e2e2;
 }
+.tiptap p{
+  font-weight: 400;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  font-size: 14px;
+}
+.tiptap blockquote{
+  border-left: 4px solid #8a2222af;
+  background: rgba(236, 166, 166, 0.658);
+  margin: 10px 0;
+  padding: 10px 0px 10px 16px;
+ 
+}
+.tiptap blockquote p{
+  margin-bottom: 0px;
+}
+.tiptap h1{
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.tiptap h2{
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.tiptap h3{
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.tiptap h4{
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.tiptap h6{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.tiptap ol{
+  padding-left: 14px;
+}
+
+.tiptap ul {
+  list-style-type:disc; 
+  padding-left: 30px;
+}
+
+.tiptap ol {
+  list-style-type:decimal;
+  padding-left: 30px;
+}
+
+
+.tiptap li {
+  font-size: 16px;
+  line-height: 1.5;
+}

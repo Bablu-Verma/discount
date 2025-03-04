@@ -14,22 +14,37 @@ import FontFamily from "@tiptap/extension-font-family";
 import Link from "@tiptap/extension-link";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
-
 import Image from "@tiptap/extension-image";
+import TextAlign from "@tiptap/extension-text-align";
 import { useState } from "react";
+
+import { FaUndo, FaRedo, FaRegCopy, FaBold, FaItalic, FaUnderline, FaStrikethrough,FaImage, FaLink, FaCode, FaTable
+,FaPaintBrush,FaAlignLeft,FaAlignCenter,FaAlignRight,FaAlignJustify
+
+} from "react-icons/fa";
+import { FiMinimize, FiMaximize  } from "react-icons/fi";
+import { MdSelectAll } from "react-icons/md";
+
+
+
 
 const TiptapEditor = () => {
   const [editorContent, setEditorContent] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCode, setShowCode] = useState<boolean>(false);
+
   const editor = useEditor({
     extensions: [
-      
-      StarterKit,
+      StarterKit.configure({
+        blockquote: {},
+        bulletList: {},
+        orderedList: {},
+        strike: {},
+      }),
       Underline,
       TextStyle,
       Color,
-      Highlight.configure({ multicolor: true }), 
+      Highlight.configure({ multicolor: true }),
       FontFamily,
       Link.configure({
         openOnClick: true,
@@ -43,6 +58,12 @@ const TiptapEditor = () => {
       TableRow,
       TableHeader,
       TableCell,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "right", "justify"],
+      }),
+      TaskList,
+      TaskItem,
     ],
     content: "<p>Hello, this is your editor!</p>",
     onUpdate: ({ editor }) => {
@@ -53,8 +74,7 @@ const TiptapEditor = () => {
   if (!editor) return null;
 
   // Utility Functions
-  const addTable = () =>
-    editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
+  const addTable = () => editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
   const addRow = () => editor.chain().focus().addRowAfter().run();
   const addColumn = () => editor.chain().focus().addColumnAfter().run();
   const deleteRow = () => editor.chain().focus().deleteRow().run();
@@ -62,12 +82,8 @@ const TiptapEditor = () => {
   const undo = () => editor.chain().focus().undo().run();
   const redo = () => editor.chain().focus().redo().run();
   const selectAll = () => editor.chain().focus().selectAll().run();
-
-  const setFontFamily = (font: string) =>
-    editor.chain().focus().setFontFamily(font).run();
-
-  const setColor = (color: string) =>
-    editor.chain().focus().setColor(color).run();
+  const setFontFamily = (font: string) => editor.chain().focus().setFontFamily(font).run();
+  const setColor = (color: string) => editor.chain().focus().setColor(color).run();
   const addLink = () => {
     const url = prompt("Enter URL");
     if (url)
@@ -77,12 +93,10 @@ const TiptapEditor = () => {
     const url = prompt("Enter image URL");
     if (url) editor.chain().focus().setImage({ src: url }).run();
   };
-
-
-  const setHighlight = (color: string) =>
-    editor.chain().focus().toggleHighlight({ color }).run();
-
-
+  const setHighlight = (color: string) => editor.chain().focus().toggleHighlight({ color }).run();
+  const clearMarks = () => editor.chain().focus().unsetAllMarks().run();
+  const setTextAlign = (align: "left" | "center" | "right" | "justify") =>
+    editor.chain().focus().setTextAlign(align).run();
 
   return (
     <div
@@ -92,81 +106,83 @@ const TiptapEditor = () => {
           : "border p-4 bg-white rounded-md shadow-md"
       }
     >
-      <div className=" mb-4 p-2 editor_tool_bar sticky top-0 z-[99999] bg-white">
+      <div className="mb-4 p-2 editor_tool_bar sticky top-0 z-[99999] bg-white">
         {/* Toolbar */}
         <div className="mb-2 flex flex-wrap gap-2">
           <button
             type="button"
+            title="undo"
             onClick={undo}
-            className="bg-gray-400 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Undo
+           <FaUndo />
           </button>
           <button
+          title="redo"
             type="button"
             onClick={redo}
-            className="bg-gray-400 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Redo
+            <FaRedo />
           </button>
-          <select
-            onChange={(e) => {
-              const level = Number(e.target.value) as 1 | 2 | 3 | 4 | 5 | 6;
-              editor.chain().focus().toggleHeading({ level }).run();
-            }}
-            className="border px-2 py-1 rounded"
-          >
-            <option value="">Heading</option>
-            <option value="1">H1</option>
-            <option value="2">H2</option>
-            <option value="3">H3</option>
-            <option value="4">H4</option>
-            <option value="5">H5</option>
-            <option value="6">H6</option>
-          </select>
+         
           <button
             type="button"
+            title="select all"
             onClick={selectAll}
-            className="bg-gray-600 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Select All
+            <MdSelectAll />
           </button>
 
           <button
+          title="bold"
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Bold
+           <FaBold />
           </button>
           <button
+          title="italic"
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Italic
+            <FaItalic />
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+            title="underline"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Underline
+          <FaUnderline />
+          </button>
+          <button
+            type="button"
+title="strike through"
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+         <FaStrikethrough />
           </button>
 
           <button
             type="button"
+            title="add link"
             onClick={addLink}
-            className="bg-purple-500 text-white px-2 py-1 rounded"
+            className='bg-gray-200 text-black px-2 py-1 rounded'
           >
-            Add Link
+         <FaLink />
           </button>
           <button
             type="button"
+            title="add image"
             onClick={addImage}
-            className="bg-purple-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Add Image
+            <FaImage />
           </button>
 
           {/* Font Family */}
@@ -182,32 +198,34 @@ const TiptapEditor = () => {
             <option value="Verdana">Verdana</option>
           </select>
 
+          <select
+            onChange={(e) => {
+              const level = Number(e.target.value) as 1 | 2 | 3 | 4 | 5 | 6;
+              editor.chain().focus().toggleHeading({ level }).run();
+            }}
+            className="border px-2 py-1 rounded"
+          >
+            <option value="">Heading</option>
+            <option value="1">H1</option>
+            <option value="2">H2</option>
+            <option value="3">H3</option>
+            <option value="4">H4</option>
+            <option value="5">H5</option>
+            <option value="6">H6</option>
+          </select>
+
           {/* Text Color */}
-         <div className="flex flex-nowrap items-center gap-2">
-         <label htmlFor="text_color">Text Color</label>
-          <input
-            type="color"
-            id="text_color"
-            onChange={(e) => setColor(e.target.value)}
-            title="Text Color"
-          />
-         </div>
+          <div className="flex flex-nowrap items-center gap-2">
+            <label htmlFor="text_color">Text Color</label>
+            <input
+              type="color"
+              id="text_color"
+              onChange={(e) => setColor(e.target.value)}
+              title="Text Color"
+            />
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setShowCode(!showCode)}
-            className="bg-purple-500 text-white px-2 py-1 rounded"
-          >
-            {showCode ? "Hide" : "Show"} Code
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="bg-purple-500 text-white px-2 py-1 rounded"
-          >
-            {isFullscreen ? "Small Screen" : "Full Screen"}
-          </button>
+         
 
           <div className="flex flex-nowrap items-center gap-2">
             <label htmlFor="bg_color">Background</label>
@@ -218,8 +236,9 @@ const TiptapEditor = () => {
               title="Background Color"
             />
           </div>
-           {/* List Buttons */}
-           <button
+
+          {/* List Buttons */}
+          <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className="bg-green-500 text-white px-2 py-1 rounded"
@@ -227,7 +246,7 @@ const TiptapEditor = () => {
             Bullet List
           </button>
           <button
-           type="button"
+            type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className="bg-green-500 text-white px-2 py-1 rounded"
           >
@@ -235,58 +254,129 @@ const TiptapEditor = () => {
           </button>
           <button
             onClick={() => editor.chain().focus().toggleTaskList().run()}
-             type="button"
+            type="button"
             className="bg-green-500 text-white px-2 py-1 rounded"
           >
             Task List
           </button>
-        </div>
 
-        {/* Table Controls */}
-        <div className=" space-x-2">
+          {/* Blockquote */}
           <button
             type="button"
-            onClick={addTable}
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
             className="bg-blue-500 text-white px-2 py-1 rounded"
           >
-            Insert Table
+            Blockquote
+          </button>
+
+          <button
+            type="button"
+            onClick={clearMarks}
+            className="bg-red-500 text-white px-2 py-1 rounded"
+          >
+            <FaPaintBrush />
+          </button>
+
+          {/* Text Align */}
+          <button
+            type="button"
+            onClick={() => setTextAlign("left")}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+            <FaAlignLeft />
           </button>
           <button
             type="button"
+            onClick={() => setTextAlign("center")}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+            <FaAlignCenter />
+          </button>
+          <button
+            type="button"
+            onClick={() => setTextAlign("right")}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+            <FaAlignRight />
+          </button>
+          <button
+            type="button"
+            onClick={() => setTextAlign("justify")}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+            <FaAlignJustify />
+          </button>
+         <span className='inline-flex justify-between gap-2'>
+         <button
+            type="button"
+            onClick={addTable}
+            title="Insert table"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+          <FaTable />
+          </button>
+          <button
+            type="button"
+            title="Table add row"
             onClick={addRow}
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Add Row
+            TAR
           </button>
           <button
             type="button"
+
+            title="Table add column"
             onClick={addColumn}
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
           >
-            Add Column
+            TAC
           </button>
           <button
             type="button"
+            title="table delete row"
             onClick={deleteRow}
             className="bg-red-500 text-white px-2 py-1 rounded"
           >
-            Delete Row
+            TDR
           </button>
           <button
+          title="Table delete column"
             type="button"
             onClick={deleteColumn}
             className="bg-red-500 text-white px-2 py-1 rounded"
           >
-            Delete Column
+            TDC
+          </button>
+
+         </span>
+          <button
+            type="button"
+            title={`${showCode ? "Hide" : "Show"} Code`}
+            onClick={() => setShowCode(!showCode)}
+            className={` ${showCode?"bg-gray-600":'bg-gray-200'} text-black px-2 py-1 rounded`}
+          >
+            <FaCode />
+            
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="bg-purple-500 text-white px-2 py-1 rounded"
+          >
+            {isFullscreen ? <FiMinimize />: <FiMaximize />}
           </button>
         </div>
+
+       
       </div>
 
       {/* Editor Content */}
       <EditorContent editor={editor} className="" />
 
       {showCode && (
-        <div className="mt-4 p-2 border-t ">
+        <div className="mt-4 p-2 border-t">
           <h3 className="font-semibold">Editor Output (HTML):</h3>
           <div className="text-sm">{editorContent}</div>
         </div>

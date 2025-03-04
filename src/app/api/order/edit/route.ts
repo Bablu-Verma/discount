@@ -17,14 +17,14 @@ export async function POST(req: Request) {
     }
 
     if (usertype !== "admin") {
-        return new NextResponse(
-          JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
-          { status: 403, headers: { "Content-Type": "application/json" } }
-        );
-      }
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // ✅ Extract data from request body
-    const { record_id, order_status, payment_status } = await req.json();
+    const { record_id, order_status, order_details, payment_status, payment_details, payment_proof } = await req.json();
 
     if (!record_id) {
       return new NextResponse(JSON.stringify({ success: false, message: "Record ID is required." }), {
@@ -42,16 +42,46 @@ export async function POST(req: Request) {
       });
     }
 
-    // ✅ Update editable fields if provided
+    // ✅ Check if any updates are provided
+    if (!order_status && !payment_status) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "No updates provided." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    
     if (order_status) {
       record.order_status = order_status;
+      record.order_history.push({
+        status: order_status,
+        date: new Date(),
+        details: order_details || `Order status updated to ${order_status}`,
+      });
     }
+
+    // ✅ Update `payment_status` if provided
     if (payment_status) {
       record.payment_status = payment_status;
-    }
-  
+      record.payment_history.push({
+        status: payment_status,
+        date: new Date(),
+        details: payment_details || `Payment status updated to ${payment_status}`,
+      });
 
-    // ✅ Save the updated record
+      if (payment_status === "Paid") {
+        if (Array.isArray(payment_proof) && payment_proof.length > 0) {
+          record.payment_proof = payment_proof;
+        } else {
+          return new NextResponse(
+            JSON.stringify({ success: false, message: "Payment proof must be an array with at least one image." }),
+            { status: 400, headers: { "Content-Type": "application/json" } }
+          );
+        }
+      }
+    }
+
+   
     await record.save();
 
     return new NextResponse(

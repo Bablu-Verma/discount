@@ -27,6 +27,7 @@ interface IRecord extends Document {
   payment_history: IHistory[];
   createdAt?: Date;
   updatedAt?: Date;
+  payment_proof:string[] ;
 }
 
 // Order Schema
@@ -76,8 +77,21 @@ const RecordSchema = new Schema<IRecord>(
     payment_status: {
       type: String,
       enum: PAYMENT_STATUSES,
-      default: null, // Initially null
+      default: null,
     },
+    payment_proof: {
+      type: [String], 
+      validate: {
+        validator: function (val: string[]) {
+          return Array.isArray(val) && val.length > 0;
+        },
+        message: "At least one proof image is required.",
+      },
+      required: function () {
+        return this.payment_status === "Paid"; 
+      },
+    },
+
     order_history: [
       {
         status: {
@@ -87,7 +101,7 @@ const RecordSchema = new Schema<IRecord>(
         },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
-        proof_document: { type: String },
+       
       },
     ],
     payment_history: [
@@ -99,7 +113,7 @@ const RecordSchema = new Schema<IRecord>(
         },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
-        proof_document: { type: String },
+        
       },
     ],
   },

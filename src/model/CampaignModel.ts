@@ -16,7 +16,7 @@ interface ICampaign {
   description: string;
   redirect_url: string;
   img_array: string[];
-  product_tags?: ("new" | "hot" | "best" | "fast selling")[];
+  product_tags?: ("new" | "hot" | "best")[];
   long_poster: { is_active: boolean; image: string }[];
   main_banner: { is_active: boolean; image: string }[];
   premium_product: { is_active: boolean; image: string }[];
@@ -67,7 +67,7 @@ const CampaignSchema = new Schema<ICampaign>(
 
     product_tags: {
       type: [String],
-      enum: ["new", "hot", "best", "fast selling"],
+      enum: ["new", "hot", "best"],
       default: [],
     },
 

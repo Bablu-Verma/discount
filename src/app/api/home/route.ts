@@ -4,43 +4,78 @@ import CampaignModel from "@/model/CampaignModel";
 import CategoryModel from "@/model/CategoryModel";
 import BlogModel from "@/model/BlogModal";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-
+import StoreModel from "@/model/StoreModel";
+import CouponModel from "@/model/CouponModel";
 
 export async function POST(req: Request) {
   await dbConnect();
 
-
   const currentDate = new Date();
 
   try {
-
-  const { authenticated, user, usertype, message } =
+    const { authenticated, user, usertype, message } =
       await authenticateAndValidateUser(req);
-    
-    const banner = await CampaignModel.find({banner:true}).limit(10);
-    const newCampaigns = await CampaignModel.find({new:true}).limit(10);
-    const hotCampaigns = await CampaignModel.find({hot:true}).limit(10);
-    const featuredCampaigns = await CampaignModel.find({featured:true, expire_time: { $gt: currentDate },}).limit(10);
-    const category = await CategoryModel.find({})
-    const newBlogs = await BlogModel.find({isPublished:true}).limit(4);
-    const poster = await CampaignModel.find({add_poster:true}).limit(2);
-    const arrival = await CampaignModel.find({arrival:true}).limit(4);
-   
-   
+
+    // ✅ Ensure all queries are awaited
+    const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10);
+    const category = await CategoryModel.find({ status: "ACTIVE" });
+    const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20);
+    const coupon = await CouponModel.find({ status: "ACTIVE" }).limit(10);
+    const main_banner = await CampaignModel.find({
+      product_status: "ACTIVE",
+      main_banner: { $elemMatch: { is_active: true } },
+    }).limit(6);
+    const long_poster = await CampaignModel.find({
+      product_status: "ACTIVE",
+      long_poster: { $elemMatch: { is_active: true } },
+    }).limit(4);
+    const premium_product = await CampaignModel.find({
+      product_status: "ACTIVE",
+      premium_product: { $elemMatch: { is_active: true } },
+    });
+    const flash_sale = await CampaignModel.find({
+      product_status: "ACTIVE",
+      flash_sale: {
+        $elemMatch: {
+          is_active: true,
+          end_time: { $gte: currentDate.toISOString() }, // Ensures flash_sale is not expired
+        },
+      },
+    });
+    const new_product = await CampaignModel.find({
+      product_status: "ACTIVE",
+      product_tags: "new",
+    }).limit(10);
+    const hot_product = await CampaignModel.find({
+      product_status: "ACTIVE",
+      product_tags: "hot",
+    }).limit(10);
+    const best_product = await CampaignModel.find({
+      product_status: "ACTIVE",
+      product_tags: "best",
+    }).limit(10);
+    const offer_deal = await CampaignModel.find({
+      product_status: "ACTIVE",
+      product_tags: { $in: ["new", "hot", "best"] }, // Ensures at least one tag exists
+    }).limit(20);
+
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Home data fatch successfully.",
+        message: "Home data fetched successfully.",
         data: {
-          category:category,
-          banner:banner,
-          new: newCampaigns,
-          hot: hotCampaigns,
-          featured: featuredCampaigns,
-          blogs: newBlogs,
-          poster:poster,
-          arrival:arrival,
-         
+          flash_sale,
+          premium_product,
+          long_poster,
+          main_banner,
+          coupon,
+          category,
+          blog,
+          store,
+          new_product,
+          hot_product,
+          best_product,
+          offer_deal,
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
@@ -68,5 +103,3 @@ export async function POST(req: Request) {
     }
   }
 }
-
-

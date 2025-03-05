@@ -15,17 +15,15 @@ import SubFooter from "@/components/SubFooter";
 import TimeCount from "@/components/TimeCount";
 import { getServerToken } from "@/helpers/server/server_function";
 
-import { ICampaign } from "@/model/CampaignModel";
+
 
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-import Image from "next/image";
-import Link from "next/link";
-import toast from "react-hot-toast";
+
 
 export const GetData = async (token: string) => {
   try {
-    let { data } = await axios.post(
+    let  data  = await axios.post(
       home_api,
       {
         headers: {
@@ -38,8 +36,8 @@ export const GetData = async (token: string) => {
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.error("Error registering user", error.response?.data.message);
-      toast.error(error.response?.data.message);
+      console.error("Error home data  fatching", error.response?.data.message);
+      
     } else {
       console.error("Unknown error", error);
     }
@@ -49,6 +47,10 @@ export const GetData = async (token: string) => {
 export default async function Home() {
   const token = await getServerToken();
   const page_data = await GetData(token);
+
+
+console.log("page_data",page_data)
+return
 
   return (
     <>

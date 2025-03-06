@@ -27,6 +27,7 @@ interface IRecord extends Document {
   payment_history: IHistory[];
   createdAt?: Date;
   updatedAt?: Date;
+  
   payment_proof:string[] ;
 }
 
@@ -83,6 +84,7 @@ const RecordSchema = new Schema<IRecord>(
       type: [String], 
       validate: {
         validator: function (val: string[]) {
+          if (this.payment_status !== "Paid") return true; // Skip validation if not "Paid"
           return Array.isArray(val) && val.length > 0;
         },
         message: "At least one proof image is required.",
@@ -122,7 +124,7 @@ const RecordSchema = new Schema<IRecord>(
 
 // Middleware to track history and auto-set payment status
 RecordSchema.pre("save", function (next) {
-  if (this.isNew) {
+  if (this.isNew ) {
     this.order_history.push({
       status: this.order_status,
       date: new Date(),

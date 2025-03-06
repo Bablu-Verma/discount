@@ -30,7 +30,7 @@ const { authenticated, user, usertype, message } =
    
     const updatedUser = await UserModel.findOneAndUpdate(
       { email:user?.email },
-      { deleted_user: true },
+      { user_status: 'REMOVED' },
       { new: true } 
     );
 

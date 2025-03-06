@@ -15,7 +15,7 @@ export interface IUser  {
   role: string;
   dob?: Date;
   gender?: string;
-  deleted_user: boolean;
+  user_status:string;
   address?: {
     house_no?: string;
     landmark?: string;
@@ -81,9 +81,10 @@ const UserSchema = new Schema<IUser>(
       type: String,
       enum: ["male", "female", "other"],
     },
-    deleted_user: {
-      type: Boolean,
-      default: false,
+    user_status: {
+      type: String,
+      default: 'ACTIVE',
+      enum: ['ACTIVE', 'REMOVED']
     },
     address: {
       house_no: {

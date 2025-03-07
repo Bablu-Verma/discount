@@ -3,7 +3,7 @@ const AutoIncrementFactory = require("mongoose-sequence");
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
-interface ICampaign {
+export interface ICampaign {
   title: string;
   actual_price: Number;
   offer_price: Number;

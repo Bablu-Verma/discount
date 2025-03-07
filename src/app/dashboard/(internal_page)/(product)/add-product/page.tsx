@@ -19,6 +19,7 @@ interface IFormData {
   price: string;
   cashback: string;
   category: string;
+  description: string;
   product_status: string;
   banner_status: string;
   images: string[] | null;
@@ -42,7 +43,7 @@ const AddProduct = () => {
   const [categoryList, setCategoryList] = useState([]);
   const [images, setImages] = useState<string>("");
   const [loding, setLoading] = useState<boolean>(false);
-const [editorContent, setEditorContent] = useState("");
+  const [editorContent, setEditorContent] = useState("");
   const [form_data, setForm_data] = useState<IFormData>({
     product_name: "",
     brand_name: "",
@@ -50,6 +51,7 @@ const [editorContent, setEditorContent] = useState("");
     cashback: "",
     hot_p: "",
     category: "",
+    description:"",
     product_status: "active",
     banner_status: "active",
     images: [],
@@ -147,103 +149,135 @@ const [editorContent, setEditorContent] = useState("");
   };
   
 
-const handleSubmit = async () => {
-  try {
-    const requiredFields = [
-      "product_name",
-      "brand_name",
-      "price",
-      "calculation_type",
-      "cashback",
-      "category",
-      "product_status",
-      "banner_status",
-      "terms",
-      "tags",
-      "meta_title",
-      "meta_description",
-      "meta_keywords",
-      "client_url",
-    ];
-
-    for (const field of requiredFields) {
-      if (!form_data[field as keyof typeof form_data]) {
-        toast.error(`${field.replace("_", " ")} is required.`);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+  
+      // Required fields validation
+      const requiredFields = [
+        "product_name",
+        "brand_name",
+        "price",
+        "calculation_type",
+        "cashback",
+        "category",
+        "product_status",
+        "banner_status",
+        "terms",
+        "tags",
+        "meta_title",
+        "meta_description",
+        "meta_keywords",
+        "client_url",
+      ];
+  
+      const missingFields = requiredFields.filter((field) => !(form_data as Record<string, any>)[field]);
+  
+      if (missingFields.length > 0) {
+        toast.error(`${missingFields.join(", ")} is required.`);
+        setLoading(false);
         return;
       }
-    }
-
-    if (!editorContent.trim()) {
-      toast.error("Description is required.");
-      return;
-    }
-
-    if (!form_data.images || form_data.images.length < 3) {
-      toast.error("Please select at least three images.");
-      return;
-    }
-
-    if (form_data.images.length > 5) {
-      toast.error("You can select a maximum of five images.");
-      return;
-    }
-
-    const formPayload = new FormData();
-    if (Array.isArray(form_data.images)) {
-      form_data.images.forEach((image) => {
-        formPayload.append("images", image);
+  
+      if (!editorContent.trim()) {
+        toast.error("Description is required.");
+        setLoading(false);
+        return;
+      }
+  
+      if (!form_data.images || form_data.images.length < 3) {
+        toast.error("Please select at least three images.");
+        setLoading(false);
+        return;
+      }
+  
+      if (form_data.images.length > 5) {
+        toast.error("You can select a maximum of five images.");
+        setLoading(false);
+        return;
+      }
+  
+      // Clone form data
+      const formPayload = { ...form_data, description: editorContent };
+  
+      // Validate and process images (Assuming image URLs are stored)
+      if (Array.isArray(form_data.images)) {
+        formPayload.images = form_data.images.map((image) => image);
+      } else {
+        toast.error("Invalid file input.");
+        setLoading(false);
+        return;
+      }
+  
+      // Validate banner selection
+      if (form_data.banner_status === "active" || form_data.featured_p || form_data.add_poster) {
+        if (!form_data.banner) {
+          toast.error("Please select one banner type image.");
+          setLoading(false);
+          return;
+        }
+        formPayload.banner = form_data.banner;
+      }
+  
+      // Validate flash sale time
+      if (form_data.featured_p && !form_data.flash_time) {
+        toast.error("Flash sale time is required.");
+        setLoading(false);
+        return;
+      }
+  
+      console.log("Submitting:", formPayload);
+  
+      // Send JSON payload (file uploads should be handled separately)
+      const { data } = await axios.post(add_product, JSON.stringify(formPayload), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
-    } else {
-      toast.error("Invalid file input.");
-      return;
-    }
-
-    if (form_data.banner_status === "active" || form_data.featured_p || form_data.add_poster) {
-      if (!form_data.banner) {
-        toast.error("Please select one banner type image.");
-        return;
+  
+      toast.success("Product added successfully!");
+  
+      setTimeout(() => {
+        setForm_data({
+          product_name: "",
+          brand_name: "",
+          price: "",
+          cashback: "",
+          hot_p: "",
+          category: "",
+          description: "",
+          product_status: "active",
+          banner_status: "active",
+          images: [],
+          terms: "",
+          meta_title: "",
+          meta_description: "",
+          meta_keywords: "",
+          new_p: "",
+          featured_p: "",
+          tags: "",
+          add_poster: "",
+          arrival: "",
+          flash_time: null,
+          banner: "",
+          calculation_type: "",
+          client_url: "",
+        }); // Reset form
+        setEditorContent("");
+      }, 2000);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "An error occurred");
+      } else {
+        console.error("Unexpected error:", error);
       }
-      formPayload.append("banner", form_data.banner);
+    } finally {
+      setLoading(false);
     }
-
-    Object.entries(form_data).forEach(([key, value]) => {
-      if (key !== "images" && value !== undefined && value !== null) {
-        formPayload.append(key, String(value));
-      }
-    });
-
-    if (form_data.featured_p && !form_data.flash_time) {
-      toast.error("Flash sale time is required.");
-      return;
-    }
-
-    formPayload.append("description", editorContent);
-
-    console.log(formPayload)
-    return
-    setLoading(true);
-
-    const { data } = await axios.post(add_product, formPayload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    toast.success("Product added successfully!");
-    setTimeout(() => {
-      // Instead of reloading the page, reset form_data
-      setForm_data(form_data);
-    }, 2000);
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast.error(error.response?.data?.message || "An error occurred");
-    } else {
-      console.error("Unexpected error:", error);
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+  
+  
 
 
   return (

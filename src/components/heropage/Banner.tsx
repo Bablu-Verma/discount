@@ -33,9 +33,9 @@ const Banner:React.FC<BannerProps> = ({banner}) => {
       >
         {banner.map((item, i) => (
           <SwiperSlide key={i}>
-            <Link href={`/campaign/${item.slug}`}
+            <Link href={item.slug_type === 'INTERNAL' ? `/campaign/${item?.product_slug}` : item.redirect_url}
               className="relative h-48 lg:h-60 rounded bg-cover bg-center block mx-2"
-              style={{ backgroundImage: `url(${item.banner_img})` }}
+              style={{ backgroundImage: `url(${item.main_banner[0].image})` }}
             ></Link>
           </SwiperSlide>
         ))}

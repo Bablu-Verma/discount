@@ -33,7 +33,7 @@ export const GetData = async (token: string) => {
       }
     );
 
-    return data;
+    return data.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error home data  fatching", error.response?.data.message);
@@ -49,8 +49,9 @@ export default async function Home() {
   const page_data = await GetData(token);
 
 
-console.log("page_data",page_data)
-return
+  if (page_data) {
+    console.log("page_data", page_data.data);
+  }
 
   return (
     <>
@@ -59,7 +60,7 @@ return
       <CallApiInHome />
       <Hero
         home_category={page_data.data.category}
-        banner={page_data.data.banner}
+        banner={page_data.data.main_banner}
       />
       <main>
         <SubHeading title="Today's" />
@@ -67,28 +68,29 @@ return
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
         </div>
-        <HomeFlash featured={page_data.data.featured} />
+        <HomeFlash flashSale={page_data.data.flash_sale} />
+
 
         <SubHeading title="This Month" />
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Best Selling Products" />
         </div>
-        <BestSalling best_product={page_data.data.new} />
+        <BestSalling best_product={page_data.data.best_product} />
 
         <div className="max-w-[1400px] mx-auto mt-14">
-          <HomePoster poster={page_data.data.poster} />
+          <HomePoster poster={page_data.data.long_poster} />
         </div>
         <SubHeading title="Our Product" />
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Explore Our Products" />
         </div>
-        <BestSalling best_product={page_data.data.hot} />
+        {/* <BestSalling best_product={page_data.data.hot_product} /> */}
 
         <SubHeading title="Featured" />
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="New Arrival" />
         </div>
-        <Featured arrival={page_data.data.arrival} />
+        <Featured arrival={page_data.data.premium_product} />
         <SubHeading title="Categories" />
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Browse by category" />
@@ -98,12 +100,12 @@ return
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Read Our Blog" />
         </div>
-        <HomeBlog blogs={page_data.data.blogs} />
+        <HomeBlog blogs={page_data.data.blog} />
 
         <SubFooter />
         <BottomToTop />
       </main>
       <Footer />
     </>
-  );
+  ); 
 }

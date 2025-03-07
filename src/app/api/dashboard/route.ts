@@ -132,12 +132,103 @@ export async function POST(req: Request) {
         }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
+    }else if (usertype === "data_editor") {
+      const [
+        totalCategories, activeCategories, inactiveCategories,
+        totalStores, activeStores, inactiveStores,
+        totalCoupons, activeCoupons, inactiveCoupons,
+        totalCampaigns, activeCampaigns, pausedCampaigns,
+        totalCampaignQueries, campaignQueriesNotStarted, campaignQueriesOpen, campaignQueriesClosed, campaignQueriesRemoved,
+        totalClaimForms, pendingClaims, approvedClaims, rejectedClaims
+      ] = await Promise.all([
+      
+        // Categories
+        CategoryModel.countDocuments(),
+        CategoryModel.countDocuments({ status: "ACTIVE" }),
+        CategoryModel.countDocuments({ status: "INACTIVE" }),
+
+      
+        // Stores
+        StoreModel.countDocuments(),
+        StoreModel.countDocuments({ store_status: "ACTIVE" }),
+        StoreModel.countDocuments({ store_status: "INACTIVE" }),
+
+        // Coupons
+        CouponModel.countDocuments(),
+        CouponModel.countDocuments({ status: "ACTIVE" }),
+        CouponModel.countDocuments({ status: "INACTIVE" }),
+
+        // Campaigns
+        CampaignModel.countDocuments(),
+        CampaignModel.countDocuments({ product_status: "ACTIVE" }),
+        CampaignModel.countDocuments({ product_status: "PAUSE" }),
+
+        // Campaign Queries
+        CampaignQueryModel.countDocuments(),
+        CampaignQueryModel.countDocuments({ query_status: "NOTSTART" }),
+        CampaignQueryModel.countDocuments({ query_status: "OPEN" }),
+        CampaignQueryModel.countDocuments({ query_status: "CLOSED" }),
+        CampaignQueryModel.countDocuments({ query_status: "REMOVED" }),
+        // Claim Forms
+        ClaimFormModel.countDocuments(),
+        ClaimFormModel.countDocuments({ status: "PENDING" }),
+        ClaimFormModel.countDocuments({ status: "APPROVED" }),
+        ClaimFormModel.countDocuments({ status: "REJECTED" }),
+      ]);
+
+      return new NextResponse(
+        JSON.stringify({
+          success: true,
+          message: "Dashboard data retrieved successfully",
+          data: {
+            categories: { total: totalCategories, active: activeCategories, inactive: inactiveCategories },
+            stores: { total: totalStores, active: activeStores, inactive: inactiveStores },
+            coupons: { total: totalCoupons, active: activeCoupons, inactive: inactiveCoupons },
+            campaigns: { total: totalCampaigns, active: activeCampaigns, paused: pausedCampaigns },
+            campaign_queries: { total: totalCampaignQueries, not_started: campaignQueriesNotStarted, open: campaignQueriesOpen, closed: campaignQueriesClosed, removed: campaignQueriesRemoved },
+            claim_forms: { total: totalClaimForms, pending: pendingClaims, approved: approvedClaims, rejected: rejectedClaims }
+          }
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } else if (usertype === "blog_editor"){
+      const [
+        totalBlogCategories, activeBlogCategories, inactiveBlogCategories,
+        totalBlogs, activeBlogs, inactiveBlogs, removedBlogs,
+      ] = await Promise.all([
+      
+        // Blog Categories
+        BlogCategoryModel.countDocuments(),
+        BlogCategoryModel.countDocuments({ status: "ACTIVE" }),
+        BlogCategoryModel.countDocuments({ status: "INACTIVE" }),
+
+        // Blogs
+        BlogModel.countDocuments(),
+        BlogModel.countDocuments({ status: "ACTIVE" }),
+        BlogModel.countDocuments({ status: "INACTIVE" }),
+        BlogModel.countDocuments({ status: "REMOVED" }),
+
+      ]);
+
+      return new NextResponse(
+        JSON.stringify({
+          success: true,
+          message: "Dashboard data retrieved successfully",
+          data: {
+            blog_categories: { total: totalBlogCategories, active: activeBlogCategories, inactive: inactiveBlogCategories },
+            blogs: { total: totalBlogs, active: activeBlogs, inactive: inactiveBlogs, removed: removedBlogs },
+          }
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }else{
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    return new NextResponse(
-      JSON.stringify({ success: false, message: "Access denied: Does not have the required role" }),
-      { status: 403, headers: { "Content-Type": "application/json" } }
-    );
+   
   } catch (error) {
     console.error("Failed to get dashboard data", error);
     return new NextResponse(

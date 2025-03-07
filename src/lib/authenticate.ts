@@ -59,6 +59,15 @@ export const authenticateAndValidateUser = async (req: Request): Promise<AuthRes
       };
     }
 
+    if (user.user_status == 'REMOVED') {
+      return {
+        authenticated: false,
+        user: null,
+        usertype: null,
+        message: "User not found",
+      };
+    }
+
     let usertype: string | null = null;
     if (user.role === "admin") {
       usertype = "admin";

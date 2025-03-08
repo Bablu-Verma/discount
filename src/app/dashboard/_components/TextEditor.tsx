@@ -42,10 +42,16 @@ import {
 } from "react-icons/fa";
 import { FiMinimize, FiMaximize } from "react-icons/fi";
 import { MdSelectAll } from "react-icons/md";
+import axios from "axios";
+import { upload_image_api } from "@/utils/api_url";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux-store/redux_store";
 
 const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Dispatch<React.SetStateAction<string>>;}> = ({ editorContent, setEditorContent }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCode, setShowCode] = useState<boolean>(false);
+
+  const token = useSelector((state: RootState) => state.user.token);
 
   const editor = useEditor({
     extensions: [
@@ -106,10 +112,42 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
     if (url)
       editor.chain().focus().setLink({ href: url, target: "_blank" }).run();
   };
-  const addImage = () => {
-    const url = prompt("Enter image URL");
-    if (url) editor.chain().focus().setImage({ src: url }).run();
+  const addImage = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    
+    input.onchange = async (event) => {
+      const target = event.target as HTMLInputElement; 
+     if (!target.files || target.files.length === 0) return;
+
+    const file = target.files[0];
+  
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("file_name", 'editor_folder');
+
+      try {
+        const {data} = await axios.post(upload_image_api, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (data.responce.url) {
+          editor.chain().focus().setImage({ src: data.responce.url }).run();
+        } else {
+          alert("Failed to upload image");
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("Error uploading image");
+      }
+    };
+  
+    input.click();
   };
+
   const setHighlight = (color: string) =>
     editor.chain().focus().toggleHighlight({ color }).run();
   const clearMarks = () => editor.chain().focus().unsetAllMarks().run();
@@ -124,7 +162,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
           : "border p-4 bg-white rounded-md shadow-md"
       }
     >
-      <div className="mb-4 p-2 editor_tool_bar sticky top-0 z-[99999] bg-white">
+      <div className="mb-4 p-2 editor_tool_bar sticky top-0 z-[9] bg-white">
         {/* Toolbar */}
         <div className="mb-2 flex flex-wrap gap-2">
           <button

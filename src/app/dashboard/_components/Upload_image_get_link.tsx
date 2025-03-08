@@ -55,7 +55,7 @@ const UploadImageGetLink = () => {
       });
 
       toast.success("Image uploaded successfully");
-      console.log(data.responce.url)
+    
       setImgLink(data.responce.url); 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -116,6 +116,8 @@ const UploadImageGetLink = () => {
               <option value="blog_site">Blog Folder</option>
               <option value="product_site">Product Folder</option>
               <option value="user_site">User Folder</option>
+              <option value="store_site">Store Folder</option>
+              <option value="coupon_site">Coupon Folder</option>
             </select>
           </div>
           

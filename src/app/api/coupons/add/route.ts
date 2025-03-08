@@ -26,9 +26,9 @@ export async function POST(req: Request) {
     }
 
     const requestData = await req.json();
-    const { code, discount, description, expiry_date, store, category, status } = requestData;
+    const { code, title, discount, description, expiry_date, store, category, status } = requestData;
 
-    if (!code || !discount || !description || !expiry_date || !store || !category) {
+    if (!code || !discount ||! title || !description || !expiry_date || !store || !category) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "All fields are required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
       expiry_date,
       store,
       category,
+      title,
       status,
     });
 

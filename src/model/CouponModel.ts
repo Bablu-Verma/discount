@@ -5,6 +5,7 @@ import { ICategory } from "@/model/CategoryModel";
 export type CouponStatus = "ACTIVE" | "INACTIVE" | "REMOVED";
 
 export interface ICoupon {
+  title: string;
   code: string;
   discount: string;
   description: string;
@@ -18,6 +19,10 @@ export interface ICoupon {
 
 const CouponSchema = new Schema<ICoupon>(
   {
+    title: {
+      type: String,
+      required: [true, "Coupon title"]
+    },
     code: {
       type: String,
       required: [true, "Coupon code is required"],

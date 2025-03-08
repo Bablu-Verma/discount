@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const requestData = await req.json();
-    const { coupon_id, code, discount, description, expiry_date, store, category, status } = requestData;
+    const { coupon_id, code, discount, title, description, expiry_date, store, category, status } = requestData;
 
     if (!coupon_id) {
       return new NextResponse(
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
 
     // Update coupon fields if provided
     if (code) coupon.code = code;
+    if(title) code.title = title;
     if (discount) coupon.discount = discount;
     if (description) coupon.description = description;
     if (expiry_date) coupon.expiry_date = expiry_date;

@@ -21,9 +21,10 @@ const AddCategory = () => {
   const token = useSelector((state: RootState) => state.user.token);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+  
     if (name === "innerImage") {
       setFormData((prev) => ({ ...prev, images: [value, prev.images[1]] }));
     } else if (name === "outerImage") {
@@ -107,6 +108,7 @@ const AddCategory = () => {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Inner Category Image URL
@@ -136,34 +138,32 @@ const AddCategory = () => {
             />
             <div className="mt-4 flex space-x-4">{renderImagePreview(1)}</div>
           </div>
+          </div>
+
+          
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Category Status
             </label>
             <div className="flex items-center space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="status"
-                  value="ACTIVE"
-                  checked={formData.status === "ACTIVE"}
-                  onChange={handleInputChange}
-                  className="focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="ml-2">Active</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="status"
-                  value="INACTIVE"
-                  checked={formData.status === "INACTIVE"}
-                  onChange={handleInputChange}
-                  className="focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="ml-2">Inactive</span>
-              </label>
+            <select
+               name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+              >
+                <option disabled value="">
+                  Select Store
+                </option>
+                <option value='ACTIVE'>
+                ACTIVE
+                  </option>
+                <option value='INACTIVE'>
+                INACTIVE
+                  </option>
+              </select>
+             
             </div>
           </div>
 

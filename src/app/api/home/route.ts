@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10);
     const category = await CategoryModel.find({ status: "ACTIVE" });
     const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20);
-    const coupon = await CouponModel.find({ status: "ACTIVE" }).limit(10);
+    const coupon = await CouponModel.find({ status: "ACTIVE" }).limit(10).populate('store', 'name store_img').populate('category', 'name');
     const main_banner = await CampaignModel.find({
       product_status: "ACTIVE",
       main_banner: { $elemMatch: { is_active: true } },
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       flash_sale: {
         $elemMatch: {
           is_active: true,
-          end_time: { $gte: currentDate.toISOString() }, // Ensures flash_sale is not expired
+          end_time: { $gte: currentDate.toISOString() }, 
         },
       },
     });

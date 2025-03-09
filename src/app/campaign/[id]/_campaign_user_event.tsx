@@ -42,9 +42,6 @@ const user = useSelector(
 
   const SubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-
-   
-  
    
     if (!formData.whatsapp_number) {
       toast.error("Please enter whatsapp/Phone number");

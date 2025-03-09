@@ -8,9 +8,6 @@ import { IBlogCard } from "@/app/blog/page";
 
 const HomeBlog: React.FC<{blogs: IBlogCard[]}> = ({blogs}) => {
   
-  console.log(blogs)
-
-
   return (
     <div className="max-w-[1400px] mx-auto pt-2 mb-4 relative">
       <div className="absolute right-4 top-[-44px]">

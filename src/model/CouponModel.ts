@@ -5,6 +5,7 @@ import { ICategory } from "@/model/CategoryModel";
 export type CouponStatus = "ACTIVE" | "INACTIVE" | "REMOVED";
 
 export interface ICoupon {
+  _id: string;
   title: string;
   code: string;
   discount: string;

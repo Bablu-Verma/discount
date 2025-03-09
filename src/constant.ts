@@ -1,1 +1,1 @@
-export const blogType = ['Article', 'Tutorial', 'Case Study', 'Review', 'Interview']
+export const blog_type = ['Article', 'Tutorial', 'Case Study', 'Review', 'Interview']

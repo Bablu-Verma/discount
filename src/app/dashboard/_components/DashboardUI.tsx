@@ -56,18 +56,19 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
     },
     {
       id: 3,
-      name: "Add Category",
-      url: "/dashboard/add-category",
-      icon: "fas fa-tachometer-alt",
-      roles: ["admin"]
-    },
-    {
-      id: 4,
       name: "All Product",
       url: "/dashboard/all-products",
       icon: "fas fa-tachometer-alt",
       roles: ["admin", "data_editor"],
     },
+    {
+      id: 4,
+      name: "Add Category",
+      url: "/dashboard/add-category",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"]
+    },
+   
     {
       id: 5,
       name: "All Category",
@@ -77,36 +78,80 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
     },
     {
       id: 6,
+      name: "Add store",
+      url: "/dashboard/add-store",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"]
+    },
+   
+    {
+      id: 7,
+      name: "All Stores",
+      url: "/dashboard/all-stores",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin", "data_editor"], 
+    },
+    {
+      id: 8,
+      name: "Add coupons",
+      url: "/dashboard/add-coupons",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin", 'data_editor']
+    },
+   
+    {
+      id: 9,
+      name: "All Coupons",
+      url: "/dashboard/all-coupons",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin", "data_editor"], 
+    },
+    {
+      id: 10,
       name: "Order List",
       url: "/dashboard/all-order",
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
     {
-      id: 7,
+      id: 11,
       name: "Users",
       url: "/dashboard/all-user",
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
     {
-      id: 8,
+      id: 12,
       name: "Contact Us Data",
       url: "/dashboard/contact-us/list",
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
     {
-      id: 9,
+      id: 13,
       name: "Add Blog",
       url: "/dashboard/add-blog",
       icon: "fas fa-tachometer-alt",
       roles: ["admin", "blog_editor"], 
     },
     {
-      id: 10,
+      id: 14,
       name: "Blog List",
       url: "/dashboard/blog-list",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin", "blog_editor"], 
+    },
+    {
+      id: 15,
+      name: "Add Blog Category",
+      url: "/dashboard/add-blog-category",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin", "blog_editor"], 
+    },
+    {
+      id: 16,
+      name: " All Blog Category List",
+      url: "/dashboard/blog-category-list",
       icon: "fas fa-tachometer-alt",
       roles: ["admin", "blog_editor"], 
     },
@@ -126,7 +171,7 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
               <h1 className="text-2xl font-semibold text-center text-secondary_color py-3 mb-3 select-none">
                 <span className="text-primary capitalize">{userI_data?.role}</span>Board
               </h1>
-              <div>
+              <div className="pb-10">
                 <Link
                   href="/"
                   className="block mb-3 px-6 border-l-4 border-l-transparent hover:border-primary cursor-pointer duration-100 ease-in"

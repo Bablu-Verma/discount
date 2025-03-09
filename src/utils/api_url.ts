@@ -37,3 +37,6 @@ export const add_store_api = main_url + '/store/add'
 export const list_store_api = main_url + '/store/list'
 export const add_coupons_api = main_url + '/coupons/add'
 // export const upload_image_api = main_url + '/get-one-user'
+
+export const add_blog_category_api = main_url + '/blog-category/add'
+export const blog_category_list_api = main_url + '/blog-category/list'

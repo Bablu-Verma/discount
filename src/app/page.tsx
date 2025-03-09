@@ -11,33 +11,29 @@ import HomeBlog from "@/components/homepage/HomeBlog";
 import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
 import HomePoster from "@/components/homepage/HomePoster";
+import StoreCard from "@/components/small_card/StoreCard";
 import SubFooter from "@/components/SubFooter";
-import TimeCount from "@/components/TimeCount";
+
 import { getServerToken } from "@/helpers/server/server_function";
-
-
+import { IStore } from "@/model/StoreModel";
 
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-
+import Link from "next/link";
 
 export const GetData = async (token: string) => {
   try {
-    let  data  = await axios.post(
-      home_api,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    let data = await axios.post(home_api, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return data.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error home data  fatching", error.response?.data.message);
-      
     } else {
       console.error("Unknown error", error);
     }
@@ -48,10 +44,9 @@ export default async function Home() {
   const token = await getServerToken();
   const page_data = await GetData(token);
 
-
-  if (page_data) {
-    console.log("page_data", page_data.data);
-  }
+  // if (page_data) {
+  //   console.log("page_data", page_data.data);
+  // }
 
   return (
     <>
@@ -70,12 +65,26 @@ export default async function Home() {
         </div>
         <HomeFlash flashSale={page_data.data.flash_sale} />
 
-
         <SubHeading title="This Month" />
         <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Best Selling Products" />
         </div>
         <BestSalling best_product={page_data.data.best_product} />
+
+        <SubHeading title="Cashback store" />
+        <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-14 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
+            {page_data.data.store.map((item: IStore) => (
+              <StoreCard item={item} />
+            ))}
+            <Link
+              href={`/store`}
+              className="bg-white rounded-md p-3 justify-center gap-1 flex flex-col items-center hover:shadow-orange-600"
+            >
+              <h3 className="text-xl capitalize  text-secondary">View All</h3>
+            </Link>
+          </div>
+        </div>
 
         <div className="max-w-[1400px] mx-auto mt-14">
           <HomePoster poster={page_data.data.long_poster} />
@@ -107,5 +116,5 @@ export default async function Home() {
       </main>
       <Footer />
     </>
-  ); 
+  );
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { IBlogCard } from "@/app/blog/page";
 import Link from "next/link";
 import React from "react";
@@ -29,7 +31,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
       <div className="max-h-[200px] overflow-hidden relative">
         <span className="w-full h-auto bg-[rgba(0,0,0,.2)] absolute top-0 left-0 bottom-0 right-0 z-10"></span>
         <img
-          src={item?.image}
+          src={item?.image[0]}
           className="w-full"
           alt="shose"
         />

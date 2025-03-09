@@ -133,9 +133,9 @@ const user = useSelector(
             <h3 className="text-xl font-medium mb-3 text-secondary select-none">
               Tream and Condition
             </h3>
-            <p className="text-base text-gray-800 leading-7 tracking-wide">
-              {campaign_data?.tc}
-            </p>
+
+            <div dangerouslySetInnerHTML={{ __html: campaign_data?.t_and_c }}>
+            </div>
             <button
               onClick={() => setOpentc(false)}
               className="mt-2 underline hover:text-red-500"
@@ -189,7 +189,7 @@ const user = useSelector(
                   </label>
                   <input
                     type="text"
-                    value={`#${campaign_data?.campaign_id}`}
+                    value={`#${campaign_data?.product_id}`}
                     readOnly
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-primary"
                     placeholder="Campaign Id"

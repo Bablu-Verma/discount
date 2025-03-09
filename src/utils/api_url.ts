@@ -40,3 +40,7 @@ export const add_coupons_api = main_url + '/coupons/add'
 
 export const add_blog_category_api = main_url + '/blog-category/add'
 export const blog_category_list_api = main_url + '/blog-category/list'
+
+
+
+export const store_list_api = main_url + '/store/list'

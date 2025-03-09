@@ -81,22 +81,33 @@ const MainHeader = () => {
           </li>
           <li className="mx-1">
             <Link
-              href="/contact-us"
               className={`${
-                pathname == "/contact-us" ? "text-primary" : "text-gray-700"
+                pathname == "/store" ? "text-primary" : "text-gray-700"
+              } font-medium duration-200 px-2 hover:text-gray-900`}
+              href="/store"
+            >
+              Store
+            </Link>
+          </li>
+         
+          <li className="mx-1">
+            <Link
+              href="coupons"
+              className={`${
+                pathname == "/coupons" ? "text-primary" : "text-gray-700"
               } font-medium duration-200 px-2 hover:text-gray-900`}
             >
-              Contact
+              Coupons
             </Link>
           </li>
           <li className="mx-1">
             <Link
-              href="about"
+              href="blog"
               className={`${
-                pathname == "/about" ? "text-primary" : "text-gray-700"
+                pathname == "/blog" ? "text-primary" : "text-gray-700"
               } font-medium duration-200 px-2 hover:text-gray-900`}
             >
-              About
+              Blog
             </Link>
           </li>
         </ul>

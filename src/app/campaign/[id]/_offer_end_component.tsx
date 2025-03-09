@@ -51,7 +51,7 @@ const Offer_end_component: React.FC<IOffer> = ({ time_data }) => {
   return (
     <>
       {time_ && (
-        <div className="mb-4">
+        <div className="">
           <big className="text-base font-medium mr-1">{time_}</big>{" "}
           <span className="text-sm font-normal text-red-500">Offer End soon</span>
         </div>

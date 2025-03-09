@@ -49,7 +49,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
   const slug = awaitslug.slug;
 
   const page_data = await GetData(token, slug);
-  console.log("page_data", page_data.data);
+  // console.log("page_data", page_data.data);
 
   const formate_date = (item:string)=>{
     const create_d = new Date(item);
@@ -99,11 +99,13 @@ const simpal_data = [
         <section className="max-w-[1100px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="grid grid-cols-7 gap-8">
           <div className="col-span-5">
-            <div className="text-gray-600 uppercase flex gap-2"><span>By: {page_data.data.writer_email}</span> / <span>{page_data.data.blogType}</span> / <span>{formate_date(page_data.data.updatedAt)}</span></div>
+            <div className="text-gray-600 uppercase flex gap-2"><span>By: {page_data.data.writer_email}</span> / <span>{page_data.data.blog_type}</span> / <span>{formate_date(page_data.data.updatedAt)}</span></div>
             <h1 className="text-3xl font-medium mb-8 mt-2 text-secondary capitalize">{page_data.data.title}</h1>
-            <Image src={page_data.data.image} width={500} height={200} className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm" sizes="100vw" alt={page_data.data.title} />
-            {/* <div className="text-gray-600 uppercase flex gap-2 test-sm"><span>View: <i className="fa-regular fa-eye"></i> {page_data.data.views}</span></div> */}
-            <div className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4">{page_data.data.short_desc}</div>
+            <Image src={page_data.data.image[0]} width={500} height={200} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm" alt={page_data.data.title} />
+           
+            <div className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4" dangerouslySetInnerHTML={{ __html: page_data.data.short_desc }}></div>
+
+
             <div className={`${styles.blog_style} mt-16`} dangerouslySetInnerHTML={{ __html: page_data.data.desc }}>
 
             </div>

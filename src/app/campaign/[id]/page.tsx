@@ -27,7 +27,8 @@ export const GetData = async (token: string, slug: string) => {
     let { data } = await axios.post(
       product_details_,
       {
-        slug: slug,
+        product_slug: slug,
+        product_status:'ACTIVE'
       },
       {
         headers: {
@@ -54,6 +55,8 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
   let { id } = await params;
   let slug = id;
 
+  console.log('slug__',slug)
+
   const page_data = await GetData(token, slug);
 
   return (
@@ -64,7 +67,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
         <section className="max-w-[1400px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
-              <Campaign_banner campaign_data={page_data?.img} />
+              <Campaign_banner campaign_data={page_data.img_array} />
               <Campaign_user_event campaign_data={page_data} />
             </div>
 
@@ -76,28 +79,20 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <p>
                   <i className="fa-regular fa-clock mr-1 "></i>
                   <span>{getTimeAgo(page_data.createdAt)}</span>
-                </p>{" "}
-                |
-                {page_data?.active ? (
-                  <span className="text-green-400 font-medium">Active</span>
-                ) : (
-                  <span className="text-red-400 font-medium">
-                    Expire -{" "}
-                    <span className="text-sm font-normal">
-                      Don't Bye this product
-                    </span>
-                  </span>
-                )}
+                </p>  |  {page_data?.flash_sale[0].is_active && (
+                <Offer_end_component time_data={page_data?.flash_sale[0].end_time} />
+              )}
+                
               </div>
               <div className="flex items-center mt-1">
                 <strong className="text-secondary text-3xl mr-3">
                   ₹{page_data?.offer_price}/-
                 </strong>
                 <span className="text-gray-600 text-xl font-medium line-through">
-                  ₹{page_data?.price}
+                  ₹{page_data?.actual_price}
                 </span>
                 <small className="text-red-500 text-base py-.5 px-2 ml-4 border-[1px] border-red-500 ">
-                  ₹{page_data?.cashback} Off
+                  ₹{page_data?.calculated_cashback} Off
                 </small>
               </div>
               <div className="py-7 flex justify- gap-5 items-center">
@@ -107,16 +102,14 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 </button> */}
                 <Watchlistadd oneitem={page_data} />
               </div>
-              {page_data.featured && (
-                <Offer_end_component time_data={page_data?.expire_time} />
-              )}
+             
 
               <div className="flex justify-start gap-10 items-center">
                 <p className="text-base text-gray-700 capitalize">
                   {" "}
                   <small>Brand:</small>
                   <span className="text-secondary text-xl">
-                    {page_data?.brand}
+                    {page_data?.store}
                   </span>
                 </p>
                 <p className="text-base text-gray-700 capitalize">
@@ -136,10 +129,10 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
             </div>
           </div>
 
-          <SubHeading title="This Month" />
+          {/* <SubHeading title="This Month" />
           <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
             <MainHeading title="Best Selling Products" />
-          </div>
+          </div> */}
           {/* <BestSalling /> */}
         </section>
         <BottomToTop />

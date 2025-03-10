@@ -8,6 +8,12 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
+
+    const requestData = await req.json();
+ 
+    console.log(requestData)
+
+
     const { 
       page = 1, 
       limit = 10, 
@@ -26,11 +32,28 @@ export async function POST(req: Request) {
       product_status, 
       startDate, 
       endDate 
-    } = await req.json();
+    } = requestData;
+
+
+    // console.log( title, 
+    //   calculation_mode, 
+    //   user_email, 
+    //   store, 
+    //   category, 
+    //   product_tags, 
+    //   long_poster, 
+    //   main_banner, 
+    //   premium_product, 
+    //   flash_sale, 
+    //   slug_type, 
+    //   product_id, 
+    //   product_status, 
+    //   startDate, 
+    //   endDate )
 
     const filters: any = {};
 
-    // Title (Partial Match)
+  
     if (title) {
       filters.title = { $regex: title, $options: "i" };
     }

@@ -16,7 +16,7 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   FaUndo,
@@ -85,11 +85,17 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
       TaskList,
       TaskItem,
     ],
-    content: "<p>Hello, this is your editor!</p>",
+    content: <p>this is your editor</p>,
     onUpdate: ({ editor }) => {
       setEditorContent(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (editor && editorContent !== editor.getHTML()) {
+      editor.commands.setContent(editorContent);
+    }
+  }, [editorContent, editor]);
 
   if (!editor) return null;
 
@@ -119,7 +125,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
     
     input.onchange = async (event) => {
       const target = event.target as HTMLInputElement; 
-     if (!target.files || target.files.length === 0) return;
+       if (!target.files || target.files.length === 0) return;
 
     const file = target.files[0];
   

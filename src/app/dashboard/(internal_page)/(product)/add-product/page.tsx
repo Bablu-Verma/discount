@@ -14,11 +14,11 @@ import DateTimePicker from "react-datetime-picker";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-interface IClintCampaign {
+export interface IClintCampaign {
   title: string;
   actual_price: number;
   cashback_: number | string;
-  calculation_mode: "PERCENTAGE" | "FIX"; // Determines the cashback type
+  calculation_mode: "PERCENTAGE" | "FIX"; 
   store: string;
   category: string;
   redirect_url: string;

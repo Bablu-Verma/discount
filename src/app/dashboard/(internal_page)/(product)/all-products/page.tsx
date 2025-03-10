@@ -6,7 +6,11 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { product_list_ } from "@/utils/api_url";
+import {
+  category_list_api,
+  list_store_api,
+  product_list_,
+} from "@/utils/api_url";
 import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 import { ICampaign } from "@/model/CampaignModel";
 
@@ -14,7 +18,12 @@ const ProductList = () => {
   const [produt_list, setProdutList] = useState<ICampaign[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = 10;
-
+  const [categoryList, setCategoryList] = useState<
+    { name: string; slug: string }[]
+  >([]);
+  const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
+    []
+  );
   const token = useSelector((state: RootState) => state.user.token);
 
   // ✅ Filters state (All filters included)
@@ -23,7 +32,7 @@ const ProductList = () => {
     calculation_mode: "",
     user_email: "",
     store: "",
-    product_id:'',
+    product_id: "",
     category: "",
     product_tags: [] as string[], // ["new", "hot", "best", "fast selling"]
     long_poster: null as boolean | null,
@@ -31,7 +40,7 @@ const ProductList = () => {
     premium_product: null as boolean | null,
     flash_sale: null as boolean | null,
     slug_type: "INTERNAL",
-    product_status: "ALL",
+    product_status: "ACTIVE",
     startDate: "",
     endDate: "",
   });
@@ -41,13 +50,14 @@ const ProductList = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFilters((prev) => {
+      const updatedFilters = { ...prev, [name]: value };
+      // console.log("Updated Filters:", updatedFilters); // Debugging
+      return updatedFilters;
+    });
   };
 
-  // ✅ Handle boolean filters (long_poster, main_banner, etc.)
+  
   const handleBooleanFilter = (name: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -67,13 +77,13 @@ const ProductList = () => {
 
   // ✅ Fetch Products
   const get_product = async () => {
+    console.log("filter", {...filters});
     try {
       const { data } = await axios.post(
         product_list_,
-        { filters },
+        filters,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -93,41 +103,47 @@ const ProductList = () => {
 
   useEffect(() => {
     get_product();
-  }, [filters]);
+  }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [storeRes, categoryRes] = await Promise.all([
+          axios.post(
+            list_store_api,
+            { store_status: "ACTIVE" },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+          axios.post(
+            category_list_api,
+            { status: "ACTIVE" },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
 
+        setStoreList(storeRes.data.data || []);
+        setCategoryList(categoryRes.data.data || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   return (
     <>
-      <h1 className="text-2xl py-2 font-medium text-secondary_color">Products</h1>
-<div className="flex flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
+      <h1 className="text-2xl py-2 font-medium text-secondary_color">
+        Products
+      </h1>
+      <div className="flex flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
         <input
-
           type="text"
           name="title"
           placeholder="Product Title"
           value={filters.title}
           onChange={handleFilterChange}
           className="border p-2 rounded-md h-9 text-sm outline-none "
-        />
-
-        <input
-          type="text"
-          name="store"
-          placeholder="Store Name"
-          value={filters.store}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        />
-
-        {/* ✅ Category Filter */}
-        <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={filters.category}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none"
         />
         <input
           type="text"
@@ -137,20 +153,56 @@ const ProductList = () => {
           onChange={handleFilterChange}
           className="border p-2 rounded-md h-9 text-sm outline-none"
         />
-         <input
-          type="text"
+        <select
           name="category"
-          placeholder="Category"
           value={filters.category}
           onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none"
-        />
+          className="border p-2 rounded-md h-9 text-sm outline-none "
+        >
+          <option disabled>Category</option>
+
+          {categoryList.map((item, i) => {
+            return (
+              <option key={i} value={item.slug}>
+                {item.name}
+              </option>
+            );
+          })}
+        </select>
+        <select
+          name="store"
+          value={filters.store}
+          onChange={handleFilterChange}
+          className="border p-2 rounded-md h-9 text-sm outline-none "
+        >
+          <option disabled>Store</option>
+
+          {storeList.map((item, i) => {
+            return (
+              <option key={i} value={item.slug}>
+                {item.name}
+              </option>
+            );
+          })}
+        </select>
+        <select
+          name="slug_type"
+          value={filters.slug_type}
+          onChange={handleFilterChange}
+          className="border p-2 rounded-md h-9 text-sm outline-none "
+        >
+          <option disabled>slug_type</option>
+
+          <option value="INTERNAL">INTERNAL</option>
+          <option value="EXTERNAL">EXTERNAL</option>
+        </select>
         <select
           name="product_status"
           value={filters.product_status}
           onChange={handleFilterChange}
           className="border p-2 rounded-md h-9 text-sm outline-none "
         >
+           <option disabled>Product status</option>
           <option value="ALL">All</option>
           <option value="ACTIVE">Active</option>
           <option value="PAUSE">Paused</option>
@@ -163,6 +215,7 @@ const ProductList = () => {
           onChange={handleFilterChange}
           className="border p-2 rounded-md h-9 text-sm outline-none "
         >
+          
           <option value="">Calculation Mode</option>
           <option value="PERCENTAGE">Percentage</option>
           <option value="FIX">Fixed</option>
@@ -190,7 +243,9 @@ const ProductList = () => {
             <button
               key={tag}
               className={`px-3  border rounded-md ${
-                filters.product_tags.includes(tag) ? "bg-yellow-500 text-white" : "bg-white text-black"
+                filters.product_tags.includes(tag)
+                  ? "bg-yellow-500 text-white"
+                  : "bg-white text-black"
               }`}
               onClick={() => handleTagChange(tag)}
             >
@@ -200,23 +255,32 @@ const ProductList = () => {
         </div>
 
         {/* ✅ Boolean Filters */}
-        {["long_poster", "main_banner", "premium_product", "flash_sale"].map((filter) => (
-          <select
-            key={filter}
-            onChange={(e) => handleBooleanFilter(filter as keyof typeof filters, e.target.value)}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option value="">Select {filter.replace("_", " ")}</option>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-        ))}
+        {["long_poster", "main_banner", "premium_product", "flash_sale"].map(
+          (filter) => (
+            <select
+              key={filter}
+              onChange={(e) =>
+                handleBooleanFilter(
+                  filter as keyof typeof filters,
+                  e.target.value
+                )
+              }
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            >
+              <option value="">Select {filter.replace("_", " ")}</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          )
+        )}
 
-        <button onClick={get_product} className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary">
+        <button
+          onClick={get_product}
+          className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary"
+        >
           Apply Filters
         </button>
       </div>
-
 
       {/* ✅ Product Table */}
       <div className="pt-5 py-5 px-0 relative w-full">
@@ -224,13 +288,27 @@ const ProductList = () => {
           <table className="min-w-full table-auto border-collapse rounded-lg">
             <thead className="bg-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Product Name</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Category</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Brand</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Status</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Banner</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Price</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">Action</th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Product Name
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Brand
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Banner
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Price
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -242,25 +320,51 @@ const ProductList = () => {
                       alt={product.title}
                       className="w-10 h-10 rounded-md"
                     />
-                    <Link href={`/dashboard/product/${product.product_slug}`} className="text-gray-800 text-sm hover:text-blue-400 line-clamp-2">
+                    <Link
+                      href={`/dashboard/product/${product.product_slug}`}
+                      className="text-gray-800 text-sm hover:text-blue-400 line-clamp-2"
+                    >
                       {product.title}
                     </Link>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{product.store}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {product.category}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {product.store}
+                  </td>
                   <td className="px-6 py-4 text-gray-600">
-                    <span className={`px-2 py-1 text-sm text-white rounded-md ${product.product_status === "ACTIVE" ? "bg-green-500" : product.product_status === "PAUSE" ? "bg-yellow-400" : "bg-red-400"}`}>
+                    <span
+                      className={`px-2 py-1 text-sm text-white rounded-md ${
+                        product.product_status === "ACTIVE"
+                          ? "bg-green-500"
+                          : product.product_status === "PAUSE"
+                          ? "bg-yellow-400"
+                          : "bg-red-400"
+                      }`}
+                    >
                       {product.product_status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    <span className={`px-2 py-1 text-sm rounded-md ${product.main_banner?.[0]?.is_active ? "bg-yellow-300" : "bg-gray-300"}`}>
+                    <span
+                      className={`px-2 py-1 text-sm rounded-md ${
+                        product.main_banner?.[0]?.is_active
+                          ? "bg-yellow-300"
+                          : "bg-gray-300"
+                      }`}
+                    >
                       {product.main_banner?.[0]?.is_active ? "Yes" : "No"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{String(product.actual_price)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {String(product.actual_price)}
+                  </td>
                   <td className="px-6 py-4">
-                    <Link href={`/dashboard/product/edit/${product.product_slug}`} className="px-2 py-1 text-sm text-white bg-yellow-500 rounded-md">
+                    <Link
+                      href={`/dashboard/product/edit/${product.product_slug}`}
+                      className="px-2 py-1 text-sm text-white bg-yellow-500 rounded-md"
+                    >
                       Edit
                     </Link>
                   </td>
@@ -270,7 +374,11 @@ const ProductList = () => {
           </table>
         </div>
 
-        <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );

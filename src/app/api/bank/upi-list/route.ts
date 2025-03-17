@@ -35,13 +35,13 @@ export async function POST(request: Request) {
 
   try {
     // Fetch UPI document using the correct model
-    const upi_document = await UserUPIModel.find({ user_id: user?._id, status:'ACTIVE'});
+    const upi_document = await UserUPIModel.find({ user_id: user?._id});
 
     if (!upi_document) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "No active UPI details found",
+          message: "No UPI details found",
         }),
         {
           status: 400,

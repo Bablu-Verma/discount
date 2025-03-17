@@ -7,7 +7,7 @@ export interface IUserUPI extends Document {
   upi_holder_name_aspr_upi: string;
   upi_id: string;
   status: "ACTIVE" | "INACTIVE";
-  otp_history: { otp: number; generated_at: Date }[];
+  otp: Number | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,15 +45,13 @@ const UserUPISchema = new Schema<IUserUPI>(
       default: "INACTIVE",
       enum: ["ACTIVE", "INACTIVE"],
     },
-    otp_history: [
-      {
-        otp: { type: Number, required: true },
-        generated_at: { type: Date, required: true },
-      },
-    ],
+    otp: {
+      type: Number,
+      default: null,
+    },
   },
   {
-    timestamps: true, // Automatically adds createdAt & updatedAt
+    timestamps: true,
   }
 );
 

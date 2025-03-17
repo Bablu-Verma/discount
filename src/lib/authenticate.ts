@@ -64,7 +64,7 @@ export const authenticateAndValidateUser = async (req: Request): Promise<AuthRes
         authenticated: false,
         user: null,
         usertype: null,
-        message: "User not found",
+        message: "User is remove",
       };
     }
 

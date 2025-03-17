@@ -3,9 +3,8 @@ import dbConnect from "@/lib/dbConnect";
 
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import UserUPIModel from "@/model/UserUPIModel";
-import {
-  generateOTP,
-} from "@/helpers/server/server_function";
+import { generateOTP } from "@/helpers/server/server_function";
+import { user_verify_email } from "@/email/user_verify";
 import { upi_verify_email } from "@/email/user_upi_verify";
 
 export async function POST(req: Request) {
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
     // Authenticate the user
     const { authenticated, user, message } = await authenticateAndValidateUser(req);
 
-    if (!authenticated) {
+    if (!authenticated && !user) {
       return new NextResponse(
         JSON.stringify({ success: false, message: message || "User is not authenticated" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
@@ -42,37 +41,35 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the user already has a bank entry
-    const existingEntry = await UserUPIModel.findOne({ user_id });
+    const upiIdNormalized = upi_id.trim().toLowerCase();
+    const existingEntry = await UserUPIModel.findOne({ user_id, upi_id:upiIdNormalized  });
 
     if (existingEntry) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "already has a registered UPI." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      if(existingEntry.status =='ACTIVE'){
+        return new NextResponse(
+          JSON.stringify({ success: false, message: "User already has a registered same UPI." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }else if(existingEntry.status =='INACTIVE'){
+        await UserUPIModel.deleteOne({ _id: existingEntry._id });
+      }
     }
 
-    // Generate OTP
     const create_otp = generateOTP();
-    const otp_generated_at = new Date();
-     otp_generated_at.setMinutes(otp_generated_at.getMinutes() + 30);
-
-     
-    // Create new UPI entry
+  
     const newUserBank = new UserUPIModel({
       user_id,
       user_email,
       upi_link_bank_name,
       upi_holder_name_aspr_upi,
-      upi_id,
-      status: "INACTIVE",
-      otp_history: [{ otp: create_otp, generated_at: otp_generated_at }],
+      upi_id:upiIdNormalized,
+      status: "INACTIVE", 
+      otp: create_otp,
     });
 
     await newUserBank.save();
 
-    // Send verification email (async handling)
-    await upi_verify_email(create_otp, user_email);
+    upi_verify_email(create_otp, user_email)
 
     return new NextResponse(
       JSON.stringify({

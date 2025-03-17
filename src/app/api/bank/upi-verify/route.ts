@@ -7,7 +7,7 @@ import {
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 import dbConnect from "@/lib/dbConnect";
-import UserUPIModel from "@/model/UserUPIModel"; // Corrected model import
+import UserUPIModel from "@/model/UserUPIModel";
 
 import { NextResponse } from "next/server";
 
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Fetch UPI document using the correct model
+    
     const upi_document = await UserUPIModel.findOne({ user_id: user?._id });
 
     if (!upi_document) {
@@ -84,10 +84,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if the OTP matches the latest entry in otp_history
-    const latest_otp_entry = upi_document.otp_history?.[0]; // Get the latest OTP entry
 
-    if (!latest_otp_entry || otp != latest_otp_entry.otp) {
+    if (otp !== upi_document.otp) {
       return new NextResponse(
         JSON.stringify({
           success: false,
@@ -102,15 +100,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate OTP expiry time
-    const now_date = new Date();
-    const otp_expiry_date = new Date(latest_otp_entry.generated_at);
+    const now = new Date();
+    const otpIssuedTime = new Date(upi_document.updatedAt); 
+    const otpExpiryLimit = 10 * 60 * 1000; 
 
-    if (now_date > otp_expiry_date) {
+    if (now.getTime() - otpIssuedTime.getTime() > otpExpiryLimit) {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "OTP is only valid for 30 minutes",
+          message: "OTP is only valid for 10 minutes",
         }),
         {
           status: 400,

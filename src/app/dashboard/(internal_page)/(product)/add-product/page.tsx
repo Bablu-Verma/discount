@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 
 export interface IClintCampaign {
   title: string;
+  product_id: number;
   actual_price: number;
   cashback_: number | string;
   calculation_mode: "PERCENTAGE" | "FIX"; 
@@ -55,6 +56,7 @@ const AddProduct = () => {
   const [images, setImages] = useState("");
   const [form_data, setForm_data] = useState<IClintCampaign>({
     title: "",
+    product_id:0,
     actual_price: 0,
     cashback_: 0,
     calculation_mode: "" as "PERCENTAGE" | "FIX",

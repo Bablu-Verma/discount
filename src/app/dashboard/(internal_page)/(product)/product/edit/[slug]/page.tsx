@@ -1,10 +1,8 @@
 "use client";
 
-
 import { ICampaign } from "@/model/CampaignModel";
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import { setEditorData } from "@/redux-store/slice/editorSlice";
 import {
   product_edit_,
   category_list_api,
@@ -22,13 +20,11 @@ import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_lin
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 import { IClintCampaign } from "../../../add-product/page";
 
-
-
 const EditProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [productDetails, setProductDetails] = useState<ICampaign>();
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
-  const [images, setImages] = useState<string>('');
+  const [images, setImages] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -36,59 +32,59 @@ const EditProduct = () => {
   const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
     []
   );
- const [editorT_and_c, setEditor_t_and_c] = useState("");
- const [editorContent, setEditorContent] = useState("");
-
+  const [editorT_and_c, setEditor_t_and_c] = useState("");
+  const [editorContent, setEditorContent] = useState("");
 
   const [form_data, setForm_data] = useState<IClintCampaign>({
-      title: "",
-      actual_price: 0,
-      cashback_: 0,
-      calculation_mode: "" as "PERCENTAGE" | "FIX",
-      store: "",
-      category: "",
-      redirect_url: "",
-      img_array: [],
-      product_tags: [],
-      long_poster: [
-        {
-          is_active: false,
-          image: "",
-        },
-      ],
-      main_banner: [
-        {
-          is_active: false,
-          image: "",
-        },
-      ],
-  
-      premium_product: [
-        {
-          is_active: false,
-          image: "",
-        },
-      ],
-  
-      flash_sale: [
-        {
-          is_active: false,
-          image: "",
-          end_time: null,
-        },
-      ],
-      slug_type: "INTERNAL" as "INTERNAL" | "EXTERNAL",
-      meta_title: "",
-      meta_description: "",
-      meta_keywords: [],
-      meta_robots: "index, follow" as "index, follow" | "noindex, nofollow",
-      canonical_url: "",
-      structured_data: "{}",
-      og_image: "",
-      og_title: "",
-      og_description: "",
-      product_status: "ACTIVE" as "ACTIVE" | "PAUSE",
-    });
+    title: "",
+    product_id: 0,
+    actual_price: 0,
+    cashback_: 0,
+    calculation_mode: "" as "PERCENTAGE" | "FIX",
+    store: "",
+    category: "",
+    redirect_url: "",
+    img_array: [],
+    product_tags: [],
+    long_poster: [
+      {
+        is_active: false,
+        image: "",
+      },
+    ],
+    main_banner: [
+      {
+        is_active: false,
+        image: "",
+      },
+    ],
+
+    premium_product: [
+      {
+        is_active: false,
+        image: "",
+      },
+    ],
+
+    flash_sale: [
+      {
+        is_active: false,
+        image: "",
+        end_time: null,
+      },
+    ],
+    slug_type: "INTERNAL" as "INTERNAL" | "EXTERNAL",
+    meta_title: "",
+    meta_description: "",
+    meta_keywords: [],
+    meta_robots: "index, follow" as "index, follow" | "noindex, nofollow",
+    canonical_url: "",
+    structured_data: "{}",
+    og_image: "",
+    og_title: "",
+    og_description: "",
+    product_status: "ACTIVE" as "ACTIVE" | "PAUSE",
+  });
 
   useEffect(() => {
     getCategory();
@@ -123,18 +119,17 @@ const EditProduct = () => {
   };
 
   useEffect(() => {
-    if(urlslug){
+    if (urlslug) {
       GetData(urlslug);
     }
-    
   }, [urlslug]);
-  
 
   useEffect(() => {
     if (productDetails) {
       setForm_data((prev) => ({
         ...prev,
         title: productDetails?.title || "",
+        product_id: productDetails?.product_id || "",
         actual_price: productDetails?.actual_price || 0,
         cashback_: productDetails?.cashback_ || 0,
         calculation_mode: productDetails?.calculation_mode || "PERCENTAGE",
@@ -143,10 +138,18 @@ const EditProduct = () => {
         redirect_url: productDetails?.redirect_url || "",
         img_array: productDetails?.img_array || [],
         product_tags: productDetails?.product_tags || [],
-        long_poster: productDetails?.long_poster || [{ is_active: false, image: "" }],
-        main_banner: productDetails?.main_banner || [{ is_active: false, image: "" }],
-        premium_product: productDetails?.premium_product || [{ is_active: false, image: "" }],
-        flash_sale: productDetails?.flash_sale || [{ is_active: false, image: "", end_time: null }],
+        long_poster: productDetails?.long_poster || [
+          { is_active: false, image: "" },
+        ],
+        main_banner: productDetails?.main_banner || [
+          { is_active: false, image: "" },
+        ],
+        premium_product: productDetails?.premium_product || [
+          { is_active: false, image: "" },
+        ],
+        flash_sale: productDetails?.flash_sale || [
+          { is_active: false, image: "", end_time: null },
+        ],
         slug_type: productDetails?.slug_type || "INTERNAL",
         meta_title: productDetails?.meta_title || "",
         meta_description: productDetails?.meta_description || "",
@@ -160,13 +163,10 @@ const EditProduct = () => {
         product_status: productDetails?.product_status || "ACTIVE",
       }));
     }
-  
-    setEditorContent(productDetails?.description || "some error")
-    setEditor_t_and_c(productDetails?.t_and_c || "some error")
 
-
+    setEditorContent(productDetails?.description || "some error");
+    setEditor_t_and_c(productDetails?.t_and_c || "some error");
   }, [productDetails]);
-  
 
   const getCategory = async () => {
     try {
@@ -192,7 +192,6 @@ const EditProduct = () => {
     }
   };
 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -230,8 +229,6 @@ const EditProduct = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
- 
-
 
   const handleSubmit = async () => {
     try {
@@ -279,7 +276,11 @@ const EditProduct = () => {
       }
 
       // Clone form data
-      const formPayload = { ...form_data, description: editorContent, t_and_c:editorT_and_c };
+      const formPayload = {
+        ...form_data,
+        description: editorContent,
+        t_and_c: editorT_and_c,
+      };
 
       // console.log("Submitting:", formPayload);
 
@@ -307,51 +308,45 @@ const EditProduct = () => {
     }
   };
 
- 
-
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setImages(e.target.value);
-    };
-    const addImage = () => {
-      if (images.trim() && form_data.img_array) {
-        setForm_data((prev) => ({
-          ...prev,
-          img_array: [...prev.img_array!, images.trim()],
-        }));
-        setImages("");
-      }
-    };
-  
-    // Remove Image Link
-    const removeImage = (index: number) => {
+    setImages(e.target.value);
+  };
+  const addImage = () => {
+    if (images.trim() && form_data.img_array) {
       setForm_data((prev) => ({
         ...prev,
-        img_array: prev.img_array!.filter((_, i) => i !== index),
+        img_array: [...prev.img_array!, images.trim()],
       }));
-    };
-  
-    const renderImagePreview = () => {
-      return form_data.img_array!.map((image: string, index: number) => (
-        <div key={index} className="flex items-center space-x-2">
-          <img
-            src={image}
-            alt={`Preview ${index + 1}`}
-            className="w-16 h-16 object-cover rounded"
-          />
-          <button
-            type="button"
-            onClick={() => removeImage(index)}
-            className="text-red-500 flex justify-center items-center bg-gray-200 rounded-full w-5 h-5"
-          >
-            <i className="fa-solid fa-x text-[12px]"></i>
-          </button>
-        </div>
-      ));
-    };
-  
+      setImages("");
+    }
+  };
 
+  // Remove Image Link
+  const removeImage = (index: number) => {
+    setForm_data((prev) => ({
+      ...prev,
+      img_array: prev.img_array!.filter((_, i) => i !== index),
+    }));
+  };
 
+  const renderImagePreview = () => {
+    return form_data.img_array!.map((image: string, index: number) => (
+      <div key={index} className="flex items-center space-x-2">
+        <img
+          src={image}
+          alt={`Preview ${index + 1}`}
+          className="w-16 h-16 object-cover rounded"
+        />
+        <button
+          type="button"
+          onClick={() => removeImage(index)}
+          className="text-red-500 flex justify-center items-center bg-gray-200 rounded-full w-5 h-5"
+        >
+          <i className="fa-solid fa-x text-[12px]"></i>
+        </button>
+      </div>
+    ));
+  };
 
   return (
     <>
@@ -359,8 +354,7 @@ const EditProduct = () => {
         Edit Product
       </h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
-
-      <UploadImageGetLink />
+        <UploadImageGetLink />
 
         <h4 className="mb-3 text-base text-secondary select-none font-semibold">
           Product id: #{productDetails?.product_id}
@@ -372,8 +366,7 @@ const EditProduct = () => {
           }}
           className="space-y-6"
         >
-           
-           <div>
+          <div>
             <label
               htmlFor="title"
               className="block text-sm font-medium text-gray-700"
@@ -1087,7 +1080,6 @@ const EditProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>
-
 
           <div className="text-right pt-20">
             <button

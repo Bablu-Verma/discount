@@ -65,14 +65,15 @@ const FilterContent = () => {
 
   const dispatch = useDispatch();
 
+  console.log(filterData)
+
   const fetchCategories = async () => {
     try {
       const { data } = await axios.post(
         category_list_api,
-        {},
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }

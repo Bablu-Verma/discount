@@ -13,7 +13,7 @@ interface posterProps {
 
 const HomePoster: React.FC<posterProps> = ({ poster }) => {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 pt-2 mb-4 relative">
+    <div className="max-w-6xl mx-auto px-4 pt-2 mb-4 relative">
       <Swiper
     //   loop={true}
     //   modules={[Autoplay, A11y]}

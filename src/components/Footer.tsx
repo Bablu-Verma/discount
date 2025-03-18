@@ -16,7 +16,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-black text-white">
-      <div className="max-w-[1400px] mx-auto px-2 relative grid pt-16 pb-8 gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="max-w-6xl mx-auto px-2 relative grid pt-16 pb-8 gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <h1 className="text-2xl font-semibold mb-4">Exclusive</h1>
           <h3 className="text-lg font-normal mb-4">Subscribe</h3>

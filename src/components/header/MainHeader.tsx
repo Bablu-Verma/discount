@@ -51,7 +51,7 @@ const MainHeader = () => {
        isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="max-w-[1400px] m-auto py-3 flex justify-between items-center px-4">
+      <div className="max-w-6xl m-auto py-3 flex justify-between items-center px-4">
         <h3 className="font-semibold text-black text-2xl md:text-3xl font-mono select-none">
           Discount
         </h3>

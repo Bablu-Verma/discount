@@ -60,54 +60,58 @@ export default async function Home() {
         banner={page_data.data.main_banner}
       />
       <main>
+      <div className="bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-2 pb-5 mt-4 lg:mt-14">
         <SubHeading title="Today's" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
         </div>
         <HomeFlash flashSale={page_data.data.flash_sale} />
-
+        </div>
         <SubHeading title="This Month" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Best Selling Products" />
         </div>
         <BestSalling best_product={page_data.data.best_product} />
-
-        <SubHeading title="Cashback store" />
-        <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-8 mb-16">
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
-            {page_data.data.store.map((item: IStore) => (
-              <StoreCard item={item} />
-            ))}
-            <Link
-              href={`/store`}
-              className="bg-white rounded-md p-3 justify-center gap-1 flex flex-col items-center hover:shadow-orange-600"
-            >
-              <h3 className="text-xl capitalize  text-secondary">View All</h3>
-            </Link>
+        <div className="bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-2 mt-4 lg:mt-14">
+          <SubHeading title="Cashback store" />
+          <div className="max-w-6xl px-2 m-auto  mb-12">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-3 lg:mt-5">
+              {page_data.data.store.map((item: IStore) => (
+                <StoreCard item={item} />
+              ))}
+              <Link
+                href={`/store`}
+                className="bg-white rounded-md p-3 justify-center gap-1 flex flex-col items-center hover:shadow-orange-600"
+              >
+                <h3 className="text-xl capitalize  text-secondary">View All</h3>
+              </Link>
+            </div>
           </div>
         </div>
-
-        <div className="max-w-[1400px] mx-auto mt-14">
+        <div className="max-w-6xl mx-auto mt-14">
           <HomePoster poster={page_data.data.long_poster} />
         </div>
+        <div className="border-[1px solid #e7e7e7] mt-10">
+
+        
         <SubHeading title="Our Product" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Explore Our Products" />
         </div>
-        {/* <BestSalling best_product={page_data.data.hot_product} /> */}
-
+        <BestSalling best_product={page_data.data.offer_deal} />
+        </div>
         <SubHeading title="Featured" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="New Arrival" />
         </div>
         <Featured arrival={page_data.data.premium_product} />
-      
+
         <SubHeading title="Offer Code" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="New Coupon" />
         </div>
-        <div className="max-w-[1400px] px-2 m-auto mt-2 lg:mt-8 mb-16">
+        <div className="max-w-6xl px-2 m-auto mt-2 lg:mt-8 mb-16">
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
             {page_data.data.coupon.map((item: ICoupon) => (
               <CouponcodeCard item={item} />
@@ -120,15 +124,14 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        
 
         <SubHeading title="Categories" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Browse by category" />
         </div>
         <HomeCategories category={page_data.data.category} />
         <SubHeading title="Blog" />
-        <div className="max-w-[1400px] mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
+        <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
           <MainHeading title="Read Our Blog" />
         </div>
         <HomeBlog blogs={page_data.data.blog} />

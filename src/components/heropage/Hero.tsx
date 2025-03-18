@@ -12,7 +12,7 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({home_category, banner}) => {
   return (
     <section className="pt-2 lg:pt-10">
-      <div className="max-w-[1400px] mx-auto lg:px-4 gap-6 grid grid-cols-5">
+      <div className="max-w-6xl mx-auto lg:px-4 gap-2 grid grid-cols-5">
         <HeroCategory category={home_category}/>
         <Banner banner={banner}/>
       </div>

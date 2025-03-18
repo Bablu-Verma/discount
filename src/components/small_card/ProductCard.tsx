@@ -9,13 +9,19 @@ interface CardProp {
 }
 
 const ProductCard: React.FC<CardProp> = ({ card_data }) => {
-
-  const timeAgo = getTimeAgo(card_data.createdAt);
+  const timeAgo = getTimeAgo(card_data.createdAt ?? new Date());
 
   return (
-    <div className="shadow overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:shadow-lg hover:border-gray-100 hover:border-[1px] bg-[#fff]">
+    <Link
+      href={
+        card_data.slug_type === "INTERNAL"
+          ? `/campaign/${card_data?.product_slug}`
+          : card_data.redirect_url
+      }
+      className="shadow-box_shadow_color hover:shadow-box_shadow_hover hover:translate-y-[-6px] bg-highlight_color overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:border-gray-100 hover:border-[1px] group"
+    >
       {card_data?.product_tags && card_data.product_tags.includes("new") ? (
-        <span className="absolute top-2 left-2 bg-green-600 py-[1px] px-5 text-[12px] rounded-md shadow-md text-white font-medium z-10 select-none">
+        <span className="absolute top-2 left-2 bg-green-600 py-[1px] px-5 text-[12px] rounded-md shadow-md text-white font-medium z-10 select-none"> 
           New
         </span>
       ) : card_data?.product_tags && card_data.product_tags.includes("hot") ? (
@@ -48,37 +54,34 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
 
         <h4
           title={card_data?.title}
-          className="text-gray-700 font-normal text-sm my-1 capitalize line-clamp-2"
+          className="text-[#16171a] font-normal text-sm my-1 mb-5 capitalize line-clamp-2"
         >
           {card_data?.title}
         </h4>
-        <div className="flex items-center mt-1">
-          <strong className="text-primary text-xl mr-3 mb-1">
-            ₹{card_data?.offer_price}/-
-          </strong>
-          <span className="text-gray-600 font-medium line-through">
-            ₹{card_data?.actual_price}
+        <div className="flex items-center justify-between mt-1">
+          <span>
+            <strong className="text-primary text-xl mr-3 mb-1">
+              ₹{card_data?.offer_price.toString()}/-
+            </strong>
+            <small className="text-red-500 text-sm py-.5 px-2 border-[1px] border-red-500 ">
+              ₹{card_data?.calculated_cashback.toString()} Off
+            </small>
+            <br />
+            <span className="text-gray-600 font-medium line-through">
+              ₹{card_data?.actual_price.toString()}
+            </span>
           </span>
-          <small className="text-red-500 text-sm py-.5 px-2 ml-4 border-[1px] border-red-500 ">
-            ₹{card_data?.calculated_cashback} Off
-          </small>
-        </div>
-        <div className="flex justify-between mt-4 mb-1 items-center">
-          <Link
-            style={{ background: "rgb(204 43 82 / 52%)" }}
-            href={
-              card_data.slug_type === "INTERNAL"
-                ? `/campaign/${card_data?.product_slug}`
-                : card_data.redirect_url
-            }
-            className="select-none bg-white rounded-md text-secondary font-medium py-1 px-8 text-sm duration-200 ease-in-out
+          <div className="flex justify-between mt-4 mb-1 items-center ">
+            <button
+              className="select-none lg:opacity-0 group-hover:opacity-100 rounded-md text-[#2491ef] font-medium py-1 text-sm duration-200 ease-in-out
            "
-          >
-            Get offer
-          </Link>
+            >
+              BUY NOW
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

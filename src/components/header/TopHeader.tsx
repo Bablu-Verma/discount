@@ -5,7 +5,7 @@ const TopHeader = () => {
   return (
     <section className="bg-black py-2 px-4 mobile:hidden sm:block">
     <div
-      className="max-w-[1400px] m-auto flex justify-between capitalize items-center"
+      className="max-w-6xl m-auto flex justify-between capitalize items-center"
     >
       <p className="text-white w-full text-center text-sm">
         Summer Sale for all swim suits and free delivery - off 50%!

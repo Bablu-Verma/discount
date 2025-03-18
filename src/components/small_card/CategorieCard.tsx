@@ -7,15 +7,25 @@ interface CategoryCard {
   item: ICategory;
 }
 
+const getRandomRGBA = () => {
+  const randomValue = () => Math.floor(Math.random() * 200); 
+  
+  
+  return `rgba(${randomValue()}, ${randomValue()}, ${randomValue()}, 0.7)`;
+};
+
 const CategorieCard: React.FC<CategoryCard> = ({item}) => {
 
   return (
-    <Link href={`category/${item.slug}`} className="shadow group rounded-md overflow-hidden relative bg-white hover:bg-primary hover:border-primary duration-200 border-[2px] flex justify-center items-center flex-col py-3 lg:py-8">
-    <Image src={item.imges[0]} alt={item.name} width={100} height={100} sizes="100vw" className="rounded-md mb-3"  />
+    <Link href={`category/${item.slug}`} className="hover:shadow rounded-xl relative bg-white duration-200  w-[200px] h-[160px] flex flex-col p-4">
+      <div className="h-1 w-16  rounded-r-full" style={{ backgroundColor: getRandomRGBA() }}/>
+   <div className="w-full flex flex-col mt-4 justify-between items-center">
+   <Image src={item.imges[0]} alt={item.name} width={90} height={90}  className="mb-4"  />
     
-      <p className="text-gray-700 text-md font-medium pt-2 capitalize group-hover:text-white">
-        {item.name}
-      </p>
+    <p className="text-gray-700 text-base font-medium  uppercase ">
+      {item.name}
+    </p>
+   </div>
     </Link>
   );
 };

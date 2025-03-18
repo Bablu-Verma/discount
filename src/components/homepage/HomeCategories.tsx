@@ -28,7 +28,7 @@ const HomeCategories: React.FC<CategoryProps> = ({category}) => {
           </button>
         </div>
         <Swiper
-          spaceBetween={20}
+          spaceBetween={12}
           slidesPerView={2.2}
           breakpoints={{
             520: {

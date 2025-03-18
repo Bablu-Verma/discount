@@ -34,6 +34,8 @@ export const contact_us_list_api = main_url + '/contactus/list'
 export const upload_image_api = main_url + '/upload_image'
 export const create_order_api = main_url + '/order/add'
 export const add_store_api = main_url + '/store/add'
+export const store_details_api = main_url + '/store/details'
+export const edit_store_api = main_url + '/store/edit'
 export const list_store_api = main_url + '/store/list'
 export const add_coupons_api = main_url + '/coupons/add'
 // export const upload_image_api = main_url + '/get-one-user'
@@ -42,5 +44,3 @@ export const add_blog_category_api = main_url + '/blog-category/add'
 export const blog_category_list_api = main_url + '/blog-category/list'
 
 
-
-export const store_list_api = main_url + '/store/list'

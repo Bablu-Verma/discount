@@ -6,57 +6,27 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { setEditorData } from "@/redux-store/slice/editorSlice";
 import { RootState } from "@/redux-store/redux_store";
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_link";
 
 
-interface IFormData {
-  name: string;
-  fontawesome: string;
-  image: string ;
-  isActive: boolean;
-  slug: string;
-}
 
 const EditCategory: React.FC = () => {
   const token = useSelector((state: RootState) => state.user.token);
-  const editorContent = useSelector((state: any) => state.editor.content);
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [form_data, setFormData] = useState<IFormData>({
-    fontawesome: "",
-    image: '',
-    name: "",
-    slug: "",
-    isActive: true,
+  const [formData, setFormData] = useState({
+    categoryName: "",
+    images: ["", ""],
+    status: "ACTIVE" as "ACTIVE" | "INACTIVE",
   });
-
+  const [editorContent, setEditorContent] = useState("");
   const urlslug = pathname.split("/").pop() || "";
-
-  // Form Validation
-  const validateForm = () => {
-    const errors: string[] = [];
-
-    if (!form_data.image) {
-      errors.push("Image is required.");
-    }
-    if (!editorContent || editorContent.length < 100) {
-      errors.push("Add a blog description with at least 100 characters.");
-    }
-
-    if (errors.length > 0) {
-      errors.forEach((error) => toast.error(error));
-      return false;
-    }
-    return true;
-  };
-
 
   const getCategory = async () => {
     try {
@@ -70,16 +40,14 @@ const EditCategory: React.FC = () => {
           },
         }
       );
-      const main_data = data.data;
 
       setFormData({
-        fontawesome: main_data.font_awesome_class,
-        image: main_data.img,
-        name: main_data.name,
-        slug: main_data.slug,
-        isActive: main_data.status,
-      });
-      dispatch(setEditorData(main_data.description));
+        categoryName: data.data.name || "",
+        images: data.data.imges || ['', ''], 
+        status: data.data.status || "ACTIVE",
+      })
+      setEditorContent(data.data.description)
+
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Error fetching category");
@@ -89,54 +57,34 @@ const EditCategory: React.FC = () => {
     }
   };
 
-  
-  useEffect(() => {
-    return () => {
-      dispatch(setEditorData(""));
-    };
-  }, [dispatch]);
-
-  
   useEffect(() => {
     getCategory();
   }, [urlslug]);
 
   // Handle Input Changes
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : name === "isActive"
-          ? value === "true" 
-          : value,
-    }));
-  };
 
   // Handle Submit
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    const { categoryName, status, images } = formData;
 
     try {
       setLoading(true);
-      const { data } = await axios.post(category_edit_api, {
-        slug: urlslug,
-        fontawesome: form_data.fontawesome,
-        status: form_data.isActive,
-        description: editorContent,
-        img: form_data.image,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.post(
+        category_edit_api,
+        {
+          slug: urlslug,
+          name: categoryName,
+          description: editorContent,
+          status: status,
+          imges: images,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Category updated successfully! Redirecting...");
       setTimeout(() => router.push("/dashboard/all-category"), 3000);
     } catch (error) {
@@ -148,6 +96,32 @@ const EditCategory: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    if (name === "innerImage") {
+      setFormData((prev) => ({ ...prev, images: [value, prev.images[1]] }));
+    } else if (name === "outerImage") {
+      setFormData((prev) => ({ ...prev, images: [prev.images[0], value] }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const renderImagePreview = (index: number) => {
+    return formData.images[index] ? (
+      <img
+        src={formData.images[index]}
+        alt={`Category image ${index + 1}`}
+        className="w-24 h-24 object-cover rounded-md"
+      />
+    ) : null;
   };
 
   return (
@@ -163,129 +137,97 @@ const EditCategory: React.FC = () => {
           }}
           className="space-y-6"
         >
-             <UploadImageGetLink />
+          <UploadImageGetLink />
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Title
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Category Name
             </label>
             <input
               type="text"
-              id="title"
-              name="title"
-              value={form_data.name}
-              readOnly
-              placeholder="Category title"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+              name="categoryName"
+              value={formData.categoryName}
+              onChange={handleInputChange}
+              placeholder="Enter category name"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div>
-            <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
-              Slug
-            </label>
-            <input
-              type="text"
-              name="slug"
-              id="slug"
-              value={form_data.slug}
-              readOnly
-              placeholder="Slug"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div>
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-                Image
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Inner Category Image URL
               </label>
               <input
                 type="text"
-                id="image"
-                value={form_data.image}
-                name="image"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
-                onChange={handleChange}
+                name="innerImage"
+                value={formData.images[0]}
+                onChange={handleInputChange}
+                placeholder="Enter inner image URL"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               />
-              {form_data.image && (
-                <div className="flex justify-center items-center mb-6 mt-4">
-                  <Image
-                    src={form_data.image || ''}
-                    alt="Category Image"
-                    width={200}
-                    height={200}
-                    className="object-cover rounded-lg"
-                  />
-                </div>
-              )}
+              <div className="mt-4 flex space-x-4">{renderImagePreview(0)}</div>
             </div>
+
             <div>
-              <label
-                htmlFor="fontawesome"
-                className="block text-sm font-medium text-gray-700"
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Outer Category Image URL
+              </label>
+              <input
+                type="text"
+                name="outerImage"
+                value={formData.images[1]}
+                onChange={handleInputChange}
+                placeholder="Enter outer image URL"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="mt-4 flex space-x-4">{renderImagePreview(1)}</div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Category Status
+            </label>
+            <div className="flex items-center space-x-4">
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               >
-                Font Awesome Class
-              </label>
-              <input
-                type="text"
-                name="fontawesome"
-                value={form_data.fontawesome}
-                onChange={handleChange}
-                placeholder="Font Awesome Class"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
-              />
-            </div>
-            <div className="flex gap-5 items-center justify-end pr-10">
-              <label className="text-sm font-medium text-gray-700">Is Active</label>
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="isActive"
-                    value="true"
-                    onChange={handleChange}
-                    checked={form_data.isActive === true}
-                  />
-                  <span className="ml-2 text-gray-700">Yes</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="isActive"
-                    value="false"
-                    onChange={handleChange}
-                    checked={form_data.isActive === false}
-                  />
-                  <span className="ml-2 text-gray-700">No</span>
-                </label>
-              </div>
+                <option disabled value="">
+                  Select Store
+                </option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
             </div>
           </div>
 
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Category Description
             </label>
-            <TextEditor />
+            <TextEditor
+              editorContent={editorContent}
+              setEditorContent={setEditorContent}
+            />
           </div>
 
-          <div className="text-right pt-20">
+          <div className="text-right">
             <button
               type="reset"
+              className="px-6 py-2 text-red-500 rounded-lg shadow-lg font-medium focus:ring-2 focus:ring-red-500 mr-6"
               onClick={() => window.location.reload()}
-              className="px-6 py-2 text-red-500 rounded-lg shadow-lg font-medium focus:outline-none mr-6"
             >
               Clear
             </button>
             <button
               type="submit"
+              className="px-6 py-2 text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"
               disabled={loading}
-              className="px-6 py-2 text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none"
             >
-              {loading ? "Submitting..." : "Submit"}
+              {loading ? "In Progress" : "Submit"}
             </button>
           </div>
         </form>

@@ -127,6 +127,17 @@ const Footer = () => {
         </div>
       </div>
       <div className="py-3 border-t-[0.5px] border-gray-400">
+<div className="py-10 flex justify-center items-center flex-col">
+<h1 className="text-4xl pb-1 text-white ">#SaveOnDiscountOn</h1>
+<h5>We help you save your money</h5>
+</div>
+
+
+
+
+
+
+
         <p className="text-sm font-medium text-gray-600 text-center">
           <i className="fa-regular fa-copyright"></i> Copyright Bablu 2024. All
           rights reserved.

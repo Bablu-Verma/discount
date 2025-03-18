@@ -25,6 +25,7 @@ const ProductList = () => {
     []
   );
   const token = useSelector((state: RootState) => state.user.token);
+  const [showFilter, setShowFilter] = useState(false);
 
   // ✅ Filters state (All filters included)
   const [filters, setFilters] = useState({
@@ -57,7 +58,6 @@ const ProductList = () => {
     });
   };
 
-  
   const handleBooleanFilter = (name: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -77,17 +77,13 @@ const ProductList = () => {
 
   // ✅ Fetch Products
   const get_product = async () => {
-    console.log("filter", {...filters});
+  
     try {
-      const { data } = await axios.post(
-        product_list_,
-        filters,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const { data } = await axios.post(product_list_, filters, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setProdutList(data.data);
     } catch (error) {
@@ -127,160 +123,171 @@ const ProductList = () => {
         console.log(error);
       }
     };
-
-    fetchData();
-  }, [token]);
+    if (showFilter) {
+      fetchData();
+    }
+  }, [token, showFilter]);
 
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
         Products
       </h1>
-      <div className="flex flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
-        <input
-          type="text"
-          name="title"
-          placeholder="Product Title"
-          value={filters.title}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        />
-        <input
-          type="text"
-          name="product_id"
-          placeholder="product_id"
-          value={filters.product_id}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none"
-        />
-        <select
-          name="category"
-          value={filters.category}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        >
-          <option disabled>Category</option>
 
-          {categoryList.map((item, i) => {
-            return (
-              <option key={i} value={item.slug}>
-                {item.name}
-              </option>
-            );
-          })}
-        </select>
-        <select
-          name="store"
-          value={filters.store}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        >
-          <option disabled>Store</option>
+      <button
+        className="border p-2 rounded-md h-9 text-sm outline-none text-blue-300"
+        type="button"
+        onClick={() => setShowFilter(!showFilter)}
+      >
+        {showFilter ? "Hide Filter" : "Show Filter"}
+      </button>
 
-          {storeList.map((item, i) => {
-            return (
-              <option key={i} value={item.slug}>
-                {item.name}
-              </option>
-            );
-          })}
-        </select>
-        <select
-          name="slug_type"
-          value={filters.slug_type}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        >
-          <option disabled>slug_type</option>
+      {showFilter && (
+        <div className="flex mt-3 flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
+          <input
+            type="text"
+            name="title"
+            placeholder="Product Title"
+            value={filters.title}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          />
+          <input
+            type="text"
+            name="product_id"
+            placeholder="product_id"
+            value={filters.product_id}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none"
+          />
+          <select
+            name="category"
+            value={filters.category}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>Category</option>
 
-          <option value="INTERNAL">INTERNAL</option>
-          <option value="EXTERNAL">EXTERNAL</option>
-        </select>
-        <select
-          name="product_status"
-          value={filters.product_status}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        >
-           <option disabled>Product status</option>
-          <option value="ALL">All</option>
-          <option value="ACTIVE">Active</option>
-          <option value="PAUSE">Paused</option>
-          <option value="DELETE">Deleted</option>
-        </select>
+            {categoryList.map((item, i) => {
+              return (
+                <option key={i} value={item.slug}>
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
+          <select
+            name="store"
+            value={filters.store}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>Store</option>
 
-        <select
-          name="calculation_mode"
-          value={filters.calculation_mode}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        >
-          
-          <option value="">Calculation Mode</option>
-          <option value="PERCENTAGE">Percentage</option>
-          <option value="FIX">Fixed</option>
-        </select>
+            {storeList.map((item, i) => {
+              return (
+                <option key={i} value={item.slug}>
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
+          <select
+            name="slug_type"
+            value={filters.slug_type}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>slug_type</option>
 
-        <input
-          type="date"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        />
+            <option value="INTERNAL">INTERNAL</option>
+            <option value="EXTERNAL">EXTERNAL</option>
+          </select>
+          <select
+            name="product_status"
+            value={filters.product_status}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>Product status</option>
+            <option value="ALL">All</option>
+            <option value="ACTIVE">Active</option>
+            <option value="PAUSE">Paused</option>
+            <option value="DELETE">Deleted</option>
+          </select>
 
-        <input
-          type="date"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleFilterChange}
-          className="border p-2 rounded-md h-9 text-sm outline-none "
-        />
+          <select
+            name="calculation_mode"
+            value={filters.calculation_mode}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option value="">Calculation Mode</option>
+            <option value="PERCENTAGE">Percentage</option>
+            <option value="FIX">Fixed</option>
+          </select>
 
-        {/* ✅ Product Tags */}
-        <div className="flex gap-2">
-          {["new", "hot", "best", "fast selling"].map((tag) => (
-            <button
-              key={tag}
-              className={`px-3  border rounded-md ${
-                filters.product_tags.includes(tag)
-                  ? "bg-yellow-500 text-white"
-                  : "bg-white text-black"
-              }`}
-              onClick={() => handleTagChange(tag)}
-            >
-              {tag}
-            </button>
-          ))}
+          <input
+            type="date"
+            name="startDate"
+            value={filters.startDate}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          />
+
+          <input
+            type="date"
+            name="endDate"
+            value={filters.endDate}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          />
+
+          {/* ✅ Product Tags */}
+          <div className="flex gap-2">
+            {["new", "hot", "best", "fast selling"].map((tag) => (
+              <button
+                key={tag}
+                className={`px-3  border rounded-md ${
+                  filters.product_tags.includes(tag)
+                    ? "bg-yellow-500 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => handleTagChange(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
+          {/* ✅ Boolean Filters */}
+          {["long_poster", "main_banner", "premium_product", "flash_sale"].map(
+            (filter) => (
+              <select
+                key={filter}
+                onChange={(e) =>
+                  handleBooleanFilter(
+                    filter as keyof typeof filters,
+                    e.target.value
+                  )
+                }
+                className="border p-2 rounded-md h-9 text-sm outline-none "
+              >
+                <option value="">Select {filter.replace("_", " ")}</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            )
+          )}
+
+          <button
+            onClick={get_product}
+            className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary"
+          >
+            Apply Filters
+          </button>
         </div>
-
-        {/* ✅ Boolean Filters */}
-        {["long_poster", "main_banner", "premium_product", "flash_sale"].map(
-          (filter) => (
-            <select
-              key={filter}
-              onChange={(e) =>
-                handleBooleanFilter(
-                  filter as keyof typeof filters,
-                  e.target.value
-                )
-              }
-              className="border p-2 rounded-md h-9 text-sm outline-none "
-            >
-              <option value="">Select {filter.replace("_", " ")}</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          )
-        )}
-
-        <button
-          onClick={get_product}
-          className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary"
-        >
-          Apply Filters
-        </button>
-      </div>
+      )}
 
       {/* ✅ Product Table */}
       <div className="pt-5 py-5 px-0 relative w-full">
@@ -320,12 +327,12 @@ const ProductList = () => {
                       alt={product.title}
                       className="w-10 h-10 rounded-md"
                     />
-                    <Link
-                      href={`/dashboard/product/${product.product_slug}`}
+                    <a
+                      
                       className="text-gray-800 text-sm hover:text-blue-400 line-clamp-2"
                     >
                       {product.title}
-                    </Link>
+                    </a>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {product.category}

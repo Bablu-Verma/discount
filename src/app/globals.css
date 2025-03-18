@@ -24,6 +24,7 @@
   outline: none;
   box-shadow: #da6d6d;
 }
+
 .verify_input:focus{
   border: 1px solid var(--main-color);
 

@@ -15,7 +15,7 @@ const HeroCategory:React.FC<HeroCategoryProps> = ({category}) => {
               <li className="py-1" key={i}>
               <Link
                 href={`/category/${item.slug}`}
-                className="text-gray-700 font-normal duration-200 hover:text-gray-900 hover:pl-2 hover:font-medium"
+                className="text-gray-700 font-normal capitalize duration-200 hover:text-gray-900 hover:pl-2 hover:font-medium"
               >
                 {item.name}
               </Link>

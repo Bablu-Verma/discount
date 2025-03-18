@@ -7,34 +7,33 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { category_list_api } from "@/utils/api_url";
+import { category_list_api, list_store_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
+import { IStore } from "@/model/StoreModel";
 
 const CategoryList = () => {
   const token = useSelector((state: RootState) => state.user.token);
-  const [categoryList, setCategoryList] = useState([]);
- const [showFilter, setShowFilter] = useState(false);
-
+  const [storeList, setStoreList] = useState([]);
+  const [showFilter, setShowFilter] = useState(false);
 
   const [filters, setFilters] = useState({
-     name: "",
-     status: "ACTIVE",
-     startDate: "",
-     endDate: "",
-   });
+    search:"",
+      cashback_status:"",  // "ACTIVE_CASHBACK", "INACTIVE_CASHBACK"
+      cashback_type:"", // "PERCENTAGE", "FLAT_AMOUNT"
+      store_id:"",
+      store_status:"ACTIVE",  // "ALL", "ACTIVE", "INACTIVE", "REMOVED"
+      startDate:"",
+      endDate:""
+  });
 
-  const getCategory = async () => {
+  const getStores = async () => {
     try {
-      const { data } = await axios.post(
-        category_list_api, filters,
-        {
-          headers: {
-           
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCategoryList(data.data);
+      const { data } = await axios.post(list_store_api, filters, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setStoreList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -46,27 +45,24 @@ const CategoryList = () => {
   };
 
   useEffect(() => {
-    getCategory();
+    getStores();
   }, []);
 
- 
-
   const handleFilterChange = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-      const { name, value } = e.target;
-      setFilters((prev) => {
-        const updatedFilters = { ...prev, [name]: value };
-        // console.log("Updated Filters:", updatedFilters); // Debugging
-        return updatedFilters;
-      });
-    };
-
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFilters((prev) => {
+      const updatedFilters = { ...prev, [name]: value };
+      // console.log("Updated Filters:", updatedFilters); // Debugging
+      return updatedFilters;
+    });
+  };
 
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
-        All Category
+        All Stores
       </h1>
 
       <button
@@ -81,27 +77,58 @@ const CategoryList = () => {
         <div className="flex mt-3 flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
           <input
             type="text"
-            name="name"
-            placeholder="Category name"
-            value={filters.name}
+            name="search"
+            placeholder="name / slug "
+            value={filters.search}
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
-         
+           <input
+            type="text"
+            name="store_id"
+            placeholder="store_id "
+            value={filters.store_id}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          />
+
           <select
-            name="status"
-            value={filters.status}
+            name="store_status"
+            value={filters.store_status}
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           >
-            <option disabled>Category status</option>
-            <option value="">ALL</option>
+            <option disabled>store_status</option>
+            <option value="ALL">ALL</option>
             <option value="ACTIVE">ACTIVE</option>
             <option value="INACTIVE">INACTIVE</option>
             <option value="REMOVED">REMOVED</option>
           </select>
 
-         
+          <select
+            name="cashback_status"
+            value={filters.cashback_status}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>cashback_status</option>
+            <option value="ACTIVE_CASHBACK">ACTIVE_CASHBACK</option>
+            <option value="INACTIVE_CASHBACK">INACTIVE_CASHBACK</option>
+           
+          </select>
+
+          <select
+            name="cashback_type"
+            value={filters.cashback_type}
+            onChange={handleFilterChange}
+            className="border p-2 rounded-md h-9 text-sm outline-none "
+          >
+            <option disabled>cashback_type</option>
+            <option value="PERCENTAGE">PERCENTAGE</option>
+            <option value="FLAT_AMOUNT">FLAT_AMOUNT</option>
+           
+          </select>
+
           <input
             type="date"
             name="startDate"
@@ -118,12 +145,8 @@ const CategoryList = () => {
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
 
-         
-
-          
-
           <button
-            onClick={getCategory}
+            onClick={getStores}
             className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary"
           >
             Apply Filters
@@ -131,9 +154,6 @@ const CategoryList = () => {
         </div>
       )}
 
-
-
-     
       <div className="pt-5 py-5 px-0 relative w-full">
         <div className="overflow-x-auto pb-4">
           <table className="min-w-full table-auto border-collapserounded-lg">
@@ -153,18 +173,17 @@ const CategoryList = () => {
                   Slug
                 </th>
 
-               
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {categoryList.map((item:ICategory, i) => (
+              {storeList.map((item: IStore, i) => (
                 <tr key={i} className="bg-white hover:bg-gray-100">
                   <td className="px-6 py-4">
                     <img
-                      src={item.imges[0]}
+                      src={item.store_img}
                       alt={item.name}
                       className="w-10 h-10 rounded-md"
                     />
@@ -174,21 +193,15 @@ const CategoryList = () => {
                     <span className="text-gray-800">{item.name}</span>
                   </td>
 
-                  <td className="px-6 py-4 text-gray-600">
-                    <span
-                      className={`px-2 py-1 text-sm text-white rounded-md ${
-                        item.status == true ? "bg-green-500" : "bg-red-500"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+                  <td className="px-6 py-4 text-gray-800">
+                    {item.store_status}
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-gray-800">{item.slug}</span>
                   </td>
                   <td className="px-6 py-4">
                     <Link
-                      href={`/dashboard/category/${item.slug}`}
+                      href={`/dashboard/store/${item.slug}`}
                       className="px-2 py-1 text-sm inline-block text-blue-500 hover:underline"
                     >
                       Edit

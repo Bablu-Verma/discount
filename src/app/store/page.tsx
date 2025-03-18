@@ -6,13 +6,13 @@ import StoreCard from "@/components/small_card/StoreCard";
 import { getServerToken } from "@/helpers/server/server_function";
 
 import { IStore } from "@/model/StoreModel";
-import { store_list_api } from "@/utils/api_url";
+import { list_store_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
 export const GetData = async (token: string) => {
   try {
-    let { data } = await axios.post(store_list_api,{store_status:"ACTIVE"}, {
+    let { data } = await axios.post(list_store_api,{store_status:"ACTIVE"}, {
       headers: {
         Authorization: token,
         "Content-Type": "application/json",

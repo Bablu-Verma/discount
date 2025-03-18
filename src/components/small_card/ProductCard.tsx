@@ -73,10 +73,10 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
           </span>
           <div className="flex justify-between mt-4 mb-1 items-center ">
             <button
-              className="select-none lg:opacity-0 group-hover:opacity-100 rounded-md text-[#2491ef] font-medium py-1 text-sm duration-200 ease-in-out
+              className="select-none rounded-md text-[#2491ef] font-medium py-1 text-sm duration-200 ease-in-out
            "
             >
-              BUY NOW
+              GRAB NOW
             </button>
           </div>
         </div>

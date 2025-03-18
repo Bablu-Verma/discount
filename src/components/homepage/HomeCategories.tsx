@@ -49,7 +49,7 @@ const HomeCategories: React.FC<CategoryProps> = ({category}) => {
           className="home_flash_"
         >
           {category.map((item, i) => (
-            <SwiperSlide key={i}>
+            <SwiperSlide key={i} className="my-1">
               <CategorieCard item={item}/>
             </SwiperSlide>
           ))}

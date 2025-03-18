@@ -32,7 +32,7 @@ export default function RootLayout({
         />
      
       </head>
-      <body className="font-roboto antialiased">
+      <body className="font-roboto antialiased bg-highlight_color">
        <Toaster  position="top-right" />
         <ReduxProvider>
           {children}

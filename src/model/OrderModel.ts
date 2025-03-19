@@ -11,7 +11,7 @@ interface IHistory {
   proof_document?: string;
 }
 
-interface IRecord extends Document {
+export interface IRecord extends Document {
   user_id: mongoose.Types.ObjectId;
   product_id: string;
   product_url: string;

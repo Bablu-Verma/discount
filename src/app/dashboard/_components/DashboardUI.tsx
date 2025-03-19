@@ -106,27 +106,7 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       icon: "fas fa-tachometer-alt",
       roles: ["admin", "data_editor"], 
     },
-    {
-      id: 10,
-      name: "Order List",
-      url: "/dashboard/all-order",
-      icon: "fas fa-tachometer-alt",
-      roles: ["admin"], 
-    },
-    {
-      id: 11,
-      name: "Users",
-      url: "/dashboard/all-user",
-      icon: "fas fa-tachometer-alt",
-      roles: ["admin"], 
-    },
-    {
-      id: 12,
-      name: "Contact Us Data",
-      url: "/dashboard/contact-us/list",
-      icon: "fas fa-tachometer-alt",
-      roles: ["admin"], 
-    },
+   
     {
       id: 13,
       name: "Add Blog",
@@ -154,6 +134,27 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       url: "/dashboard/blog-category-list",
       icon: "fas fa-tachometer-alt",
       roles: ["admin", "blog_editor"], 
+    },
+    {
+      id: 10,
+      name: "Order List",
+      url: "/dashboard/all-order",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
+    },
+    {
+      id: 11,
+      name: "Users",
+      url: "/dashboard/all-user",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
+    },
+    {
+      id: 12,
+      name: "Contact Us Data",
+      url: "/dashboard/contact-us/list",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
     },
   ];
 

@@ -53,7 +53,7 @@ const MainHeader = () => {
     >
       <div className="max-w-6xl m-auto py-3 flex justify-between items-center px-4">
         <h3 className="font-semibold text-black text-2xl md:text-3xl font-mono select-none">
-          Discount
+          Gain<span className="text-blue-500">Karo</span>
         </h3>
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">

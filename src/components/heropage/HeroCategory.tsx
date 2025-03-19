@@ -7,7 +7,7 @@ interface HeroCategoryProps{
 }
 const HeroCategory:React.FC<HeroCategoryProps> = ({category}) => {
   return (
-    <div className="px-4 py-2 bg-highlight_color rounded hidden lg:block col-span-1">
+    <div className="px-4 py-2 bg-white rounded hidden lg:block col-span-1">
       <ul>
         {
           category.slice(0,6).map((item, i)=>{

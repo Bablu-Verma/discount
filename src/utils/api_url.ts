@@ -42,5 +42,8 @@ export const add_coupons_api = main_url + '/coupons/add'
 
 export const add_blog_category_api = main_url + '/blog-category/add'
 export const blog_category_list_api = main_url + '/blog-category/list'
+export const coupons_list_api = main_url + '/coupons/get'
+export const edit_coupons_api = main_url + '/coupons/edit'
+export const coupons_detail_api = main_url + '/coupons/detail'
 
 

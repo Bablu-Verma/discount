@@ -4,6 +4,7 @@ import CouponModel from "@/model/CouponModel";
 import StoreModel from "@/model/StoreModel";
 import CategoryModel from "@/model/CategoryModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
+import { console } from "inspector";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -26,7 +27,12 @@ export async function POST(req: Request) {
     }
 
     const requestData = await req.json();
+
+    console.log(requestData)
+
     const { coupon_id, code, discount, title, description, expiry_date, store, category, status } = requestData;
+
+    
 
     if (!coupon_id) {
       return new NextResponse(

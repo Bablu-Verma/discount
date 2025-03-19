@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // Parse request data
     const requestData = await req.json();
-
+console.log("requestData",requestData)
     const {
       blog_id,
       title,
@@ -79,6 +79,9 @@ export async function POST(req: Request) {
       );
     }
 
+    
+
+
     // Update slug only if title is provided
     if (title) {
       const newSlug = generateSlug(title);
@@ -103,23 +106,34 @@ export async function POST(req: Request) {
     if (desc) blogToUpdate.desc = desc;
     if (blog_category) blogToUpdate.blog_category = blog_category;
     if (blog_type) blogToUpdate.blog_type = blog_type;
-    if (image) blogToUpdate.image = image.trim();
-    if (tags)
-      blogToUpdate.tags = tags.split(",").map((item: string) => item.trim());
+    if (image.length > 0) blogToUpdate.image = image.map((img:string) => img.trim());
+    if (tags) {
+      if (Array.isArray(tags)) {
+        blogToUpdate.tags = tags.map((tag) => tag.trim()); // Already an array
+      } else if (typeof tags === "string") {
+        blogToUpdate.tags = tags.split(",").map((tag) => tag.trim()); // Convert string to array
+      }
+    }
     if (reading_time) blogToUpdate.reading_time = reading_time;
-    if (keywords)
-      blogToUpdate.keywords = keywords
-        .split(",")
-        .map((item: string) => item.trim());
+    if (keywords) {
+      if (Array.isArray(keywords)) {
+        blogToUpdate.keywords = keywords.map((keyword) => keyword.trim()); // Already an array
+      } else if (typeof keywords === "string") {
+        blogToUpdate.keywords = keywords.split(",").map((keyword) => keyword.trim()); // Convert string to array
+      }
+    }
     if (publish_schedule) blogToUpdate.publish_schedule = publish_schedule;
     if (word_count) blogToUpdate.word_count = word_count;
     if (status) blogToUpdate.status = status;
     if (meta_title) blogToUpdate.meta_title = meta_title;
     if (meta_description) blogToUpdate.meta_description = meta_description;
-    if (meta_keywords)
-      blogToUpdate.meta_keywords = meta_keywords
-        .split(",")
-        .map((item: string) => item.trim());
+    if (meta_keywords) {
+      if (Array.isArray(meta_keywords)) {
+        blogToUpdate.meta_keywords = meta_keywords.map((item) => item.trim()); // Already an array
+      } else if (typeof meta_keywords === "string") {
+        blogToUpdate.meta_keywords = meta_keywords.split(",").map((item) => item.trim()); // Convert string to array
+      }
+    }
     if (canonical_url) blogToUpdate.canonical_url = canonical_url;
     if (og_image) blogToUpdate.og_image = og_image.trim();
     if (og_title) blogToUpdate.og_title = og_title;

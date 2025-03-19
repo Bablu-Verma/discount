@@ -26,8 +26,8 @@ const EditCoupons: React.FC = () => {
      code: "",
      discount: "",
      expiry_date:  new Date(),
-     store: "",
-     category: "",
+     store: { name: "", _id: "" }, 
+     category: { name: "", _id: "" },
      status: "",
    });
   const [editorContent, setEditorContent] = useState("");
@@ -60,8 +60,8 @@ const EditCoupons: React.FC = () => {
         code: data.data.code || '',
         discount: data.data.discount || '',
         expiry_date: data.data.expiry_date,
-        store: data.data.store || '',
-        category: data.data.category || "",
+        store: data.data.store || {},
+        category: data.data.category || {},
         status: data.data.status || '',
       })
       setEditorContent(data.data.description)
@@ -122,9 +122,12 @@ const EditCoupons: React.FC = () => {
   }, [token]);
 
 
+
+
+
    // Handle Submit
   const handleSubmit = async () => {
-    console.log(formData)
+   
     try {
       const { data } = await axios.post(
         edit_coupons_api,
@@ -134,8 +137,8 @@ const EditCoupons: React.FC = () => {
           code: formData.code,
           discount: formData.discount,
           expiry_date:  formData.expiry_date,
-          store: formData.store,
-          category: formData.category,
+          store: formData.store._id,
+          category: formData.category._id,
           status: formData.status,
           description:editorContent
         },
@@ -151,6 +154,8 @@ const EditCoupons: React.FC = () => {
       setTimeout(() => router.push("/dashboard/all-coupons"), 3000);
 
     } catch (error) {
+
+     
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Error fetching category");
       } else {
@@ -158,10 +163,6 @@ const EditCoupons: React.FC = () => {
       }
     }
   };
-
-
-
-
 
   return (
     <>
@@ -227,7 +228,7 @@ const EditCoupons: React.FC = () => {
               </label>
               <select
                 name="store"
-                value={formData.store}
+                value={formData.store._id}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               >
@@ -247,7 +248,7 @@ const EditCoupons: React.FC = () => {
               </label>
               <select
                 name="category"
-                value={formData.category}
+                value={formData.category._id}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               >

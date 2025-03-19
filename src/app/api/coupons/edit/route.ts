@@ -72,7 +72,7 @@ export async function POST(req: Request) {
 
     // Update coupon fields if provided
     if (code) coupon.code = code;
-    if(title) code.title = title;
+    if (title) coupon.title = title;
     if (discount) coupon.discount = discount;
     if (description) coupon.description = description;
     if (expiry_date) coupon.expiry_date = expiry_date;

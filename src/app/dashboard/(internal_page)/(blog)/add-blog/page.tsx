@@ -15,6 +15,28 @@ import DateTimePicker from "react-datetime-picker";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
+
+export   interface IClientBlog {
+  title: string;
+blog_category: string;
+blog_type: "Article" | "Tutorial" | "Case Study" | "Review" | "Interview";
+image: string[];
+tags: string[];
+reading_time: number;
+keywords: string[];
+publish_schedule: Date | null;
+status: "ACTIVE" | "INACTIVE";
+meta_title: string;
+meta_description: string;
+meta_keywords: string[]; // Explicitly define as a string array
+canonical_url: string;
+og_image: string;
+og_title: string;
+og_description: string;
+twitter_card?:'summary' | 'summary_large_image';
+schema_markup: string;
+}
+
 const AddBlog = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [images, setImages] = useState("");
@@ -23,26 +45,7 @@ const AddBlog = () => {
   const [loding, setLoading] = useState<boolean>(false);
 
 
-  interface IClientBlog {
-    title: string;
-  blog_category: string;
-  blog_type: "Article" | "Tutorial" | "Case Study" | "Review" | "Interview";
-  image: string[];
-  tags: string[];
-  reading_time: number;
-  keywords: string[];
-  publish_schedule: Date | null;
-  status: "ACTIVE" | "INACTIVE";
-  meta_title: string;
-  meta_description: string;
-  meta_keywords: string[]; // Explicitly define as a string array
-  canonical_url: string;
-  og_image: string;
-  og_title: string;
-  og_description: string;
-  twitter_card?:'summary' | 'summary_large_image';
-  schema_markup: string;
-  }
+ 
 
   const [form_data, setForm_data] = useState<IClientBlog>({
     title: "",
@@ -286,7 +289,7 @@ const AddBlog = () => {
   };
 
 
-  console.log(form_data)
+  // console.log(form_data)
 
 
   const addImage = () => {

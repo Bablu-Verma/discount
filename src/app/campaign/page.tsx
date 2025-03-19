@@ -46,7 +46,7 @@ const Campaign = async () => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1400px] mx-auto mt-14 mb-16 p-2 xl:p-0">
+        <section className="max-w-6xl mx-auto mt-14 mb-16 p-2 xl:p-0">
           <CampaignClient product_={page_data} />
         </section>
         <BottomToTop />

@@ -2,7 +2,7 @@ import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
-import { MainHeading,SubHeading } from "@/components/Heading";
+import { MainHeading } from "@/components/Heading";
 import Featured from "@/components/heropage/Featured";
 import Hero from "@/components/heropage/Hero";
 import BestSalling from "@/components/homepage/BestSelling";
@@ -46,10 +46,6 @@ export default async function Home() {
   const token = await getServerToken();
   const page_data = await GetData(token);
 
-  // if (page_data) {
-  //   console.log("page_data", page_data.data);
-  // }
-
   return (
     <>
       <TopHeader />
@@ -60,26 +56,24 @@ export default async function Home() {
         banner={page_data.data.main_banner}
       />
       <main>
-        <div className="bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-2 pb-5 mt-4 lg:mt-14">
-          <SubHeading title="Today's" />
+        <div className="py-7">
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
           <HomeFlash flashSale={page_data.data.flash_sale} />
         </div>
 
-        <SubHeading title="This Month" />
-        <MainHeading title="Best Selling Products" />
-        <BestSalling best_product={page_data.data.best_product} />
+        <div className="py-7">
+          <MainHeading title="Best Selling Products" />
+          <BestSalling best_product={page_data.data.best_product} />
+        </div>
 
-        <div className="bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-2 mt-4 lg:mt-14">
-          <div className="max-w-6xl mx-auto px-2 flex mt-4 lg:mt-7 md:mt-10 justify-start items-end mb-4 relative">
-            <MainHeading title="Cashback store" />
-          </div>
+        <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
+          <MainHeading title="Cashback store" />
           <div className="max-w-6xl relative px-2 m-auto  mb-12">
             <div className="absolute right-4 top-[-44px]">
               <a
                 href="/store"
-                className="text-blue-300  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200"
+                className="text-primary  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200"
               >
                 View All
               </a>
@@ -97,33 +91,35 @@ export default async function Home() {
         </div>
 
         <div className="border-[1px solid #e7e7e7] mt-10">
-          <SubHeading title="Our Product" />
           <MainHeading title="Explore Our Products" />
           <BestSalling best_product={page_data.data.offer_deal} />
         </div>
 
-        <SubHeading title="Featured" />
-        <MainHeading title="New Arrival" />
-        <Featured arrival={page_data.data.premium_product} />
+        <div className="py-7">
+          <MainHeading title="New Arrival" />
+          <Featured arrival={page_data.data.premium_product} />
+        </div>
 
-        <SubHeading title="Offer Code" />
-        <MainHeading title="New Coupon" />
-        <div className="max-w-6xl px-2 m-auto mt-2 lg:mt-8 mb-16">
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
-            {page_data.data.coupon.map((item: ICoupon) => (
-              <CouponcodeCard item={item} />
-            ))}
-           
+        <div className="py-7">
+          <MainHeading title="New Coupon" />
+          <div className="max-w-6xl px-2 m-auto mt-2 lg:mt-8 mb-16">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
+              {page_data.data.coupon.map((item: ICoupon) => (
+                <CouponcodeCard item={item} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <SubHeading title="Categories" />
-        <MainHeading title="Browse by category" />
-        <HomeCategories category={page_data.data.category} />
+        <div className="max-w-6xl m-auto py-3 px-2 rounded-xl bg-[#f5c4d0]">
+          <MainHeading title="Browse by category" />
+          <HomeCategories category={page_data.data.category} />
+        </div>
 
-        <SubHeading title="Blog" />
-        <MainHeading title="Read Our Blog" />
-        <HomeBlog blogs={page_data.data.blog} />
+        <div className="py-7">
+          <MainHeading title="Read Our Blog" />
+          <HomeBlog blogs={page_data.data.blog} />
+        </div>
         <BottomToTop />
       </main>
       <Footer />

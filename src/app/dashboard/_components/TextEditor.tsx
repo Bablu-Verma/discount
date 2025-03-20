@@ -17,6 +17,9 @@ import TaskItem from "@tiptap/extension-task-item";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { Heading } from "@tiptap/extension-heading";
+
 
 import {
   FaUndo,
@@ -53,6 +56,31 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
 
   const token = useSelector((state: RootState) => state.user.token);
 
+
+  const CustomHeading = Heading.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        id: {
+          default: null,
+          parseHTML: (element) => element.getAttribute("id") || uuidv4(),
+          renderHTML: (attributes) => {
+            return attributes.id ? { id: attributes.id } : {};
+          },
+        },
+      };
+    },
+  });
+
+
+
+
+
+
+
+
+
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -84,6 +112,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
       }),
       TaskList,
       TaskItem,
+      CustomHeading.configure({ levels: [1, 2, 3,4,5,6] }),
     ],
     content: <p>this is your editor</p>,
     onUpdate: ({ editor }) => {

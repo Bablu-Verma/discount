@@ -28,6 +28,8 @@ export interface IBlog {
   og_description?: string;
   twitter_card?: 'summary' | 'summary_large_image';
   schema_markup?: Record<string, any>;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const BlogSchema = new Schema<IBlog>(

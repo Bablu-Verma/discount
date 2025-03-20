@@ -1,12 +1,14 @@
 'use client'
 
-import { IBlogCard } from "@/app/blog/page";
+
+import { IBlog } from "@/model/BlogModal";
 import Link from "next/link";
 import React from "react";
 
 interface BlogCardProps {
-  item: IBlogCard;
+  item: IBlog;
 }
+
 const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
   
   const date = new Date(item.createdAt);

@@ -7,20 +7,19 @@ import Image from "next/image";
 import axios from "axios";
 import { get_All_blogs } from "@/utils/api_url";
 import ClientBlog from "./_clientblog";
+import { getServerToken } from "@/helpers/server/server_function";
 
 
-export interface IBlogCard {
-  title: string;
-  slug: string;
-  image: string;
-  short_desc: string;
-  createdAt: string;
-  views: string;
-}
 
-const fetchData = async () => {
+
+const fetchData = async (token:string) => {
   try {
-    const { data } = await axios.post(get_All_blogs);
+    const { data } = await axios.post(get_All_blogs, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
     if (!data.success) {
       throw new Error("Failed to fetch data");
     }
@@ -31,10 +30,15 @@ const fetchData = async () => {
 };
 
 const AllBlog = async () => {
-  const fetchBlogData = await fetchData();
-  // console.log("fetchBlogData==",fetchBlogData)
- const blogs: IBlogCard[] = fetchBlogData.data
-//  const pagination = await fetchBlogData.pagination;
+  const token = await getServerToken();
+  const fetchBlogData = await fetchData(token);
+
+
+  console.log(fetchBlogData.data)
+
+  const blogs = fetchBlogData.data
+
+
 
   return (
     <>

@@ -12,6 +12,7 @@ import styles from './blog_page.module.css';
 
 import React from "react";
 import toast from "react-hot-toast";
+import TableOfContents from "./TableOfContents";
 
 interface CategoryDetailsProps {
   params: { slug: string };
@@ -49,7 +50,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
   const slug = awaitslug.slug;
 
   const page_data = await GetData(token, slug);
-  // console.log("page_data", page_data.data);
+  
 
   const formate_date = (item:string)=>{
     const create_d = new Date(item);
@@ -104,8 +105,6 @@ const simpal_data = [
             <Image src={page_data.data.image[0]} width={500} height={200} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm" alt={page_data.data.title} />
            
             <div className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4" dangerouslySetInnerHTML={{ __html: page_data.data.short_desc }}></div>
-
-
             <div className={`${styles.blog_style} mt-16`} dangerouslySetInnerHTML={{ __html: page_data.data.desc }}>
 
             </div>
@@ -115,11 +114,7 @@ const simpal_data = [
           <div className="border-[1px] border-gray-600 px-2 py-3 mb-12">
               <h3 className="text-2xl text-center mb-4 font-medium text-gray-800 capitalize">Table of Contents</h3>
               <div>
-                {simpal_data.map((item,i) => (
-                  <div key={i+1} className="group  mb-4 flex justify-start gap-1">
-                   <span className="group-hover:text-blue-500 text-gray-700">{i+1}.</span> <Link href={`/blog/${item.slug}`} className="text-base font-normal text-gray-700  group-hover:text-blue-500 group-hover:underline line-clamp-2">{item.title}</Link>
-                  </div>
-                ))}
+              <TableOfContents  contents={page_data.data.desc}/>
               </div>
             </div>
 

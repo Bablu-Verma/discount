@@ -10,6 +10,9 @@
   --gray-light-color: #f2f2f2;
 }
 
+html {
+  scroll-behavior: smooth;
+}
 
 .home_banner_ .swiper-pagination-bullet-active {
   background-color: #ff5722 !important; 

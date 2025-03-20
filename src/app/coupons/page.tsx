@@ -3,9 +3,12 @@ import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import CategorieCard from "@/components/small_card/CategorieCard";
+import CouponcodeCard from "@/components/small_card/CouponcodeCard";
 import { getServerToken } from "@/helpers/server/server_function";
 import { ICategory } from "@/model/CategoryModel";
-import { category_list_api } from "@/utils/api_url";
+import { ICoupon } from "@/model/CouponModel";
+import { coupons_list_api } from "@/utils/api_url";
+
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -13,7 +16,7 @@ import toast from "react-hot-toast";
 export const GetData = async (token:string) => {
   try {
     let { data } = await axios.post(
-      category_list_api,
+      coupons_list_api,
       {
         headers: {
           Authorization: token,
@@ -44,13 +47,11 @@ export default async function Category() {
     <MainHeader />
     <main>
       <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-14 mb-16">
-         <div>
-            <span>Home</span> / <span>Category</span>
-          </div>
+         
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-8 mt-6 lg:mt-10">
           {
-            page_data.map((item:ICategory) => (
-              <CategorieCard item={item}/>
+            page_data.map((item:ICoupon) => (
+              <CouponcodeCard item={item}/>
             ))
           }
         </div>

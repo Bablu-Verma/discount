@@ -1,26 +1,52 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Link from 'next/link'
-import Image from 'next/image'
-import { IStore } from '@/model/StoreModel'
-
+import React from "react";
+import PropTypes from "prop-types";
+import Link from "next/link";
+import Image from "next/image";
+import { IStore } from "@/model/StoreModel";
 
 interface istorecard {
-    item:IStore
+  item: IStore;
 }
-const StoreCard:React.FC<istorecard> = ({item})=> {
+const StoreCard: React.FC<istorecard> = ({ item }) => {
   return (
-    <Link href={`/store/${item.slug}`} className="bg-white rounded-md p-3 justify-center gap-1 flex flex-col items-center hover:shadow-orange-300">
-    <Image src={item.store_img} alt={item.name} width={100} height={100} sizes="100vw" className="rounded-md mb-3"  />
+    <Link
+      href={`/store/${item.slug}`}
+      className="bg-white rounded-md px-3 pb-2 justify-center gap-1 flex flex-col items-center border-[1px] border-gray-200 pt-10 relative hover:shadow-orange-300"
+    >
+      <p className="text-[12px] min-w-[50%] text-center text-light bg-primary rounded-b-xl px-3 py-[1px] absolute top-0 ">
+        {item.cashback_type == "FLAT_AMOUNT" && <>₹{item.cashback_amount}.00</>}
+        {item.cashback_type == "PERCENTAGE" && <>{item.cashback_amount}%</>} Off
+      </p>
+      <Image
+        src={item.store_img}
+        alt={item.name}
+        width={100}
+        height={70}
+        className="rounded-md mb-3"
+      />
 
-    <p className="text-lg text-secondary"><span className="mr-1 text-sm ">Upto</span>   
-    {item.cashback_type=='FLAT_AMOUNT'&& <>₹{item.cashback_amount}.00</>}
-    {item.cashback_type=='PERCENTAGE'&& <>{item.cashback_amount}%</>} Cashback</p>
-    <h3 className="text-md capitalize text-secondary">{item.name}</h3>
-  </Link>
-  )
-}
+      <Link
+        href={`/store/${item.slug}`}
+        className="text-base capitalize text underline text-blue-500"
+      >
+        {item.name}
+      </Link>
 
-StoreCard.propTypes = {}
+      <div className="text-sm w-full items-center justify-center flex rounded-md mt-2 text-primary gap-[2px] capitalize py-1 px-2 bg-[#F5C4D0]">
+        {" "}
+        <span>Upto</span>
+        <span>
+          {item.cashback_type == "FLAT_AMOUNT" && (
+            <>₹{item.cashback_amount}.00</>
+          )}
+          {item.cashback_type == "PERCENTAGE" && <>{item.cashback_amount}%</>}{" "}
+        </span>
+        <span>Cashback</span>
+      </div>
+    </Link>
+  );
+};
 
-export default StoreCard
+StoreCard.propTypes = {};
+
+export default StoreCard;

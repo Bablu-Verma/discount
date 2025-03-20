@@ -78,7 +78,7 @@ export default async function Home() {
                 View All
               </a>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-3 lg:mt-5">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 mt-3 lg:mt-5">
               {page_data.data.store.map((item: IStore) => (
                 <StoreCard item={item} />
               ))}
@@ -103,7 +103,7 @@ export default async function Home() {
         <div className="py-7">
           <MainHeading title="New Coupon" />
           <div className="max-w-6xl px-2 m-auto mt-2 lg:mt-8 mb-16">
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mt-6 lg:mt-10">
               {page_data.data.coupon.map((item: ICoupon) => (
                 <CouponcodeCard item={item} />
               ))}

@@ -9,7 +9,7 @@ export default function AboutUs() {
     <>
       <MainHeader />
       <main>
-        <div className="max-w-[1400px] mx-auto px-4 my-24 relative">
+        <div className="max-w-6xl mx-auto px-4 my-24 relative">
           <div className="grid grid-cols-2 gap-20 w-full mb-10 items-center">
             <div>
               <h1 className="text-3xl font-semibold mb-6 text-gray-800">

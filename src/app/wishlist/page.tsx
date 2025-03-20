@@ -51,7 +51,7 @@ const Wishlist = async () => {
       <TopHeader />
       <MainHeader />
       <main className="min-h-screen">
-        <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-between items-end mb-4 relative">
+        <div className="max-w-6xl  mx-auto px-4 flex mt-7 md:mt-10 justify-between items-end mb-4 relative">
           <h2 className="text-xl font-semibold text-gray-700 capitalize pr-5 md:pr-10 gap-10">
             Total ({page_data?.count})
           </h2>

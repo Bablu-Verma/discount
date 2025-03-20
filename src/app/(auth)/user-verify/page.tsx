@@ -126,7 +126,7 @@ const UserVerify = () => {
       <TopHeader />
       <MainHeader />
       <main>
-        <div className="max-w-[1400px] m-auto min-h-screen sm:grid grid-cols-2 lg:grid-cols-3 gap-8 pb-10 md:pb-3">
+        <div className="max-w-6xl mx-auto min-h-screen sm:grid grid-cols-2 lg:grid-cols-3 gap-8 pb-10 md:pb-3">
           <div className="col-span-1 lg:col-span-2">
             <img
               src="https://img.freepik.com/premium-vector/woman-red-jacket-holding-shopping-bag-with-quotsalequot-it-second-bag-her-other-hand_150234-136431.jpg"

@@ -100,7 +100,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1100px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
+        <section className="max-w-6xl mx-auto  mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="grid grid-cols-7 gap-8">
             <div className="col-span-5">
               <div className="text-gray-600 uppercase flex gap-2">

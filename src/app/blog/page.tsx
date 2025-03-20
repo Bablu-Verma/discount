@@ -45,7 +45,7 @@ const AllBlog = async () => {
       <TopHeader />
       <MainHeader />
       <main>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-6xl mx-auto">
             <Image
               sizes="100vw"
               priority

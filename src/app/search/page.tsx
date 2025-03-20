@@ -85,7 +85,7 @@ export default function SearchPage() {
     <>
       <TopHeader />
       <MainHeader />
-      <main className="max-w-[1400px] mx-auto relative min-h-screen">
+      <main className="max-w-6xl  mx-auto relative min-h-screen">
         <div className="flex items-center justify-center py-4 lg:py-10">
           <div className="relative w-[50%] min-w-[350px] rounded-sm overflow-hidden">
             <input

@@ -39,7 +39,7 @@ export default function FAQ() {
     <>
       <MainHeader />
       <main>
-        <div className="max-w-[1400px] mx-auto px-4 my-24 relative">
+        <div className="max-w-6xl mx-auto px-4 my-24 relative">
           <h1 className="text-3xl font-bold text-gray-700 text-center">FAQ</h1>
           <div className="mt-10">
             <Faq_client faq_question={faq_question} />

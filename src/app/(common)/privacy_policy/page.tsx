@@ -2,7 +2,7 @@ import React from 'react'
 
 const Privacy_policy = () => {
   return (
-    <div>Privacy_policy</div>
+    <div className='max-w-6xl mx-auto'>Privacy_policy</div>
   )
 }
 

@@ -8,7 +8,7 @@ export default function OrderList() {
     <MainHeader />
     <main>     
       <div
-        className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
+        className="max-w-6xl mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative"
       >
 
 

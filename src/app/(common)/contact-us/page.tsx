@@ -8,7 +8,7 @@ export default function ContactUs() {
     <>
       <MainHeader />
       <main>
-        <div className="max-w-[1400px] mx-auto px-4 my-24  relative">
+        <div className="max-w-6xl mx-auto px-4 my-24  relative">
           <h1 className="text-3xl font-semibold text-center text-gray-800">Contact Us</h1>
           <div className="grid grid-cols-4 gap-14 w-full mt-16">
             <div className="col-span-1 pr-6">

@@ -60,7 +60,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1400px] px-2 mx-auto mt-4 lg:mt-14 mb-16">
+        <section className="max-w-6xl  px-2 mx-auto mt-4 lg:mt-14 mb-16">
           <div className="text-sm lg:text-base">
             <span>Home</span> / <span>Category</span> / <span>{page_data.name}</span>
           </div>

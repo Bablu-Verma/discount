@@ -5,7 +5,7 @@ import TopHeader from "@/components/header/TopHeader";
 import Image from "next/image";
 import React from "react";
 import Campaign_banner from "./_campaign_banner";
-import { MainHeading, SubHeading } from "@/components/Heading";
+import { MainHeading } from "@/components/Heading";
 import BestSalling from "@/components/homepage/BestSelling";
 import { getServerToken } from "@/helpers/server/server_function";
 import axios, { AxiosError } from "axios";
@@ -64,7 +64,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-[1400px] mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
+        <section className="max-w-6xl mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
               <Campaign_banner campaign_data={page_data.img_array} />

@@ -46,7 +46,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <TopHeader />
       <MainHeader />
-      <main className="max-w-[1400px] mx-auto mt-8 lg:mt-14 mb-16">
+      <main className="max-w-6xl mx-auto mt-8 lg:mt-14 mb-16">
         <section>
           <div className="flex justify-between mb-6 lg:mb-16">
             <h4 className="text-base pl-2">

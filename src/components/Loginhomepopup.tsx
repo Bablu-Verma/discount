@@ -47,11 +47,10 @@ const Loginhomepopup = () => {
         <IoClose className="text-2xl text-secondary" />
       </span>
         <button onClick={handle_process}>
-          {" "}
           <Image
             src={loginbanner}
             alt="login banner"
-            width={500}
+            width={400}
             className="h-auto rounded-md"
           />
         </button>

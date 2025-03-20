@@ -43,7 +43,7 @@ export default async function Category() {
     <TopHeader />
     <MainHeader />
     <main>
-      <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-14 mb-16">
+      <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-14 mb-16">
          <div>
             <span>Home</span> / <span>Category</span>
           </div>

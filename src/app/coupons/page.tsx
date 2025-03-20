@@ -18,6 +18,9 @@ export const GetData = async (token:string) => {
     let { data } = await axios.post(
       coupons_list_api,
       {
+        status:"ACTIVE"
+      },
+      {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",

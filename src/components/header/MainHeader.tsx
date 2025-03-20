@@ -98,7 +98,7 @@ const MainHeader = () => {
 
           <li className="mx-1">
             <Link
-              href="coupons"
+              href="/coupons"
               className={`${
                 pathname == "/coupons" ? "text-primary" : "text-gray-700"
               } font-medium duration-200 px-2 hover:text-gray-900`}
@@ -108,7 +108,7 @@ const MainHeader = () => {
           </li>
           <li className="mx-1">
             <Link
-              href="blog"
+              href="/blog"
               className={`${
                 pathname == "/blog" ? "text-primary" : "text-gray-700"
               } font-medium duration-200 px-2 hover:text-gray-900`}

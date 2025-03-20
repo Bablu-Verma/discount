@@ -38,7 +38,7 @@ export async function POST(req: Request) {
    
 
     // Fetch data
-    const category_details = await CategoryModel.findOne(query).lean();
+    const category_details = await CategoryModel.findOne(query).lean()
 
     return new NextResponse(
       JSON.stringify({

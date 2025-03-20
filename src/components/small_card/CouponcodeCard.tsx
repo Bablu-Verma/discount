@@ -9,7 +9,7 @@ interface CouponcodeCardProps {
   item: ICoupon;
 }
 const CouponcodeCard: React.FC<CouponcodeCardProps> = ({ item }) => {
-  console.log(item);
+  // console.log(item);
   return (
     <Link
       href={`/coupons/${item._id}`}

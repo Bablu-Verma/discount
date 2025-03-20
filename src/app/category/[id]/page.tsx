@@ -4,7 +4,7 @@ import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import Image from "next/image";
 import React from "react";
-import { MainHeading, SubHeading } from "@/components/Heading";
+import { MainHeading } from "@/components/Heading";
 import BestSalling from "@/components/homepage/BestSelling";
 import axios, { AxiosError } from "axios";
 import { category_details_api } from "@/utils/api_url";
@@ -81,11 +81,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             </div>
           </div>
 
-          <SubHeading title="This Month" />
-          <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
-            <MainHeading title="Best Selling Products" />
-          </div>
-          <BestSalling />
+        
         </section>
         <BottomToTop />
       </main>

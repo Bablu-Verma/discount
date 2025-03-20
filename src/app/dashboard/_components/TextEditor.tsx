@@ -72,15 +72,6 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
     },
   });
 
-
-
-
-
-
-
-
-
-
   const editor = useEditor({
     extensions: [
       StarterKit.configure({

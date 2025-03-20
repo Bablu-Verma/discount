@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { coupon_id, status} = await req.json(); // Extract filters
+    const { coupon_id, status} = await req.json(); 
 
     if (!coupon_id) {
       return new NextResponse(
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     // ✅ Find coupon with store and category details
     const coupon = await CouponModel.findOne(query)
-      .populate("store", "name img slug")
+      .populate("store", "name slug store_img")
       .populate("category", "name")
       .lean();
 

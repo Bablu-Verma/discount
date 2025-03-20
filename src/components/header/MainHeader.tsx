@@ -7,14 +7,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import Image from "next/image";
 import { IUser } from "@/common_type";
-
+import logo from "../../../public/logo_.png";
 const MainHeader = () => {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
   const token_ = useSelector((state: RootState) => state.user.token);
   const pathname = usePathname();
-  const user = useSelector((state: RootState) => state.user.user) as IUser | null;
+  const user = useSelector(
+    (state: RootState) => state.user.user
+  ) as IUser | null;
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
 
   const userlogin = token_ ? true : false;
@@ -48,13 +50,17 @@ const MainHeader = () => {
   return (
     <nav
       className={`border-b-2 border-gray-200 z-50 bg-white sticky top-0 transition-transform duration-500 ${
-       isVisible ? "translate-y-0" : "-translate-y-full"
+        isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="max-w-6xl m-auto py-3 flex justify-between items-center px-4">
-        <h3 className="font-semibold text-black text-2xl md:text-3xl font-mono select-none">
-          Gain<span className="text-primary">Karo</span>
-        </h3>
+      <div className="max-w-6xl m-auto py-1 flex justify-between items-center px-4">
+        <Link href="/">
+          <Image
+            src={logo}
+            className="w-[125px] lg:w-[140px] h-auto"
+            alt="logo"
+          />
+        </Link>
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">
             <Link
@@ -89,7 +95,7 @@ const MainHeader = () => {
               Store
             </Link>
           </li>
-         
+
           <li className="mx-1">
             <Link
               href="coupons"
@@ -168,9 +174,12 @@ const MainHeader = () => {
           ) : (
             <Link
               href="/login"
-              className="select-none text-secondary p-1 px-1.5 mr-3 hover:bg-gray-100 relative flex justify-center items-center rounded"
+              className="select-none text-secondary p-1 px-1.5 mx-3 hover:bg-gray-100 relative flex justify-center items-center gap-1 rounded"
             >
               <i className="fa-solid text-xl fa-user"></i>
+              <span className="text-sm text-secondary font-medium">
+                Login/SignUp
+              </span>
             </Link>
           )}
 

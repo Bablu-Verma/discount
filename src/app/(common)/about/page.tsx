@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import SubFooter from "@/components/SubFooter";
+
 import Link from "next/link";
 
 export default function AboutUs() {
@@ -56,7 +56,7 @@ export default function AboutUs() {
               />
             </div>
           </div>
-          <SubFooter />
+       
         </div>
         <BottomToTop />
       </main>

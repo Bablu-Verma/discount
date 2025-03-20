@@ -11,9 +11,11 @@ import HomeBlog from "@/components/homepage/HomeBlog";
 import HomeCategories from "@/components/homepage/HomeCategories";
 import HomeFlash from "@/components/homepage/HomeFlash";
 import HomePoster from "@/components/homepage/HomePoster";
+import HowToWork from "@/components/HowToWork";
+import Loginhomepopup from "@/components/Loginhomepopup";
+
 import CouponcodeCard from "@/components/small_card/CouponcodeCard";
 import StoreCard from "@/components/small_card/StoreCard";
-
 
 import { getServerToken } from "@/helpers/server/server_function";
 import { ICoupon } from "@/model/CouponModel";
@@ -21,7 +23,7 @@ import { IStore } from "@/model/StoreModel";
 
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-import Link from "next/link";
+
 
 export const GetData = async (token: string) => {
   try {
@@ -51,11 +53,15 @@ export default async function Home() {
       <TopHeader />
       <MainHeader />
       <CallApiInHome />
+      
       <Hero
         home_category={page_data.data.category}
         banner={page_data.data.main_banner}
       />
       <main>
+
+      <Loginhomepopup />
+      
         <div className="py-7">
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
@@ -67,6 +73,13 @@ export default async function Home() {
           <BestSalling best_product={page_data.data.best_product} />
         </div>
 
+        <div className="border-[1px solid #e7e7e7] mt-10">
+          <MainHeading title="Explore Our Products" />
+          <BestSalling best_product={page_data.data.offer_deal} />
+        </div>
+        <div className="max-w-6xl mx-auto mt-14">
+          <HomePoster poster={page_data.data.long_poster} />
+        </div>
         <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
           <MainHeading title="Cashback store" />
           <div className="max-w-6xl relative px-2 m-auto  mb-12">
@@ -84,15 +97,6 @@ export default async function Home() {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto mt-14">
-          <HomePoster poster={page_data.data.long_poster} />
-        </div>
-
-        <div className="border-[1px solid #e7e7e7] mt-10">
-          <MainHeading title="Explore Our Products" />
-          <BestSalling best_product={page_data.data.offer_deal} />
         </div>
 
         <div className="py-7">
@@ -121,6 +125,11 @@ export default async function Home() {
           <HomeBlog blogs={page_data.data.blog} />
         </div>
         <BottomToTop />
+        <div className="py-7">
+          <MainHeading title="How We are Work" />
+          <HowToWork />
+        </div>
+        
       </main>
       <Footer />
     </>

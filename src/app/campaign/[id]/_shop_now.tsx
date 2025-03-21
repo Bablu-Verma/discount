@@ -18,7 +18,6 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
   // const pathname = usePathname();
   // const searchParams = useSearchParams();
 
-  
   const [modelOpen, setModelOpen] = React.useState<boolean>(false);
 
   const shop_now = async () => {
@@ -33,12 +32,12 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
     }
 
     setModelOpen(true);
-   
+
     try {
       let { data } = await axios.post(
         create_order_api,
         {
-          product_id: page_data.campaign_id,
+          product_id: page_data.product_id,
         },
         {
           headers: {
@@ -49,12 +48,16 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       );
 
       if (data.success == true) {
-        
+        console.log(data);
         setTimeout(() => {
           setModelOpen(false);
-          window.open(data.order.url, "_blank");
-          // window.location.reload();
-        }, 8000);
+          if (data?.order?.url && typeof data.order.url === "string") {
+            window.open(data.order.url, "_blank");
+          } else {
+            console.error("Invalid URL");
+          }
+         
+        }, 3000);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -66,7 +69,7 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
       setTimeout(() => {
         setModelOpen(false);
       }, 1000);
-    } 
+    }
   };
 
   return (

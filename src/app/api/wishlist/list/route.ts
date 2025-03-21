@@ -57,7 +57,7 @@ export async function POST(req: Request) {
 
     // Fetch product details from the CampaignModel
     const products = await CampaignModel.find({
-      campaign_id: { $in: watchlist.campaigns },
+      product_id: { $in: watchlist.campaigns },
     });
 
     if (!products || products.length === 0) {

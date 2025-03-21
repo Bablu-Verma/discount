@@ -53,4 +53,3 @@ const Wishlist_remove:React.FC<IWRProps> = ({id}) => {
 
 export default Wishlist_remove
 
-// {page_data?.wishlist_id}

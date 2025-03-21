@@ -31,7 +31,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
     try {
       const { data } = await axios.post(
         wishlist_product_remove_,
-        { campaign_id: id },
+        { product_id: id },
         {
           headers: {
             "Content-Type": "application/json",
@@ -59,13 +59,13 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
       {wishlist.map((item, i) => {
         return (
           <div
-            key={item.campaign_id}
+            key={item.product_id}
             className="grid grid-cols-10 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 items-center px-4 rounded"
           >
             <span className="text-sm text-secondary">{i + 1}.</span>
             <div className="col-span-3 flex items-center pr-3">
               <Image
-                src={item.img[0]}
+                src={item.img_array[0]}
                 className="h-12 w-12 aspect-auto "
                 width={20}
                 sizes="100vw"
@@ -74,17 +74,17 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
               />
               <span className="mx-3 line-clamp-1 text-sm text-secondary">{item.title}</span>
             </div>
-            <span className="col-span-2 text-sm capitalize line-clamp-1">{item.brand}</span>
-            <span className="text-base font-medium capitalize line-clamp-1">₹{item.cashback}</span>
+            <span className="col-span-2 text-sm capitalize line-clamp-1">{item.store}</span>
+            <span className="text-base font-medium capitalize line-clamp-1">₹{item.calculated_cashback.toString()}</span>
             <span>
-              {item.active ? (
-                <b className="text-green-700 text-sm ">Active</b>
-              ) : (
+              {item.product_status == 'ACTIVE' ? (
+                <b className="text-green-700 text-sm ">ACTIVE</b>
+              ) : item.product_status == 'PAUSE' ? (
                 <b className="text-red-700 text-sm ">Expire</b>
-              )}
+              ):''}
             </span>
             <Link
-              href={`/campaign/${item.slug}`}
+              href={`/campaign/${item.product_slug}`}
               className="text-primary hover:text-blue-500 text-sm hover:underline"
             >
               More Info
@@ -93,7 +93,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
               <button
                 className="bg-red-200 hover:bg-red-300 py-1 px-5 rounded-md text-secondary inline-block"
                 title="Remove this item"
-                onClick={() => remover_data(item.campaign_id)}
+                onClick={() => remover_data(item.product_id)}
               >
                 <i className="fa-solid fa-trash text-sm"></i>
               </button>

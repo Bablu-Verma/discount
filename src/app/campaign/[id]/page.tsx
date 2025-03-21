@@ -55,7 +55,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
   let { id } = await params;
   let slug = id;
 
-  console.log('slug__',slug)
+  // console.log('slug__',slug)
 
   const page_data = await GetData(token, slug);
 

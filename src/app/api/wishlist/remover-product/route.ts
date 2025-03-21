@@ -28,9 +28,9 @@ export async function POST(req: Request) {
 
     const user_id = user?._id;
 
-    const { campaign_id } = await req.json();
+    const { product_id } = await req.json();
 
-    if (!campaign_id) {
+    if (!product_id) {
       return new NextResponse(
         JSON.stringify({
           success: false,
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     // Find the user's wishlist
     const wishlist = await WishlistModel.findOne({ user_id });
 
-    if (!wishlist || !wishlist.campaigns.includes(campaign_id)) {
+    if (!wishlist || !wishlist.campaigns.includes(product_id)) {
       return new NextResponse(
         JSON.stringify({
           success: false,
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     }
 
     wishlist.campaigns = wishlist.campaigns.filter(
-      (id: number) => id !== campaign_id
+      (id: number) => id !== product_id
     );
 
     await wishlist.save();

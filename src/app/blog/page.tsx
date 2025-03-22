@@ -34,8 +34,6 @@ const AllBlog = async () => {
   const fetchBlogData = await fetchData(token);
 
 
-  console.log(fetchBlogData.data)
-
   const blogs = fetchBlogData.data
 
 
@@ -57,7 +55,7 @@ const AllBlog = async () => {
               className="h-40 object-cover lg:h-auto w-full"
             />
           </div>
-        <section className="max-w-[1400px] mx-auto  mb-16 p-2 xl:p-0">
+        <section className="max-w-6xl mx-auto  mb-16 p-2 xl:p-0">
       
          <ClientBlog blog={blogs} />
         </section>

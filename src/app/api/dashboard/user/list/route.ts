@@ -25,6 +25,8 @@ export async function POST(req: Request) {
       );
     }
 
+   const requestdata  = await req.json();
+
     const {
       page = 1,
       limit = 10,
@@ -34,7 +36,8 @@ export async function POST(req: Request) {
       gender,
       startDate,
       endDate,
-    } = await req.json();
+    } = requestdata
+    console.log(requestdata)
 
     const query: any = {};
 

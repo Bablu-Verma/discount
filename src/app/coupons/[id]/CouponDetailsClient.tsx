@@ -1,15 +1,34 @@
 "use client";
 
+import { RootState } from "@/redux-store/redux_store";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { FaAngleDoubleRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
+
 
 const CouponDetailsClient = ({ page_data }) => {
   const [showCode, setShowCode] = useState(false);
+  const router = useRouter();
+  const token = useSelector((state: RootState) => state.user.token);
+
+ 
+
 
   const handle_user_click = async () => {
     await navigator.clipboard.writeText(page_data.code);
     setShowCode(!showCode);
   };
+
+  const open_clint_web = (item:string)=>{
+    if(!token){
+      router.replace('/login')
+    }
+    window.open(item, '_blank');
+  }
+
+
 
   return (
     <div className="max-w-[700px] m-auto shadow-sm rounded rounded-tr-3xl rounded-bl-3xl relative hover:shadow-lg duration-200 border-[1px] border-gray-200 py-8 px-7  bg-[#fff]">
@@ -30,7 +49,7 @@ const CouponDetailsClient = ({ page_data }) => {
       </h4>
 
       <div
-        className={`bg-gray-100 border-dashed relative border-2 h-12 mt-8 rounded-md flex ${
+        className={`bg-gray-100  border-dashed relative border-2 h-12 mt-8 rounded-md flex ${
           showCode ? "justify-center" : "justify-end"
         } items-center p-2`}
       >
@@ -41,7 +60,7 @@ const CouponDetailsClient = ({ page_data }) => {
         ) : (
           <span
             onClick={handle_user_click}
-            className="absolute -top-[1px] -left-[1px] w-[96%] bg-primary h-12 rounded-md text-base text-white items-center font-medium tracking-wide flex justify-center"
+            className="absolute -top-[1px] -left-[1px] w-[96%] bg-primary h-12 rounded-md text-base text-white cursor-pointer items-center font-medium tracking-wide flex justify-center"
           >
             Show Coupon
           </span>
@@ -55,6 +74,10 @@ const CouponDetailsClient = ({ page_data }) => {
           {showCode ? page_data.code : "00000"}
         </p>
       </div>
+      {
+        // store_link
+        showCode && <p className="text-center mt-7"><a className="text-primary cursor-pointer inline-flex  underline justify-center items-center gap-1" onClick={()=>open_clint_web(page_data.store.store_link)}  ><span>Go to Partner Site</span> <FaAngleDoubleRight /></a></p>
+      }
     </div>
   );
 };

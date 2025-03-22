@@ -32,6 +32,9 @@ export async function POST(req: Request) {
     // Parse request body
     const { email } = await req.json();
 
+
+    // console.log(email)
+
     if (!email) {
       return NextResponse.json(
         { success: false, message: "User email is required" },
@@ -59,7 +62,10 @@ export async function POST(req: Request) {
       { success: true, message: "User details retrieved successfully", data: {
         details:userDetails,
         order:user_order,
-        
+        user_upi,
+        user_campaign_query,
+        user_claim_form,
+        user_withdrawal_request
       } },
       { status: 200 }
     );

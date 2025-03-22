@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     // ✅ Find coupon with store and category details
     const coupon = await CouponModel.findOne(query)
-      .populate("store", "name slug store_img")
+      .populate("store", "name slug store_img store_link")
       .populate("category", "name")
       .lean();
 

@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       phone_number,
       startDate,
       endDate,
+      action_status,
       page = 1,
       limit = 10,
     } = requestData;
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
 
     // ✅ Email filter (Case-insensitive search)
     if (email) query.email = { $regex: email, $options: "i" };
+    if (action_status) query.action_status = action_status
 
     // ✅ Phone number exact match
     if (phone_number) query.phone_number = phone_number;

@@ -53,7 +53,7 @@ const MainHeader = () => {
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="max-w-6xl m-auto py-1 flex justify-between items-center px-4">
+      <div className="max-w-6xl m-auto py-1 flex justify-between items-center max-lg:px-4">
         <Link href="/">
           <Image
             src={logo}
@@ -177,7 +177,7 @@ const MainHeader = () => {
               className="select-none text-secondary p-1 px-1.5 mx-3 hover:bg-gray-100 relative flex justify-center items-center gap-1 rounded"
             >
               <i className="fa-solid text-xl fa-user"></i>
-              <span className="text-sm text-secondary font-medium">
+              <span className="text-sm hidden lg:block text-secondary font-medium">
                 Login/SignUp
               </span>
             </Link>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface ITableOfContents {
   contents: string;
@@ -14,25 +14,30 @@ interface Heading {
 }
 
 const TableOfContents = ({ contents }: ITableOfContents) => {
-  const extractHeadings = (htmlString: string): Heading[] => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlString;
+  const [headings, setHeadings] = useState<Heading[]>([]);
 
-    const headings: Heading[] = [];
-    tempDiv.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((heading) => {
-      const level = parseInt(heading.tagName[1]); 
-      const text = heading.textContent?.trim() || "Untitled Heading"; 
-      const id = heading.getAttribute("id") || ""; 
+  useEffect(() => {
+    const extractHeadings = (htmlString: string): Heading[] => {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = htmlString;
 
-      if (id) {
-        headings.push({ id, level, text });
-      }
-    });
+      const headings: Heading[] = [];
+      tempDiv.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((heading) => {
+        const level = parseInt(heading.tagName[1]);
+        const text = heading.textContent?.trim() || "Untitled Heading";
+        const id = heading.getAttribute("id") || "";
 
-    return headings;
-  };
+        if (id) {
+          headings.push({ id, level, text });
+        }
+      });
 
-  const headings = extractHeadings(contents);
+      return headings;
+    };
+
+    const extractedHeadings = extractHeadings(contents);
+    setHeadings(extractedHeadings); 
+  }, [contents]);
 
   return (
     <>

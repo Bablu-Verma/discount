@@ -139,7 +139,7 @@ const FilterContent = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-[#fff] px-4 pt-1 pb-4 mt-4 rounded-lg">
       {/* Category Filters */}
       <div className="mt-5">
         <p className="text-base mb-2 text-secondary capitalize">Category</p>

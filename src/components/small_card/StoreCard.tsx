@@ -25,12 +25,11 @@ const StoreCard: React.FC<istorecard> = ({ item }) => {
         className="rounded-md mb-3"
       />
 
-      <Link
-        href={`/store/${item.slug}`}
+      <div
         className="text-base capitalize text underline text-blue-500"
       >
         {item.name}
-      </Link>
+      </div>
 
       <div className="text-sm w-full items-center justify-center flex rounded-md mt-2 text-primary gap-[2px] capitalize py-1 px-2 bg-[#F5C4D0]">
         {" "}

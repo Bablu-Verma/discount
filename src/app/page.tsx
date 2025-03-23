@@ -82,7 +82,7 @@ export default async function Home() {
         </div>
         <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
           <MainHeading title="Cashback store" />
-          <div className="max-w-6xl relative px-2 m-auto  mb-12">
+          <div className="max-w-6xl relative  m-auto  mb-12">
             <div className="absolute right-4 top-[-44px]">
               <a
                 href="/store"
@@ -115,7 +115,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="max-w-6xl m-auto py-3 px-2 rounded-xl bg-[#f5c4d0]">
+        <div className="max-w-6xl m-auto py-3 lg:px-2 rounded-xl bg-[#f5c4d0]">
           <MainHeading title="Browse by category" />
           <HomeCategories category={page_data.data.category} />
         </div>

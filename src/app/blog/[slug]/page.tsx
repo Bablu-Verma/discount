@@ -101,7 +101,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
       <MainHeader />
       <main className="">
         <section className="max-w-6xl mx-auto  mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
-          <div className="grid grid-cols-7 gap-8">
+          <div className="lg:grid grid-cols-7 gap-8">
             <div className="col-span-5">
               <div className="text-gray-600 uppercase flex gap-2">
                 <span>By: {page_data.data.writer_email}</span> /{" "}
@@ -119,6 +119,14 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
                 className="w-full max-w-[700px] mb-2 rounded-sm shadow-sm"
                 alt={page_data.data.title}
               />
+                <div className="border-[1px] border-gray-600 px-2 py-3 mb-12 lg:hidden">
+                <h3 className="text-2xl text-center mb-4 font-medium text-gray-800 capitalize">
+                  Table of Contents
+                </h3>
+                <div>
+                  <TableOfContents contents={page_data.data.desc} />
+                </div>
+              </div>
 
               <div
                 className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4"
@@ -130,7 +138,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
               ></div>
             </div>
             <div className="col-span-2">
-              <div className="border-[1px] border-gray-600 px-2 py-3 mb-12">
+              <div className="border-[1px] border-gray-600 px-2 py-3 mb-12 max-lg:hidden">
                 <h3 className="text-2xl text-center mb-4 font-medium text-gray-800 capitalize">
                   Table of Contents
                 </h3>

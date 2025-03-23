@@ -10,6 +10,7 @@ import { RootState } from "@/redux-store/redux_store";
 import { contact_us_list_api } from "@/utils/api_url";
 
 import { IContactUs } from "@/model/ContactUsModel";
+import { formatDate } from "@/helpers/client/client_function";
 
 const ContactUsList = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -63,11 +64,10 @@ const ContactUsList = () => {
     getList();
   }, []);
 
-  const create_date = (item: string) => {
-    const date = new Date(item);
-    const formattedDate = date.toLocaleString();
-    return formattedDate;
-  };
+
+
+
+
 
   return (
     <>
@@ -154,63 +154,69 @@ const ContactUsList = () => {
           <table className="min-w-full table-auto border-collapserounded-lg">
             <thead className="bg-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   S.NO
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Name
                 </th>
 
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Phone
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
                   Address
                 </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  Message
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="px-2 py-3 text-left font-medium text-gray-700">
+                  Action
                 </th>
               </tr>
             </thead>
             <tbody>
               {userList.map((item: IContactUs, i) => (
                 <tr key={i} className="bg-white hover:bg-gray-100">
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{i + 1}.</span>
                   </td>
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800 text-sm">
-                      {create_date(item.createdAt)} {}
+                      {formatDate(item.createdAt)} {}
                     </span>
                   </td>
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{item.name}</span>
                   </td>
 
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{item.email}</span>
                   </td>
 
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{item.phone_number}</span>
                   </td>
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{item.subject}</span>
                   </td>
-                  <td className="px-6 py-4  ">
+                  <td className="px-2 py-4  ">
                     <span className="text-gray-800">{item.location}</span>
                   </td>
-                  <td className="px-6 py-4  ">
-                    <span className="text-gray-800">{item.message}</span>
+                  <td className="px-2 py-4  ">
+                    <span className="text-gray-800">{item.action_status}</span>
+                  </td>
+                  <td className="px-2 py-4  ">
+                    <Link href={`/dashboard/contact-us/${item.email}`} className="text-gray-800 ml-4">Action</Link>
                   </td>
                 </tr>
               ))}

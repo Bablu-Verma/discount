@@ -69,3 +69,16 @@ export function setClientCookie(cookie_name:string, cookie_value:string, duratio
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
     return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
   };
+
+
+  export function formatDate(createdAt:Date) {
+    return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    }).format(new Date(createdAt));
+}

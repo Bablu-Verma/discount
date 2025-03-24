@@ -71,13 +71,6 @@ export async function POST(req: Request) {
       partner_site_orderid,
       partner_site_order_status,
       status: "PENDING",
-      claim_history: [
-        {
-          status: "PENDING",
-          date: new Date(),
-          details: "Claim created and awaiting review.",
-        },
-      ],
     });
 
     // Save to DB

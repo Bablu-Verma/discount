@@ -11,20 +11,24 @@ import { contact_us_list_api } from "@/utils/api_url";
 
 import { IContactUs } from "@/model/ContactUsModel";
 import { formatDate } from "@/helpers/client/client_function";
+import Editcontausus from "../ContactUsDetails";
 
 const ContactUsList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [userList, setUserList] = useState([]);
 
   const [showFilter, setShowFilter] = useState(false);
-
+  const [openSheet, setOpenSheet] = useState({
+    show: false,
+    details: {},
+  });
   const [filters, setFilters] = useState({
     name: "",
     email: "",
     startDate: "",
     endDate: "",
-    phone_number:"",
-    action_status:""
+    phone_number: "",
+    action_status: "",
   });
 
   const handleFilterChange = (
@@ -42,7 +46,7 @@ const ContactUsList = () => {
     try {
       const { data } = await axios.post(
         contact_us_list_api,
-        {filters},
+        { filters },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,17 +68,14 @@ const ContactUsList = () => {
     getList();
   }, []);
 
-
-
-
-
-
   return (
-    <>
+    <div className="relative">
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
         Contact Us Data
       </h1>
-
+      {openSheet.show && (
+        <Editcontausus setOpenSheet={setOpenSheet} openSheet={openSheet} />
+      )}
       <button
         className="border p-2 rounded-md h-9 text-sm outline-none text-blue-300"
         type="button"
@@ -93,7 +94,7 @@ const ContactUsList = () => {
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
-           <input
+          <input
             type="text"
             name="email"
             placeholder="email"
@@ -102,7 +103,7 @@ const ContactUsList = () => {
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
 
-<input
+          <input
             type="text"
             name="phone_number"
             placeholder="phone_number"
@@ -216,7 +217,16 @@ const ContactUsList = () => {
                     <span className="text-gray-800">{item.action_status}</span>
                   </td>
                   <td className="px-2 py-4  ">
-                    <Link href={`/dashboard/contact-us/${item.email}`} className="text-gray-800 ml-4">Action</Link>
+                    <button
+                      onClick={() =>
+                        setOpenSheet({
+                          show: true,
+                          details: item,
+                        })
+                      }
+                    >
+                      Viedetails
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -224,7 +234,7 @@ const ContactUsList = () => {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

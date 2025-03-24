@@ -1,79 +1,60 @@
 "use client";
 
-import { category_details_api, category_edit_api } from "@/utils/api_url";
+import { category_details_api, category_edit_api, contact_us_update_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/redux-store/redux_store";
-import TextEditor from "@/app/dashboard/_components/TextEditor";
-import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_link";
 import { formatDate } from "@/helpers/client/client_function";
 
 
 
-const Editcontausus: React.FC = () => {
+const Editcontausus: React.FC = ({openSheet, setOpenSheet}) => {
   const token = useSelector((state: RootState) => state.user.token);
-  const pathname = usePathname();
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-    name: "",
-    address:'',
-    action_status:""
+    email: openSheet?.details?.email || "",
+    phone_number: openSheet?.details?.phone_number || "",
+    subject: openSheet?.details?.subject || "",
+    message: openSheet?.details?.message || "",
+    name: openSheet?.details?.name || "",
+    location: openSheet?.details?.location || "",
+    action_status: openSheet?.details?.action_status || "",
   });
 
-  const urlslug = pathname.split("/").pop() || "";
-
-  const getContact = async () => {
-    try {
-      const { data } = await axios.post(
-        category_details_api,
-        { slug: urlslug },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Error fetching category");
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    }
-  };
 
   useEffect(() => {
-    getCategory();
-  }, [urlslug]);
+    if (openSheet?.details) {
+      setFormData({
+        email: openSheet.details.email || "",
+        phone_number: openSheet.details.phone_number || "",
+        subject: openSheet.details.subject || "",
+        message: openSheet.details.message || "",
+        name: openSheet.details.name || "",
+        location: openSheet.details.location || "",
+        action_status: openSheet.details.action_status || "",
+      });
+    }
+  }, [openSheet]);
 
-  // Handle Input Changes
+ 
 
-  // Handle Submit
+
   const handleSubmit = async () => {
-    const { categoryName, status, images } = formData;
-
+   
     try {
       setLoading(true);
       const { data } = await axios.post(
-        category_edit_api,
+        contact_us_update_api,
         {
-          slug: urlslug,
-          name: categoryName,
-          description: editorContent,
-          status: status,
-          imges: images,
+          action_status:formData.action_status,
+          id:openSheet.details._id
         },
         {
           headers: {
@@ -82,8 +63,8 @@ const Editcontausus: React.FC = () => {
           },
         }
       );
-      toast.success("Category updated successfully! Redirecting...");
-      setTimeout(() => router.push("/dashboard/all-category"), 3000);
+      toast.success("Data updated successfully! Redirecting...");
+      setTimeout(() => window.location.reload(), 3000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "An error occurred");
@@ -107,9 +88,9 @@ const Editcontausus: React.FC = () => {
 
  
   return (
-    <>
-      <h1 className="text-2xl py-2 font-medium text-secondary_color">
-        Contact us Details
+    <div className=' z-[100] w-full absolute h-[98vh] bg-gray-200 top-0 overflow-auto left-0'>
+      <h1 className="text-2xl py-2 ml-5 font-medium text-secondary_color">
+        Contact us Details {openSheet.details.email}  
       </h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-50 rounded-lg shadow-sm">
         <form
@@ -120,7 +101,7 @@ const Editcontausus: React.FC = () => {
           className="space-y-6"
         >
     
-    {/* <h3>{formatDate(item.createdAt)}</h3> */}
+          <h3>{formatDate(openSheet.details.createdAt)}</h3>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
                Name
@@ -129,7 +110,7 @@ const Editcontausus: React.FC = () => {
               type="text"
               name="name"
               value={formData.name}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
               placeholder=" name"
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
@@ -142,7 +123,7 @@ const Editcontausus: React.FC = () => {
               type="text"
               name="subject"
               value={formData.subject}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
               placeholder="subject"
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
@@ -155,7 +136,7 @@ const Editcontausus: React.FC = () => {
               type="text"
               name="email"
               value={formData.email}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
               placeholder="email"
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
@@ -168,8 +149,8 @@ const Editcontausus: React.FC = () => {
               type="text"
               name="phone_number"
               value={formData.phone_number}
-              onChange={handleInputChange}
-              placeholder="phone_number"
+              // onChange={handleInputChange}
+              placeholder="phone"
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -181,10 +162,10 @@ const Editcontausus: React.FC = () => {
             </label>
             <input
               type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              placeholder="address"
+              name="location"
+              value={formData.location}
+              // onChange={handleInputChange}
+              placeholder="location"
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -232,7 +213,7 @@ const Editcontausus: React.FC = () => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

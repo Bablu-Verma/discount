@@ -3,22 +3,13 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 // Define Claim Statuses
 const CLAIM_STATUSES = ["PENDING", "APPROVED", "REJECTED"] as const;
 
-// Define Claim History Interface
-interface IClaimHistory {
-  status: (typeof CLAIM_STATUSES)[number];
-  date: Date;
-  details: string;
-  reviewed_by?: mongoose.Types.ObjectId; 
-}
-
 // Define ClaimForm Interface
 interface IClaimForm extends Document {
   user_id: mongoose.Types.ObjectId;
   order_id: string;
   reason: string;
   supporting_documents: string[]; 
-  status: (typeof CLAIM_STATUSES)[number];
-  claim_history: IClaimHistory[];
+  status: typeof CLAIM_STATUSES[number]; 
   partner_site_orderid: string;
   partner_site_order_status: string;
   createdAt?: Date;
@@ -54,28 +45,6 @@ const ClaimFormSchema = new Schema<IClaimForm>(
       },
       required: true,
     },
-    status: {
-      type: String,
-      enum: CLAIM_STATUSES,
-      default: "PENDING",
-    },
-    claim_history: [
-      {
-        status: {
-          type: String,
-          enum: CLAIM_STATUSES,
-          required: true,
-        },
-        date: {
-          type: Date,
-          default: Date.now,
-        },
-        details: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
     partner_site_orderid: {
       type: String,
       required: true,
@@ -85,6 +54,11 @@ const ClaimFormSchema = new Schema<IClaimForm>(
       type: String,
       required: true,
       trim: true,
+    },
+    status: {
+      type: String,
+      enum: CLAIM_STATUSES, // ✅ Correctly enforces allowed values
+      default: "PENDING",
     },
   },
   { timestamps: true }

@@ -9,7 +9,6 @@ import CategoryModel from "@/model/CategoryModel";
 import StoreModel from "@/model/StoreModel";
 import CouponModel from "@/model/CouponModel";
 import CampaignModel from "@/model/CampaignModel";
-import CampaignQueryModel from "@/model/CampaignQueryModel";
 import BlogCategoryModel from "@/model/BlogCategoryModel";
 import ClaimFormModel from "@/model/ClaimForm";
 
@@ -44,7 +43,6 @@ export async function POST(req: Request) {
         totalStores, activeStores, inactiveStores,
         totalCoupons, activeCoupons, inactiveCoupons,
         totalCampaigns, activeCampaigns, pausedCampaigns,
-        totalCampaignQueries, campaignQueriesNotStarted, campaignQueriesOpen, campaignQueriesClosed, campaignQueriesRemoved,
         totalBlogs, activeBlogs, inactiveBlogs, removedBlogs,
         totalClaimForms, pendingClaims, approvedClaims, rejectedClaims
       ] = await Promise.all([
@@ -92,13 +90,6 @@ export async function POST(req: Request) {
         CampaignModel.countDocuments({ product_status: "ACTIVE" }),
         CampaignModel.countDocuments({ product_status: "PAUSE" }),
 
-        // Campaign Queries
-        CampaignQueryModel.countDocuments(),
-        CampaignQueryModel.countDocuments({ query_status: "NOTSTART" }),
-        CampaignQueryModel.countDocuments({ query_status: "OPEN" }),
-        CampaignQueryModel.countDocuments({ query_status: "CLOSED" }),
-        CampaignQueryModel.countDocuments({ query_status: "REMOVED" }),
-
         // Blogs
         BlogModel.countDocuments(),
         BlogModel.countDocuments({ status: "ACTIVE" }),
@@ -125,7 +116,6 @@ export async function POST(req: Request) {
             stores: { total: totalStores, active: activeStores, inactive: inactiveStores },
             coupons: { total: totalCoupons, active: activeCoupons, inactive: inactiveCoupons },
             campaigns: { total: totalCampaigns, active: activeCampaigns, paused: pausedCampaigns },
-            campaign_queries: { total: totalCampaignQueries, not_started: campaignQueriesNotStarted, open: campaignQueriesOpen, closed: campaignQueriesClosed, removed: campaignQueriesRemoved },
             blogs: { total: totalBlogs, active: activeBlogs, inactive: inactiveBlogs, removed: removedBlogs },
             claim_forms: { total: totalClaimForms, pending: pendingClaims, approved: approvedClaims, rejected: rejectedClaims }
           }
@@ -138,44 +128,35 @@ export async function POST(req: Request) {
         totalStores, activeStores, inactiveStores,
         totalCoupons, activeCoupons, inactiveCoupons,
         totalCampaigns, activeCampaigns, pausedCampaigns,
-        totalCampaignQueries, campaignQueriesNotStarted, campaignQueriesOpen, campaignQueriesClosed, campaignQueriesRemoved,
         totalClaimForms, pendingClaims, approvedClaims, rejectedClaims
       ] = await Promise.all([
-      
         // Categories
         CategoryModel.countDocuments(),
         CategoryModel.countDocuments({ status: "ACTIVE" }),
         CategoryModel.countDocuments({ status: "INACTIVE" }),
-
-      
+    
         // Stores
         StoreModel.countDocuments(),
         StoreModel.countDocuments({ store_status: "ACTIVE" }),
         StoreModel.countDocuments({ store_status: "INACTIVE" }),
-
+    
         // Coupons
         CouponModel.countDocuments(),
         CouponModel.countDocuments({ status: "ACTIVE" }),
         CouponModel.countDocuments({ status: "INACTIVE" }),
-
+    
         // Campaigns
         CampaignModel.countDocuments(),
         CampaignModel.countDocuments({ product_status: "ACTIVE" }),
         CampaignModel.countDocuments({ product_status: "PAUSE" }),
-
-        // Campaign Queries
-        CampaignQueryModel.countDocuments(),
-        CampaignQueryModel.countDocuments({ query_status: "NOTSTART" }),
-        CampaignQueryModel.countDocuments({ query_status: "OPEN" }),
-        CampaignQueryModel.countDocuments({ query_status: "CLOSED" }),
-        CampaignQueryModel.countDocuments({ query_status: "REMOVED" }),
-        // Claim Forms
+    
+        // Claim Forms (Fixed Variable Names)
         ClaimFormModel.countDocuments(),
         ClaimFormModel.countDocuments({ status: "PENDING" }),
         ClaimFormModel.countDocuments({ status: "APPROVED" }),
         ClaimFormModel.countDocuments({ status: "REJECTED" }),
       ]);
-
+    
       return new NextResponse(
         JSON.stringify({
           success: true,
@@ -185,13 +166,13 @@ export async function POST(req: Request) {
             stores: { total: totalStores, active: activeStores, inactive: inactiveStores },
             coupons: { total: totalCoupons, active: activeCoupons, inactive: inactiveCoupons },
             campaigns: { total: totalCampaigns, active: activeCampaigns, paused: pausedCampaigns },
-            campaign_queries: { total: totalCampaignQueries, not_started: campaignQueriesNotStarted, open: campaignQueriesOpen, closed: campaignQueriesClosed, removed: campaignQueriesRemoved },
             claim_forms: { total: totalClaimForms, pending: pendingClaims, approved: approvedClaims, rejected: rejectedClaims }
           }
         }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
-    } else if (usertype === "blog_editor"){
+    }
+     else if (usertype === "blog_editor"){
       const [
         totalBlogCategories, activeBlogCategories, inactiveBlogCategories,
         totalBlogs, activeBlogs, inactiveBlogs, removedBlogs,

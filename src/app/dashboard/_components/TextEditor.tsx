@@ -19,7 +19,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Heading } from "@tiptap/extension-heading";
-
+import Superscript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
 
 import {
   FaUndo,
@@ -42,7 +43,10 @@ import {
   FaList,
   FaListOl,
   FaListAlt,
+  FaEraser,
 } from "react-icons/fa";
+import { ImSuperscript } from "react-icons/im";
+
 import { FiMinimize, FiMaximize } from "react-icons/fi";
 import { MdSelectAll } from "react-icons/md";
 import axios from "axios";
@@ -80,6 +84,8 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
         orderedList: {},
         strike: {},
       }),
+      Superscript,
+      Subscript,
       Underline,
       TextStyle,
       Color,
@@ -343,6 +349,16 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
             <FaListAlt />
           </button>
 
+
+
+
+          <button title="Superscript" type="button" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().toggleSuperscript().run()}>
+          <ImSuperscript />
+      </button>
+      <button title="Subscript" type="button" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().toggleSubscript().run()}>
+        Subscript
+      </button>
+
           {/* Blockquote */}
           <button
             type="button"
@@ -448,7 +464,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
             onClick={clearMarks}
             className="bg-red-500 text-white px-2 py-1 rounded"
           >
-            <FaPaintBrush />
+            <FaEraser />
           </button>
         </div>
       </div>

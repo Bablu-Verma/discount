@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { otp } = await request.json();
+    const { otp, documant_id } = await request.json();
 
     if (!otp) {
       return new NextResponse(
@@ -50,6 +50,23 @@ export async function POST(request: Request) {
         }
       );
     }
+    if (!documant_id) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "documant_id is required",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+
+    // console.log("user otp ",otp)
 
     if (String(otp).length !== 4) {
       return new NextResponse(
@@ -67,7 +84,7 @@ export async function POST(request: Request) {
     }
 
     
-    const upi_document = await UserUPIModel.findOne({ user_id: user?._id });
+    const upi_document = await UserUPIModel.findOne({ _id:documant_id, user_id: user?._id, });
 
     if (!upi_document) {
       return new NextResponse(
@@ -85,7 +102,10 @@ export async function POST(request: Request) {
     }
 
 
-    if (otp !== upi_document.otp) {
+    // console.log("upi_document",upi_document)
+
+
+    if (otp != upi_document.otp) {
       return new NextResponse(
         JSON.stringify({
           success: false,

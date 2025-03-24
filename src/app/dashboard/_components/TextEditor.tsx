@@ -19,9 +19,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Heading } from "@tiptap/extension-heading";
-import Superscript from '@tiptap/extension-superscript';
-import Subscript from '@tiptap/extension-subscript';
-
+import Superscript from "@tiptap/extension-superscript";
+import Subscript from "@tiptap/extension-subscript";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import {
   FaUndo,
   FaRedo,
@@ -48,18 +48,20 @@ import {
 import { ImSuperscript } from "react-icons/im";
 
 import { FiMinimize, FiMaximize } from "react-icons/fi";
-import { MdSelectAll } from "react-icons/md";
+import { MdHorizontalRule, MdOutlineSuperscript, MdSelectAll, MdSubscript } from "react-icons/md";
 import axios from "axios";
 import { upload_image_api } from "@/utils/api_url";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 
-const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Dispatch<React.SetStateAction<string>>;}> = ({ editorContent, setEditorContent }) => {
+const TiptapEditor: React.FC<{
+  editorContent: string;
+  setEditorContent: React.Dispatch<React.SetStateAction<string>>;
+}> = ({ editorContent, setEditorContent }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCode, setShowCode] = useState<boolean>(false);
 
   const token = useSelector((state: RootState) => state.user.token);
-
 
   const CustomHeading = Heading.extend({
     addAttributes() {
@@ -84,6 +86,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
         orderedList: {},
         strike: {},
       }),
+      HorizontalRule,
       Superscript,
       Subscript,
       Underline,
@@ -109,7 +112,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
       }),
       TaskList,
       TaskItem,
-      CustomHeading.configure({ levels: [1, 2, 3,4,5,6] }),
+      CustomHeading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
     ],
     content: <p>this is your editor</p>,
     onUpdate: ({ editor }) => {
@@ -148,19 +151,19 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    
-    input.onchange = async (event) => {
-      const target = event.target as HTMLInputElement; 
-       if (!target.files || target.files.length === 0) return;
 
-    const file = target.files[0];
-  
+    input.onchange = async (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target.files || target.files.length === 0) return;
+
+      const file = target.files[0];
+
       const formData = new FormData();
       formData.append("image", file);
-      formData.append("file_name", 'editor_folder');
+      formData.append("file_name", "editor_folder");
 
       try {
-        const {data} = await axios.post(upload_image_api, formData, {
+        const { data } = await axios.post(upload_image_api, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -176,7 +179,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
         alert("Error uploading image");
       }
     };
-  
+
     input.click();
   };
 
@@ -214,14 +217,7 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
             <FaRedo />
           </button>
 
-          <button
-            type="button"
-            title="select all"
-            onClick={selectAll}
-            className="bg-gray-200 text-black px-2 py-1 rounded"
-          >
-            <MdSelectAll />
-          </button>
+         
 
           <button
             title="bold"
@@ -349,15 +345,22 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
             <FaListAlt />
           </button>
 
-
-
-
-          <button title="Superscript" type="button" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().toggleSuperscript().run()}>
-          <ImSuperscript />
-      </button>
-      <button title="Subscript" type="button" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().toggleSubscript().run()}>
-        Subscript
-      </button>
+          <button
+            title="Superscript"
+            type="button"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          >
+            <MdOutlineSuperscript />
+          </button>
+          <button
+            title="Subscript"
+            type="button"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+            onClick={() => editor.chain().focus().toggleSubscript().run()}
+          >
+            <MdSubscript />
+          </button>
 
           {/* Blockquote */}
           <button
@@ -397,6 +400,17 @@ const TiptapEditor: React.FC<{ editorContent: string; setEditorContent: React.Di
             className="bg-gray-200 text-black px-2 py-1 rounded"
           >
             <FaAlignJustify />
+          </button>
+          <button type="button" title="Add Horizontal Line" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+          <MdHorizontalRule />
+      </button>
+          <button
+            type="button"
+            title="select all"
+            onClick={selectAll}
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+          >
+            <MdSelectAll />
           </button>
           <span className="inline-flex justify-between gap-2">
             <button

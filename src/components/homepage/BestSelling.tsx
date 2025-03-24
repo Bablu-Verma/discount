@@ -13,7 +13,7 @@ const BestSalling:React.FC<SellingProps > = ({best_product}) => {
 
   return (
     <div className="max-w-6xl mx-auto px-2  pt-2 mb-4 relative">
-      <div className="absolute right-4 top-[-44px]">
+      <div className="absolute right-4 top-[-33px] lg:top-[-44px]">
         <a
           href="/campaign"
           className="text-primary  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200"

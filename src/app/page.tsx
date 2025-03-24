@@ -83,7 +83,7 @@ export default async function Home() {
         <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
           <MainHeading title="Cashback store" />
           <div className="max-w-6xl relative  m-auto  mb-12">
-            <div className="absolute right-4 top-[-44px]">
+            <div className="absolute right-4 top-[-33px] lg:top-[-44px]">
               <a
                 href="/store"
                 className="text-primary  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200"
@@ -92,8 +92,8 @@ export default async function Home() {
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 mt-3 lg:mt-5">
-              {page_data.data.store.map((item: IStore) => (
-                <StoreCard item={item} />
+              {page_data.data.store.map((item: IStore,i: number) => (
+                <StoreCard item={item} key={i}/>
               ))}
             </div>
           </div>

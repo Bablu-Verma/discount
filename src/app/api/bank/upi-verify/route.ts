@@ -84,7 +84,9 @@ export async function POST(request: Request) {
     }
 
     
-    const upi_document = await UserUPIModel.findOne({ _id:documant_id, user_id: user?._id, });
+    const upi_document = await UserUPIModel.findOne({ _id:documant_id, user_id: user?._id});
+
+    console.log(documant_id)
 
     if (!upi_document) {
       return new NextResponse(

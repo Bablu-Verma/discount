@@ -46,7 +46,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <TopHeader />
       <MainHeader />
-      <main className="max-w-6xl mx-auto mt-8 lg:mt-14 mb-16">
+      <main className="max-w-6xl relative mx-auto pt-8 lg:pt-14 pb-16">
         <section>
           <div className="flex justify-between mb-6 lg:mb-16">
             <h4 className="text-base pl-2">
@@ -58,7 +58,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           <div className="my-2 lg:my-12 px-2 flex gap-[2%] justify-between ">
-            <div className=" hidden md:block w-[18%] capitalize">
+            <div className=" max-lg:absolute z-50 top-0 bottom-0 left-0 md:block w-2/3 lg:w-[18%] capitalize p-4 pl-6 rounded-lg bg-white">
               <h2 className="text-xl font-semibold mb-2 text-dark">
                 <i className="text-base text-dark fa-solid fa-link"></i> Links
               </h2>
@@ -83,6 +83,12 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                 All Order
+              </Link>
+              <Link
+                href="/addupi"
+                className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
+              >
+               Add UPI
               </Link>
               <Link
                 href="/wishlist"

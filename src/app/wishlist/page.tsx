@@ -57,7 +57,8 @@ const Wishlist = async () => {
           </h2>
          <Wishlist_remove id={page_data?.wishlist_id} />
         </div>
-        <div className="max-w-6xl mx-auto px-4 pt-2  mb-4 gap-3 ">
+        <div className="overflow-auto">
+        <div className="max-w-6xl min-w-[800px] mx-auto px-4 pt-2  mb-4 gap-3 ">
           <div className="grid grid-cols-10 w-full mt-10 py-2 text-xl font-semibold mb-2 select-none px-4">
             <h3 className="text-base text-secondary">S No.</h3>
             <h3 className="col-span-3 text-base text-secondary">Product...</h3>
@@ -69,6 +70,7 @@ const Wishlist = async () => {
           </div>
           <Wishlist_client item_={wishlist_products}/>
 
+        </div>
         </div>
         <BottomToTop />
       </main>

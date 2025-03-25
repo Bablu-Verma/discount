@@ -18,8 +18,11 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
   // const pathname = usePathname();
   // const searchParams = useSearchParams();
 
+
   const [modelOpen, setModelOpen] = React.useState<boolean>(false);
 
+
+  // console.log(page_data)
   const shop_now = async () => {
     if (!token) {
       toast.error("You need to login to proceed");
@@ -33,11 +36,13 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
 
     setModelOpen(true);
 
+
+
     try {
       let { data } = await axios.post(
         create_order_api,
         {
-          product_id: page_data.product_id,
+          product_id: page_data._id,
         },
         {
           headers: {

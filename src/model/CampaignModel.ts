@@ -5,6 +5,7 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface ICampaign {
   title: string;
+  _id: string;
   actual_price: Number;
   offer_price: Number;
   cashback_: Number;

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     // Fetch product details
-    const product = await CampaignModel.findOne({product_id, product_status: "ACTIVE"}) 
+    const product = await CampaignModel.findOne({_id:product_id, product_status: "ACTIVE"}) 
     if (!product) {
       return new NextResponse(JSON.stringify({ success: false, message: "Product not found" }), {
         status: 404,

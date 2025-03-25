@@ -43,6 +43,7 @@ export const list_store_api = main_url + '/store/list'
 export const add_coupons_api = main_url + '/coupons/add'
 export const bank_upi_api = main_url + '/bank/add'
 export const bank_upi_verify_api = main_url + '/bank/upi-verify'
+export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 
 export const add_blog_category_api = main_url + '/blog-category/add'
 export const blog_category_list_api = main_url + '/blog-category/list'

@@ -44,13 +44,10 @@ export async function POST(req: Request) {
     const userDetails = await UserModel.findOne({ email });
     
 
-    if (!userDetails) {
-      return NextResponse.json(
-        { success: false, message: "User not found" },
-        { status: 404 }
-      );
+    if (userDetails) {
+      userDetails.password = undefined;
+      userDetails.verify_code = undefined;
     }
-
     const user_order = await RecordModel.find({user_id:userDetails._id});
     const user_upi = await UserUPIModel.find({user_id:userDetails._id});
     const user_claim_form = await ClaimFormModel.find({user_id:userDetails._id});

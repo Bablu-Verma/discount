@@ -156,6 +156,13 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
+    {
+      id: 12,
+      name: "UPI Id",
+      url: "/dashboard/upi/upi-list",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
+    },
   ];
 
   

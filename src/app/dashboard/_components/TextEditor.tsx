@@ -22,6 +22,9 @@ import { Heading } from "@tiptap/extension-heading";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import HardBreak from "@tiptap/extension-hard-break";
+
+
 import {
   FaUndo,
   FaRedo,
@@ -44,11 +47,17 @@ import {
   FaListOl,
   FaListAlt,
   FaEraser,
+  FaYoutube,
 } from "react-icons/fa";
-import { ImSuperscript } from "react-icons/im";
+import { GrReturn } from "react-icons/gr";
 
 import { FiMinimize, FiMaximize } from "react-icons/fi";
-import { MdHorizontalRule, MdOutlineSuperscript, MdSelectAll, MdSubscript } from "react-icons/md";
+import {
+  MdHorizontalRule,
+  MdOutlineSuperscript,
+  MdSelectAll,
+  MdSubscript,
+} from "react-icons/md";
 import axios from "axios";
 import { upload_image_api } from "@/utils/api_url";
 import { useSelector } from "react-redux";
@@ -86,12 +95,14 @@ const TiptapEditor: React.FC<{
         orderedList: {},
         strike: {},
       }),
+     
       HorizontalRule,
       Superscript,
       Subscript,
       Underline,
       TextStyle,
       Color,
+      HardBreak,
       Highlight.configure({ multicolor: true }),
       FontFamily,
       Link.configure({
@@ -189,6 +200,8 @@ const TiptapEditor: React.FC<{
   const setTextAlign = (align: "left" | "center" | "right" | "justify") =>
     editor.chain().focus().setTextAlign(align).run();
 
+
+
   return (
     <div
       className={
@@ -216,8 +229,6 @@ const TiptapEditor: React.FC<{
           >
             <FaRedo />
           </button>
-
-         
 
           <button
             title="bold"
@@ -344,7 +355,14 @@ const TiptapEditor: React.FC<{
           >
             <FaListAlt />
           </button>
-
+          <button
+            title="Set hard break"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+            type="button"
+            onClick={() => editor.chain().focus().setHardBreak().run()}
+          >
+            <GrReturn />
+          </button>
           <button
             title="Superscript"
             type="button"
@@ -401,9 +419,14 @@ const TiptapEditor: React.FC<{
           >
             <FaAlignJustify />
           </button>
-          <button type="button" title="Add Horizontal Line" className="bg-gray-200 text-black px-2 py-1 rounded" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-          <MdHorizontalRule />
-      </button>
+          <button
+            type="button"
+            title="Add Horizontal Line"
+            className="bg-gray-200 text-black px-2 py-1 rounded"
+            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          >
+            <MdHorizontalRule />
+          </button>
           <button
             type="button"
             title="select all"

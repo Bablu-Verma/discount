@@ -23,6 +23,10 @@ const AdminProfile = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      console.log(data);
+
+
       setUserData(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -50,12 +54,7 @@ console.log(userData)
       <h3 className="text-2xl font-semibold text-gray-800 mb-4">Profile ({urlslug})</h3>
       <table className="w-full border border-gray-300 rounded-md overflow-hidden">
         <tbody>
-          {Object.entries(userData).map(([key, value]) => (
-            <tr key={key} className="border-b border-gray-300">
-              <td className="p-3 font-medium capitalize bg-gray-100 w-[200px]">{key.replace(/_/g, " ")}</td>
-              <td className="p-3 text-gray-700">{typeof value === "object" ? JSON.stringify(value, null, 2) : value}</td>
-            </tr>
-          ))}
+          
         </tbody>
       </table>
     </div>

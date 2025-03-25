@@ -38,9 +38,6 @@ export const GetData = async (token: string) => {
 
 const Wishlist = async () => {
   const token = await getServerToken();
-  if (!token) {
-    redirect("/login");
-  }
 
   const page_data = await GetData(token);
 

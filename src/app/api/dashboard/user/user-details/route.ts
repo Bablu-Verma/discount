@@ -4,7 +4,6 @@ import UserModel from "@/model/UserModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import RecordModel from "@/model/OrderModel";
 import UserUPIModel from "@/model/UserUPIModel";
-import CampaignQueryModel from "@/model/CampaignQueryModel";
 import ClaimFormModel from "@/model/ClaimForm";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
 
@@ -54,7 +53,6 @@ export async function POST(req: Request) {
 
     const user_order = await RecordModel.find({user_id:userDetails._id});
     const user_upi = await UserUPIModel.find({user_id:userDetails._id});
-    const user_campaign_query = await CampaignQueryModel.find({user_id:userDetails._id});
     const user_claim_form = await ClaimFormModel.find({user_id:userDetails._id});
     const user_withdrawal_request = await WithdrawalRequestModel.find({user_id:userDetails._id});
 
@@ -63,7 +61,6 @@ export async function POST(req: Request) {
         details:userDetails,
         order:user_order,
         user_upi,
-        user_campaign_query,
         user_claim_form,
         user_withdrawal_request
       } },

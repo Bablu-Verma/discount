@@ -128,6 +128,9 @@ const ProductList = () => {
     }
   }, [token, showFilter]);
 
+
+  console.log(produt_list)
+
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
@@ -335,10 +338,10 @@ const ProductList = () => {
                     </a>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {product.category}
+                    {product.category.name}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {product.store}
+                    {product.store.name}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <span

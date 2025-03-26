@@ -78,7 +78,7 @@ export async function POST(request: Request) {
     const skip = (page - 1) * limit;
 
     // Fetch UPI document with filters and pagination
-    const upi_documents = await UserUPIModel.find(query)
+    const upi_documents = await UserUPIModel.find(query).populate('user_id', 'name profile')
       .skip(skip)
       .limit(limit);
 

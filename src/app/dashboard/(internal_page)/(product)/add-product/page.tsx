@@ -45,9 +45,9 @@ export interface IClintCampaign {
 const AddProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [categoryList, setCategoryList] = useState<
-    { name: string; slug: string }[]
+    { name: string; _id: string }[]
   >([]);
-  const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
+  const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
   const [loding, setLoading] = useState(false);
@@ -327,7 +327,7 @@ const AddProduct = () => {
                   Slected Store
                 </option>
                 {storeList.map((item, i) => {
-                  return <option value={item.slug}>{item.name}</option>;
+                  return <option value={item._id}>{item.name}</option>;
                 })}
               </select>
             </div>
@@ -350,7 +350,7 @@ const AddProduct = () => {
                 </option>
                 {categoryList.map((item, i) => {
                   return (
-                    <option key={i} value={item.slug}>
+                    <option key={i} value={item._id}>
                       {item.name}
                     </option>
                   );

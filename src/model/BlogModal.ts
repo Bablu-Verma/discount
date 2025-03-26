@@ -8,7 +8,7 @@ export interface IBlog {
   slug: string;
   short_desc: string;
   desc: string;
-  blog_category: string;
+  blog_category: mongoose.Types.ObjectId;
   blog_type: BlogType;
   image: string[];
   tags?: string[];
@@ -56,8 +56,10 @@ const BlogSchema = new Schema<IBlog>(
       required: true,
     },
     blog_category: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
+      index: true,
+      ref:'BlogCategory'
     },
     blog_type: {
       type: String,

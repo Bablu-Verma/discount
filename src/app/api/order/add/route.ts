@@ -39,9 +39,11 @@ export async function POST(req: Request) {
     }
    
 
+
+
     const newOrder = new RecordModel({
       user_id: user._id,
-      product_id: product.product_id,
+      product_id: product._id,
       product_url: product.redirect_url,
       price:product.actual_price,
       offer_price:product.offer_price,

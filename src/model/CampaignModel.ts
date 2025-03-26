@@ -12,8 +12,8 @@ export interface ICampaign {
   calculated_cashback: Number;
   calculation_mode: "PERCENTAGE" | "FIX";
   user_email: string;
-  store: string;
-  category: string;
+  store: mongoose.Types.ObjectId;
+  category: mongoose.Types.ObjectId;
   description: string;
   redirect_url: string;
   img_array: string[];
@@ -35,7 +35,6 @@ export interface ICampaign {
   og_image?: string;
   og_title?: string;
   og_description?: string;
-  product_id?: number;
   product_status: "ACTIVE" | "PAUSE" | "DELETE";
   createdAt?: Date;
   updatedAt?: Date;
@@ -60,8 +59,12 @@ const CampaignSchema = new Schema<ICampaign>(
       required: [true, "Calculation mode is required"],
     },
     user_email: { type: String, required: [true, "Email is required"] },
-    store: { type: String, required: [true, "Store is required"] },
-    category: { type: String, required: [true, "Category is required"] },
+    store: {  type: Schema.Types.ObjectId,
+      required: [true, "Store is required"],
+      index: true,
+      ref:'Store'  },
+    category: {type: Schema.Types.ObjectId,index: true,
+      ref:'Category' , required: [true, "Category is required"] },
     description: { type: String, required: [true, "Description is required"] },
     redirect_url: { type: String, required: [true, "Client URL is required"] },
     img_array: { type: [String], required: [true, "Images are required"] },
@@ -143,8 +146,6 @@ const CampaignSchema = new Schema<ICampaign>(
       },
     },
 
-   
-
     t_and_c: {
       type: String,
       required: [true, "Terms and conditions are required"],
@@ -186,8 +187,6 @@ const CampaignSchema = new Schema<ICampaign>(
 
     og_description: { type: String },
 
-    product_id: { type: Number },
-
     product_status: {
       type: String,
       enum: ["ACTIVE", "PAUSE", "DELETE"],
@@ -198,10 +197,6 @@ const CampaignSchema = new Schema<ICampaign>(
   { timestamps: true }
 );
 
-CampaignSchema.plugin(AutoIncrement, {
-  inc_field: "product_id",
-  start_seq: 100,
-});
 
 const CampaignModel =
   mongoose.models.Campaign ||

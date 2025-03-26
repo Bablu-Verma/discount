@@ -8,6 +8,7 @@ export interface IWithdrawalRequest extends Document {
   requested_at: Date;
   processed_at: Date | null;
   transaction_id:string,
+  order_id: mongoose.Types.ObjectId
 }
 
 const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
@@ -20,6 +21,12 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
     transaction_id:{
       type: String,
       required: true,
+    },
+    order_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+      ref: "Record",
     },
     amount: {
       type: Number,

@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface IWishlist extends Document {
   user_id: mongoose.Schema.Types.ObjectId; 
-  campaigns: number[]; 
+  campaigns: mongoose.Types.ObjectId[]; 
 }
 
 const WishlistSchema = new Schema<IWishlist>(
@@ -13,7 +13,7 @@ const WishlistSchema = new Schema<IWishlist>(
       ref: "User", 
     },
     campaigns: {
-      type: [Number], 
+      type: [Schema.Types.ObjectId], 
       required: [true, "Campaign list is required"],
     },
   },

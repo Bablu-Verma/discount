@@ -13,7 +13,7 @@ interface IHistory {
 
 export interface IRecord extends Document {
   user_id: mongoose.Types.ObjectId;
-  product_id: string;
+  product_id: mongoose.Types.ObjectId;
   product_url: string;
   price: Number;
   offer_price: Number;
@@ -41,9 +41,10 @@ const RecordSchema = new Schema<IRecord>(
       index: true,
     },
     product_id: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       index: true,
+      ref:'Campaign'
     },
     product_url: {
       type: String,

@@ -6,7 +6,8 @@ const CLAIM_STATUSES = ["PENDING", "APPROVED", "REJECTED"] as const;
 // Define ClaimForm Interface
 interface IClaimForm extends Document {
   user_id: mongoose.Types.ObjectId;
-  order_id: string;
+  order_id: Schema.Types.ObjectId;
+  transaction_id:string;
   reason: string;
   supporting_documents: string[]; 
   status: typeof CLAIM_STATUSES[number]; 
@@ -26,9 +27,15 @@ const ClaimFormSchema = new Schema<IClaimForm>(
       index: true,
     },
     order_id: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       index: true,
+      ref: "Record",
+    },
+    transaction_id:{
+      type: String,
+      required: true,
+      trim: true,
     },
     reason: {
       type: String,

@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
     // ✅ Fetch orders with pagination
     const orders = await RecordModel.find(query)
-      .populate("product_id")
+      .populate("product_id", "title store")
       .sort({ createdAt: -1 }) // Latest orders first
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);

@@ -11,8 +11,8 @@ export interface ICoupon {
   discount: string;
   description: string;
   expiry_date: Date;
-  store: Types.ObjectId | IStore;
-  category: Types.ObjectId | ICategory;
+  store: mongoose.Types.ObjectId;
+  category:mongoose.Types.ObjectId;
   status: CouponStatus;
 }
 

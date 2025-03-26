@@ -4,7 +4,7 @@ import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/redux-store/slice/userSlice";
 import { usePathname } from "next/navigation";
 import Loader_ from "@/components/Loader_";
+import { FaChevronDown, FaTimes } from "react-icons/fa"; // Importing icons for toggle and close
 
 interface LayoutProps {
   children: ReactNode;
@@ -30,6 +31,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
 
   const dispatch = useDispatch();
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false); // State for toggle
 
   const logOut_user = () => {
     setTimeout(() => {
@@ -42,6 +44,18 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
     return <Loader_ />;
   }
 
+  // Function to toggle menu on mobile
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Function to handle link click to close the menu
+  const handleLinkClick = () => {
+    if (isOpen) {
+      setIsOpen(false); // Close the menu when a link is clicked
+    }
+  };
+
   return (
     <>
       <TopHeader />
@@ -49,21 +63,43 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
       <main className="max-w-6xl relative mx-auto pt-8 lg:pt-14 pb-16">
         <section>
           <div className="flex justify-between mb-6 lg:mb-16">
-            <h4 className="text-base pl-2">
+            <h4 className="flex gap-1 text-base lg:text-lg pl-2">
               Welcome!{" "}
               <span className="text-primary capitalize">
                 {user_data?.name || "Guest"}
               </span>
+              {/* Toggle Icon */}
+              <button
+                onClick={toggleMenu}
+                className="ml-2 text-xl text-primary lg:hidden" // Icon visible only on mobile
+              >
+                <FaChevronDown
+                  className={`transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} // Rotate icon on toggle
+                />
+              </button>
             </h4>
           </div>
 
           <div className="my-2 lg:my-12 px-2 flex gap-[2%] justify-between ">
-            <div className=" max-lg:absolute z-50 top-0 bottom-0 left-0 md:block w-2/3 lg:w-[18%] capitalize p-4 pl-6 rounded-lg bg-white">
-              <h2 className="text-xl font-semibold mb-2 text-dark">
+            <div
+              className={`max-lg:absolute z-50 top-0 bottom-0 left-0 md:block w-2/3 lg:w-[18%] capitalize p-4 pl-6 rounded-lg bg-white ${isOpen ? "block" : "hidden"} transition-all duration-300 ease-in-out transform ${isOpen ? "translate-x-0" : "-translate-x-full"}`} 
+              style={{ backgroundColor: isOpen ? '#f7f7f7' : 'transparent' }} // Background color change
+            >
+              <h2 className="text-xl font-semibold mb-2 text-dark flex justify-between items-center">
+                <span>
                 <i className="text-base text-dark fa-solid fa-link"></i> Links
+                </span>
+                {/* Close Icon */}
+                <button
+                  onClick={toggleMenu}
+                  className="text-xl text-dark"
+                >
+                  <FaTimes />
+                </button>
               </h2>
               <Link
                 href="/profile-edit"
+                onClick={handleLinkClick} // Close menu when link is clicked
                 className={`text-sm ${
                   pathname == "/profile-edit" ? "text-primary" : "text-gray-500"
                 } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
@@ -72,6 +108,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
               <Link
                 href="/address"
+                onClick={handleLinkClick} // Close menu when link is clicked
                 className={`text-sm ${
                   pathname == "/address" ? "text-primary" : "text-gray-500"
                 } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
@@ -80,18 +117,21 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
               <Link
                 href="/order-list"
+                onClick={handleLinkClick} // Close menu when link is clicked
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                 All Order
               </Link>
               <Link
                 href="/addupi"
+                onClick={handleLinkClick} // Close menu when link is clicked
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                Add UPI
               </Link>
               <Link
                 href="/wishlist"
+                onClick={handleLinkClick} // Close menu when link is clicked
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                 Wishlist
@@ -101,6 +141,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 user_data.role === "blog_editor") && (
                 <Link
                   href="/dashboard"
+                  onClick={handleLinkClick} // Close menu when link is clicked
                   className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
                 >
                   Dashboard

@@ -258,7 +258,7 @@ const MainHeader = () => {
                     New
                   </span> */}
                     <Link
-                      href=""
+                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
                     >
                       Campaign
@@ -266,7 +266,7 @@ const MainHeader = () => {
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href=""
+                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
                     >
                       Contact
@@ -274,7 +274,7 @@ const MainHeader = () => {
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href=""
+                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
                     >
                       About
@@ -291,14 +291,14 @@ const MainHeader = () => {
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
                       className="text-gray-700 font-normal pl-2  block"
-                      href=""
+                      href="#"
                     >
                       Incurance
                     </Link>
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href=""
+                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
                     >
                       Health

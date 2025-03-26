@@ -12,7 +12,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
   const featured_2 = arrival[1];
   const featured_3 = arrival[2];
   const featured_4 = arrival[3];
-
+  
   return (
     <div className="max-w-6xl mx-auto px-2  pt-2 md:grid gap-2 md:gap-5 gap-y-5 grid-cols-4 mb-5">
       <div
@@ -30,9 +30,9 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
           </p>
           <Link
             href={
-              featured_1.slug_type === "INTERNAL"
+              featured_1?.slug_type === "INTERNAL"
                 ? `/campaign/${featured_1?.product_slug}`
-                : featured_1.redirect_url
+                : featured_1?.redirect_url
             }
             className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
           >
@@ -56,15 +56,15 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
             </p>
             <Link
               href={
-                featured_2.slug_type === "INTERNAL"
+                featured_2?.slug_type === "INTERNAL"
                   ? `/campaign/${featured_2?.product_slug}`
-                  : featured_2.redirect_url
+                  : featured_2?.redirect_url
               }
               className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
             >
               Shop Now
             </Link>
-          </div>
+          </div>SSS
         </div>
       )}
 
@@ -84,9 +84,9 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
             </p>
             <Link
               href={
-                featured_3.slug_type === "INTERNAL"
+                featured_3?.slug_type === "INTERNAL"
                   ? `/campaign/${featured_3?.product_slug}`
-                  : featured_3.redirect_url
+                  : featured_3?.redirect_url
               }
               className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
             >
@@ -112,9 +112,9 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
             </p>
             <Link
               href={
-                featured_4.slug_type === "INTERNAL"
+                featured_4?.slug_type === "INTERNAL"
                   ? `/campaign/${featured_4?.product_slug}`
-                  : featured_4.redirect_url
+                  : featured_4?.redirect_url
               }
               className="underline text-white py-1 mt-3 inline-block text-sm md:text-base  font-medium"
             >

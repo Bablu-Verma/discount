@@ -130,11 +130,11 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
 
               <div
                 className="text-base border-[1px] text-gray-700 border-gray-200 rounded-md mt-10 bg-pink-200 p-4"
-                dangerouslySetInnerHTML={{ __html: page_data.data.short_desc }}
+                dangerouslySetInnerHTML={{ __html: page_data.data.short_desc || ''}}
               ></div>
               <div
                 className={`${styles.blog_style} mt-16`}
-                dangerouslySetInnerHTML={{ __html: page_data.data.desc }}
+                dangerouslySetInnerHTML={{ __html: page_data.data.desc || ''}}
               ></div>
             </div>
             <div className="col-span-2">

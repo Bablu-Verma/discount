@@ -10,7 +10,7 @@ const TopHeader = () => {
       <p className="text-white w-full text-center text-sm">
         Summer Sale for all swim suits and free delivery - off 50%!
         <Link
-          href=""
+          href="#"
           className="ml-3 underline text-sm text-white hover:text-primary font-medium"
           >Click Now</Link>
       </p>

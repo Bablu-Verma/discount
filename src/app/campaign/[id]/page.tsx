@@ -123,7 +123,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
               <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
                 <div
                   className={`${styles.product_style} text-base text-gray-500`}
-                  dangerouslySetInnerHTML={{ __html: page_data.description }}
+                  dangerouslySetInnerHTML={{ __html: page_data.description || ''}}
                 ></div>
               </div>
             </div>

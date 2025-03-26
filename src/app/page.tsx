@@ -23,7 +23,7 @@ import { IStore } from "@/model/StoreModel";
 
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-
+import Link from "next/link";
 
 export const GetData = async (token: string) => {
   try {
@@ -48,20 +48,20 @@ export default async function Home() {
   const token = await getServerToken();
   const page_data = await GetData(token);
 
+  console.log("Home", page_data);
   return (
     <>
       <TopHeader />
       <MainHeader />
       <CallApiInHome />
-      
+
       <Hero
         home_category={page_data.data.category}
         banner={page_data.data.main_banner}
       />
       <main>
+        <Loginhomepopup />
 
-      <Loginhomepopup />
-      
         <div className="py-7">
           <MainHeading title="Flash Sales" />
           {/* <TimeCount /> */}
@@ -83,33 +83,35 @@ export default async function Home() {
         <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
           <MainHeading title="Cashback store" />
           <div className="max-w-6xl relative  m-auto  mb-12">
-            <div className="absolute right-4 top-[-33px] lg:top-[-44px]">
-              <a
+            <div className="absolute right-4 top-[-44px]">
+              <Link
                 href="/store"
                 className="text-primary  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200"
               >
                 View All
-              </a>
+              </Link>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 mt-3 lg:mt-5">
-              {page_data.data.store.map((item: IStore,i: number) => (
-                <StoreCard item={item} key={i}/>
+              {page_data.data.store.map((item: IStore, i: number) => (
+                <StoreCard item={item} key={i} />
               ))}
             </div>
           </div>
         </div>
 
-        <div className="py-7">
-          <MainHeading title="New Arrival" />
-          <Featured arrival={page_data.data.premium_product} />
-        </div>
+        {page_data.data.premium_product?.length > 0 && (
+          <div className="py-7">
+            <MainHeading title="New Arrival" />
+            <Featured arrival={page_data.data.premium_product} />
+          </div>
+        )}
 
         <div className="py-7">
           <MainHeading title="New Coupon" />
           <div className="max-w-6xl px-2 m-auto mt-2 lg:mt-8 mb-16">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mt-6 lg:mt-10">
-              {page_data.data.coupon.map((item: ICoupon) => (
-                <CouponcodeCard item={item} />
+              {page_data.data.coupon.map((item: ICoupon, i: number) => (
+                <CouponcodeCard item={item} key={i} />
               ))}
             </div>
           </div>
@@ -129,9 +131,8 @@ export default async function Home() {
           <MainHeading title="How We are Work" />
           <HowToWork />
         </div>
-        
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

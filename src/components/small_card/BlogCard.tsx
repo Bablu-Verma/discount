@@ -11,7 +11,7 @@ interface BlogCardProps {
 
 const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
   
-  const date = new Date(item.createdAt);
+  const date = new Date(item.createdAt ?? Date.now());
   const option = { day: "2-digit", month: "short", year: "numeric" };
   const formattedDate = date.toLocaleDateString(
     "en-GB",
@@ -52,7 +52,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ item }) => {
             </span>
           </div>
           <Link
-            href={`/blog/${item.slug}`}
+            href={`/blog/${item?.slug}`}
             className="text-primary text-base hover:pr-1 duration-200"
           >
             Read More

@@ -51,7 +51,7 @@ const user = useSelector(
               Tream and Condition
             </h3>
 
-            <div dangerouslySetInnerHTML={{ __html: campaign_data?.t_and_c }}>
+            <div dangerouslySetInnerHTML={{ __html: campaign_data?.t_and_c || ''}}>
             </div>
             <button
               onClick={() => setOpentc(false)}

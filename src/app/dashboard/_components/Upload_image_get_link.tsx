@@ -3,6 +3,7 @@
 import { RootState } from "@/redux-store/redux_store";
 import { upload_image_api } from "@/utils/api_url";
 import axios from "axios";
+import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -146,14 +147,14 @@ const UploadImageGetLink = () => {
       {imgLink && (
         <p className="mt-2 text-green-600">
           Your Image Link:{' '}
-          <a
+          <Link
             href={imgLink}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 underline"
           >
             {imgLink}
-          </a>
+          </Link>
         </p>
       )}
     </div>

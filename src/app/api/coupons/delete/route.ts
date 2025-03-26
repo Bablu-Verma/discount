@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     await coupon.save();
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Coupon deleted successfully." }),
+      JSON.stringify({ success: true, message: "Coupon soft deleted successfully." }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {

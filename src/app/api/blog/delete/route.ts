@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: `Blog with slug "${slug}" deleted successfully.`,
+        message: `Blog with slug "${slug}" soft deleted successfully.`,
         data: blog_,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

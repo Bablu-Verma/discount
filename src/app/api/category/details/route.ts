@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import CategoryModel from "@/model/CategoryModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
+import CampaignModel from "@/model/CampaignModel";
+import CouponModel from "@/model/CouponModel";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -40,11 +42,36 @@ export async function POST(req: Request) {
     // Fetch data
     const category_details = await CategoryModel.findOne(query).lean()
 
+    if (!category_details) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "category not found." }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+
+    const relatedProducts = await CampaignModel.find({ category: category_details._id })
+    .populate("store", "name slug store_img")
+    .populate("category", "name slug")
+    .limit(10)
+    .lean();
+
+  const relatedCoupons = await CouponModel.find({ category: category_details._id })
+    .populate("store", "name slug store_img")
+    .populate("category", "name slug")
+    .limit(10)
+    .lean();
+
+
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Categories details fetched successfully.",
-        data: category_details,
+        data: {
+          category_details:category_details,
+          relatedProducts,
+          relatedCoupons,
+        },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

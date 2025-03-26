@@ -180,7 +180,7 @@ export async function POST(req: Request) {
       cashback_: cashback_,
       calculated_cashback: calculated_cashback_,
       calculation_mode,
-      user_email: user?.email,
+      user_id: user?._id,
       store,
       category,
       description,

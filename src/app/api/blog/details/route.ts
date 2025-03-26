@@ -10,7 +10,10 @@ export async function POST(req: Request) {
     const { slug, status } = requestData;
 
     if (!slug) {
-      return NextResponse.json({ success: false, message: "Blog slug is required." }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Blog slug is required." },
+        { status: 400 }
+      );
     }
 
     // Define the filter object
@@ -19,29 +22,50 @@ export async function POST(req: Request) {
     // Apply status filter if it's not "ALL"
     if (status && status !== "ALL") {
       if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
-        return NextResponse.json({ success: false, message: "Invalid status value." }, { status: 400 });
+        return NextResponse.json(
+          { success: false, message: "Invalid status value." },
+          { status: 400 }
+        );
       }
       filter.status = status;
     }
 
     // Fetch the blog with the applied filter
-    const blog = await BlogModel.findOne(filter);
+    const blog = await BlogModel.findOne(filter)
+      .populate("writer_id", "name email profile")
+      .populate("blog_category", "name slug");
 
     if (!blog) {
-      return NextResponse.json({ success: false, message: "Blog not found." }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Blog not found." },
+        { status: 404 }
+      );
     }
 
-    blog.views = +1
+    blog.views = +1;
 
-   await blog.save()
+    await blog.save();
 
-    return NextResponse.json({
-      success: true,
-      message: "Blog post fetched successfully.",
-      data: blog,
-    }, { status: 200 });
+    const relatedBlogs = await BlogModel.find({
+      blog_category: blog.blog_category._id, 
+      _id: { $ne: blog._id },
+    })
+      .limit(5)
+      .populate("writer_id", "name email profile")
+      .populate("blog_category", "name slug");
 
-  }  catch (error) {
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Blog post fetched successfully.",
+        data: {
+          blog: blog,
+          relatedblogs: relatedBlogs,
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
     console.error("Error fetching blog post:", error);
 
     return new NextResponse(

@@ -13,7 +13,7 @@ export interface IBlog {
   image: string[];
   tags?: string[];
   views: number;
-  writer_email: string;
+  writer_id: mongoose.Types.ObjectId;
   reading_time?: number;
   keywords: string[];
   publish_schedule?: Date;
@@ -77,9 +77,10 @@ const BlogSchema = new Schema<IBlog>(
       type: Number,
       default: 0,
     },
-    writer_email: {
-      type: String,
+    writer_id: {
+      type: Schema.Types.ObjectId,
       required: true,
+      ref:'User'
     },
     reading_time: {
       type: Number,

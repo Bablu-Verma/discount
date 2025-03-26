@@ -46,7 +46,23 @@ export async function POST(req: Request) {
     // Fetch claim forms from the database
     const claimForms = await ClaimFormModel.find(filters)
       .sort({ createdAt: -1 })
+      .populate({
+        path: 'order_id',
+        select: 'calculated_cashback calculation_mode user_id product_id',
+        populate: [
+          { path: 'user_id', select: 'name email' }, 
+          { 
+            path: 'product_id', 
+            select: 'title store',
+            populate: {
+              path: 'store',
+              select: 'name slug'  
+            }
+          }
+        ]
+      })
       .skip(skip)
+      .lean()
       .limit(limitNumber)
       .exec();
 

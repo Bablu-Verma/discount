@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // Parse request data
     const requestData = await req.json();
-console.log("requestData",requestData)
+      // console.log("requestData",requestData)
     const {
       blog_id,
       title,
@@ -51,7 +51,6 @@ console.log("requestData",requestData)
       publish_schedule,
       word_count,
       status,
-      related_blogs,
       meta_title,
       meta_description,
       meta_keywords,
@@ -117,7 +116,7 @@ console.log("requestData",requestData)
     if (reading_time) blogToUpdate.reading_time = reading_time;
     if (keywords) {
       if (Array.isArray(keywords)) {
-        blogToUpdate.keywords = keywords.map((keyword) => keyword.trim()); // Already an array
+        blogToUpdate.keywords = keywords.map((keyword) => keyword.trim());
       } else if (typeof keywords === "string") {
         blogToUpdate.keywords = keywords.split(",").map((keyword) => keyword.trim()); // Convert string to array
       }
@@ -129,9 +128,9 @@ console.log("requestData",requestData)
     if (meta_description) blogToUpdate.meta_description = meta_description;
     if (meta_keywords) {
       if (Array.isArray(meta_keywords)) {
-        blogToUpdate.meta_keywords = meta_keywords.map((item) => item.trim()); // Already an array
+        blogToUpdate.meta_keywords = meta_keywords.map((item) => item.trim()); 
       } else if (typeof meta_keywords === "string") {
-        blogToUpdate.meta_keywords = meta_keywords.split(",").map((item) => item.trim()); // Convert string to array
+        blogToUpdate.meta_keywords = meta_keywords.split(",").map((item) => item.trim()); 
       }
     }
     if (canonical_url) blogToUpdate.canonical_url = canonical_url;

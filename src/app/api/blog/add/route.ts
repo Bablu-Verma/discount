@@ -49,8 +49,8 @@ export async function POST(req: Request) {
     if (!title || title.length < 5 || title.length > 150) {
       return NextResponse.json({ success: false, message: "Title must be between 5 and 150 characters." }, { status: 400 });
     }
-    if (!blog_category || blog_category.length < 3) {
-      return NextResponse.json({ success: false, message: "Category must be at least 3 characters." }, { status: 400 });
+    if (!blog_category) {
+      return NextResponse.json({ success: false, message: "Category id is required" }, { status: 400 });
     }
     if (!short_desc || short_desc.length < 10) {
       return NextResponse.json({ success: false, message: "Short description must be at least 10 characters." }, { status: 400 });
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       blog_type,
       image,
       tags: parsedTags,
-      writer_email:user?.email,
+      writer_id:user?._id,
       reading_time,
       keywords,
       publish_schedule,

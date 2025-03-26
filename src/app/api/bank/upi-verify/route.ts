@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     }
 
 
-    console.log("upi_document",upi_document)
+    // console.log("upi_document",upi_document)
 
 
     if (otp != upi_document.otp) {

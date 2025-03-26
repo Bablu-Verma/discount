@@ -1,7 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-const AutoIncrementFactory = require("mongoose-sequence");
 
-const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface ICampaign {
   title: string;
@@ -11,7 +9,7 @@ export interface ICampaign {
   cashback_: Number;
   calculated_cashback: Number;
   calculation_mode: "PERCENTAGE" | "FIX";
-  user_email: string;
+  user_id:  mongoose.Types.ObjectId;
   store: mongoose.Types.ObjectId;
   category: mongoose.Types.ObjectId;
   description: string;
@@ -58,7 +56,8 @@ const CampaignSchema = new Schema<ICampaign>(
       enum: ["PERCENTAGE", "FIX"],
       required: [true, "Calculation mode is required"],
     },
-    user_email: { type: String, required: [true, "Email is required"] },
+    user_id: { type: Schema.Types.ObjectId, required: [true, "Email is required"] , index: true,
+      ref:'User' },
     store: {  type: Schema.Types.ObjectId,
       required: [true, "Store is required"],
       index: true,

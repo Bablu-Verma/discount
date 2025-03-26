@@ -57,8 +57,8 @@ export async function POST(req: Request) {
 
     // Fetch product details from the CampaignModel
     const products = await CampaignModel.find({
-      product_id: { $in: watchlist.campaigns },
-    });
+      _id: { $in: watchlist.campaigns },
+    }).populate('category', "name slug").populate('store', 'name slug store_img');
 
     if (!products || products.length === 0) {
       return new NextResponse(

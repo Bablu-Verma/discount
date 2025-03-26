@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     }
 
     const updatedUser = await UserModel.findOneAndUpdate(
-      { email: user?.email },
+      { _id: user?._id },
       { $set: addressUpdate },
       { new: true, runValidators: true } 
     );

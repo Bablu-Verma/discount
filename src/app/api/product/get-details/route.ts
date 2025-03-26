@@ -30,7 +30,8 @@ export async function POST(req: Request) {
       filters.product_status = product_status;
     }
 
-    const product = await CampaignModel.findOne(filters);
+    const product = await CampaignModel.findOne(filters).populate('store', 'name slug store_img')
+    .populate('category', 'name slug');
 
     if (!product) {
       return new NextResponse(

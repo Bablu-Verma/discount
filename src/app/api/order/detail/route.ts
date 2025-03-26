@@ -8,7 +8,9 @@ export async function POST(req: Request) {
 
   try {
     // Authenticate user
-    const { authenticated, user, message } = await authenticateAndValidateUser(req);
+    const { authenticated, user, message } = await authenticateAndValidateUser(
+      req
+    );
     if (!authenticated || !user) {
       return new NextResponse(JSON.stringify({ success: false, message }), {
         status: 401,
@@ -20,24 +22,50 @@ export async function POST(req: Request) {
     const { orderId } = await req.json();
 
     if (!orderId) {
-      return new NextResponse(JSON.stringify({ success: false, message: "Order ID is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Order ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Fetch order details
-    const order = await RecordModel.findById(orderId);
-
+    const order = await RecordModel.findById(orderId)
+      .populate({
+        path: "user_id",
+        select: "name email",
+        populate: [
+          {
+            path: "product_id",
+            select: "title store",
+            populate: {
+              path: "store",
+              select: "name slug",
+            },
+          },
+        ],
+      })
+      .lean()
+      .exec();
+      
     if (!order) {
-      return new NextResponse(JSON.stringify({ success: false, message: "Order not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Order not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Order details fetched", order }),
+      JSON.stringify({
+        success: true,
+        message: "Order details fetched",
+        order,
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {

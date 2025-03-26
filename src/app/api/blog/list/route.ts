@@ -15,8 +15,7 @@ const getFilterParams = async (req: Request) => {
   const filter_ = await req.json();
 
   const filters: any = {};
-  const sortOptions: any = { createdAt: -1 }; // Default sorting (newest first)
-
+  const sortOptions: any = { createdAt: -1 }; 
   // Filtering by status
   if (filter_.status && filter_.status !== "ALL") {
     if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(filter_.status)) {
@@ -33,8 +32,8 @@ const getFilterParams = async (req: Request) => {
   }
 
   // Filtering by writer email
-  if (filter_.writer_email) {
-    filters.writer_email = filter_.writer_email;
+  if (filter_.writer_id) {
+    filters.writer_id = filter_.writer_id;
   }
 
   // Filtering by date range
@@ -67,7 +66,8 @@ export async function POST(req: Request) {
     const skip = (page - 1) * limit;
 
     // Fetch blogs with filters, sorting, and pagination
-    const blogs = await BlogModel.find(filters)
+    const blogs = await BlogModel.find(filters).populate("writer_id", "name email profile")
+    .populate("blog_category", "name slug")
       .sort(sortOptions)
       .skip(skip)
       .limit(limit);

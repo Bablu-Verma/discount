@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { upi_id, transaction_id } = await req.json();
+    const { upi_id, transaction_id  } = await req.json();
 
     if (!upi_id ) {
       return new NextResponse(
@@ -61,6 +61,7 @@ export async function POST(req: Request) {
       user_id: user?._id,
       transaction_id,
       upi_id,
+      order_id:order._id,
       amount:order.calculated_cashback,
       status: "PENDING",
       requested_at: new Date(),

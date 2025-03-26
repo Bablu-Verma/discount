@@ -75,7 +75,7 @@ export async function DELETE(req: Request) {
     return new NextResponse(
       JSON.stringify({
         success: true,
-        message: "Campaign deleted successfully.",
+        message: "Campaign soft deleted successfully.",
         // data: campaign_,
       }),
       {

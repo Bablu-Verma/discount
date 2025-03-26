@@ -26,6 +26,7 @@ export async function POST(req: Request) {
 
     const {
       transaction_id,
+      order_id,
       reason,
       supporting_documents,
       partner_site_orderid,
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     // Validate required fields
     if (
       !transaction_id ||
-      !reason ||
+      !reason || !order_id ||
       !supporting_documents ||
       supporting_documents.length === 0
     ) {
@@ -65,8 +66,9 @@ export async function POST(req: Request) {
     // Create new claim form
     const newClaim = new ClaimFormModel({
       user_id: user?._id,
-      order_id: transaction_id,
+      transaction_id: transaction_id,
       reason,
+      order_id,
       supporting_documents,
       partner_site_orderid,
       partner_site_order_status,

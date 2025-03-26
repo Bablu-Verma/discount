@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       limit = 10, 
       title, 
       calculation_mode, 
-      user_email, 
+      user_id, 
       store, 
       category, 
       product_tags, 
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     }
 
     // Direct Match Filters
-    if (user_email) filters.user_email = user_email;
+    if (user_id) filters.user_id = user_id;
     if (store) filters.store = store;
     if (category) filters.category = category;
     if (slug_type) filters.slug_type = slug_type;
@@ -99,6 +99,8 @@ export async function POST(req: Request) {
     const products = await CampaignModel.find(filters)
       .skip(skip)
       .limit(Number(limit))
+      .populate('store', 'name slug store_img')
+      .populate('category', 'name slug')
       .sort({ createdAt: -1 });
 
     // Get Total Count

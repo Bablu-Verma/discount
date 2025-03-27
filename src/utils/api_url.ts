@@ -1,14 +1,28 @@
-const main_url = 'http://localhost:3000/api'
+const main_url = 'http://localhost:3000/api/v1'
 
-export const register_api = main_url + '/auth/register'
-export const user_verify_api = main_url + '/auth/user-verify'
-export const resend_otp_api = main_url + '/auth/resend-otp'
-export const login_api = main_url + '/auth/login'
-export const contact_form_api = main_url + '/contactus/add'
-export const home_api = main_url + '/home'
-export const edit_profile_api = main_url + '/user/edit'
 
-// category Api 
+// client api
+
+export const register_api = main_url + '/client/auth/register'
+export const user_verify_api = main_url + '/client/auth/user-verify'
+export const resend_otp_api = main_url + '/client/auth/resend-otp'
+export const login_api = main_url + '/client/auth/login'
+export const contact_form_api = main_url + '/client/contactus/add'
+export const home_api = main_url + '/client/home'
+export const edit_profile_api = main_url + '/client/user/edit'
+
+
+
+
+// dashboard api 
+
+
+
+
+
+
+
+
 export const category_list_api = main_url + '/category/list'
 export const category_add_api = main_url + '/category/add'
 export const category_details_api = main_url + '/category/details'

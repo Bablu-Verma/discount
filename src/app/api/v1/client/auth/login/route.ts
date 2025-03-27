@@ -82,6 +82,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    if(findUser.user_status == 'REMOVED'){
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "you are not va;i user, contact to support",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
 
     let Payload = {
       email,
@@ -95,13 +110,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const userData = findUser.toObject();
 
+   
     delete userData.password;
     delete userData.accept_terms_conditions_privacy_policy;
     delete userData.email_verified;
     delete userData.phone_verified;
     delete userData.verify_code;
-    delete userData.__v;
-    delete userData.deleted_user;
+    delete userData.verify_code_expiry;
+    delete userData.user_status;
+    delete userData.subscribe_email;
+    delete userData.__v
+
   
 
 

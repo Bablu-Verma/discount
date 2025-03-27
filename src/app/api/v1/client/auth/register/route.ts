@@ -129,6 +129,9 @@ export async function POST(req: NextRequest) {
     delete userData.email_verified;
     delete userData.phone_verified;
     delete userData.verify_code;
+    delete userData.verify_code_expiry;
+    delete userData.user_status;
+    delete userData.subscribe_email;
     delete userData.__v
 
 

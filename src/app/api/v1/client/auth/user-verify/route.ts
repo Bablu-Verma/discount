@@ -92,12 +92,17 @@ export async function POST(request: Request) {
 
   const userData = update_user.toObject();
 
+ 
   delete userData.password;
   delete userData.accept_terms_conditions_privacy_policy;
   delete userData.email_verified;
   delete userData.phone_verified;
   delete userData.verify_code;
+  delete userData.verify_code_expiry;
+  delete userData.user_status;
+  delete userData.subscribe_email;
   delete userData.__v
+
 
 
     return new NextResponse(

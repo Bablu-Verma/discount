@@ -48,13 +48,18 @@ import { authenticateAndValidateUser } from "@/lib/authenticate";
 
       const userData = findUser.toObject();
 
-      delete userData.password;
-      delete userData.accept_terms_conditions_privacy_policy;
-      delete userData.email_verified;
-      delete userData.phone_verified;
-      delete userData.verify_code;
-      delete userData.__v
+     
+    delete userData.password;
+    delete userData.accept_terms_conditions_privacy_policy;
+    delete userData.email_verified;
+    delete userData.phone_verified;
+    delete userData.verify_code;
+    delete userData.verify_code_expiry;
+    delete userData.user_status;
+    delete userData.subscribe_email;
+    delete userData.__v
 
+    
       const JwtToken = await generateJwtToken(Payload, "30m");
       user_verify_email(findUser.verify_code, findUser.email)
   

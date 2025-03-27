@@ -1,3 +1,4 @@
+import { blog_type } from '@/constant';
 import mongoose, { Schema, model, Types } from 'mongoose';
 
 export type BlogType = 'Article' | 'Tutorial' | 'Case Study' | 'Review' | 'Interview';
@@ -64,7 +65,7 @@ const BlogSchema = new Schema<IBlog>(
     blog_type: {
       type: String,
       required: true,
-      enum: ['Article', 'Tutorial', 'Case Study', 'Review', 'Interview'],
+      enum: blog_type,
     },
     image: {
       type: [String],

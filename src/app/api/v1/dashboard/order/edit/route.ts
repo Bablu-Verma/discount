@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ Extract data from request body
-    const { record_id, order_status, order_details, payment_status, payment_details, payment_proof } = await req.json();
+    const { record_id, order_status, order_details, payment_status, payment_details } = await req.json();
 
     if (!record_id) {
       return new NextResponse(JSON.stringify({ success: false, message: "Record ID is required." }), {
@@ -50,7 +50,6 @@ export async function POST(req: Request) {
       );
     }
 
-    
     if (order_status) {
       record.order_status = order_status;
       record.order_history.push({
@@ -68,26 +67,16 @@ export async function POST(req: Request) {
         date: new Date(),
         details: payment_details || `Payment status updated to ${payment_status}`,
       });
-
-      if (payment_status === "Paid") {
-        if (Array.isArray(payment_proof) && payment_proof.length > 0) {
-          record.payment_proof = payment_proof;
-        } else {
-          return new NextResponse(
-            JSON.stringify({ success: false, message: "Payment proof must be an array with at least one image." }),
-            { status: 400, headers: { "Content-Type": "application/json" } }
-          );
-        }
-      }
+    
     }
 
-   
     await record.save();
 
     return new NextResponse(
       JSON.stringify({ success: true, message: "Order updated successfully."}),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
+
   } catch (error) {
     console.error("Failed to update order:", error);
     return new NextResponse(

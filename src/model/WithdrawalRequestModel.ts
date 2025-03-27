@@ -18,20 +18,10 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
       ref: "User",
       required: true,
     },
-    transaction_id:{
-      type: String,
-      required: true,
-    },
-    order_id: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      index: true,
-      ref: "Record",
-    },
     amount: {
       type: Number,
       required: true,
-      min: 1, // Minimum withdrawal amount
+      min: 100,
     },
     upi_id: {
       type: String,

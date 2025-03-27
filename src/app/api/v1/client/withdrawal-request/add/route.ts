@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { upi_id, transaction_id  } = await req.json();
+    const { upi_id, amount  } = await req.json();
 
     if (!upi_id ) {
       return new NextResponse(
@@ -29,28 +29,25 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!transaction_id ) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "transaction_id are required." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-
-    const order = await RecordModel.findOne({transaction_id});
     const upi_document = await UserUPIModel.findOne({ user_id: user?._id, status:'ACTIVE', upi_id });
 
-
-    if(!order){
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "transaction_id not found." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
 
     if(!upi_document){
       return new NextResponse(
         JSON.stringify({ success: false, message: "UPI id not found." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if(!amount){
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Amount is require." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    if(amount < 100){
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Min withdrawal amount is 100 Rupee." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -59,14 +56,15 @@ export async function POST(req: Request) {
     // Create a new withdrawal request
     const withdrawalRequest = new WithdrawalRequestModel({
       user_id: user?._id,
-      transaction_id,
+      amount:amount,
       upi_id,
-      order_id:order._id,
-      amount:order.calculated_cashback,
       status: "PENDING",
       requested_at: new Date(),
       processed_at: null,
     });
+
+    
+
 
     await withdrawalRequest.save();
 
@@ -74,7 +72,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         success: true,
         message: "Withdrawal request submitted successfully.",
-        data: { transaction_id, status: "PENDING" },
+        data: { status: "PENDING", amount:amount },
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );

@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
 const ORDER_STATUSES = ["Redirected", "Order", "Completed", "Cancelled"] as const;
-const PAYMENT_STATUSES = ["Pending", "confirm", "Paid", "Failed"] as const;
+const PAYMENT_STATUSES = ["Pending", "confirm", "Failed"] as const;
 
 interface IHistory {
   status: string;
@@ -27,8 +27,6 @@ export interface IRecord extends Document {
   payment_history: IHistory[];
   createdAt?: Date;
   updatedAt?: Date;
-  
-  payment_proof:string[] ;
 }
 
 // Order Schema
@@ -81,20 +79,6 @@ const RecordSchema = new Schema<IRecord>(
       enum: PAYMENT_STATUSES,
       default: null,
     },
-    payment_proof: {
-      type: [String], 
-      validate: {
-        validator: function (val: string[]) {
-          if (this.payment_status !== "Paid") return true; // Skip validation if not "Paid"
-          return Array.isArray(val) && val.length > 0;
-        },
-        message: "At least one proof image is required.",
-      },
-      required: function () {
-        return this.payment_status === "Paid"; 
-      },
-    },
-
     order_history: [
       {
         status: {

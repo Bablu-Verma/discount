@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-import { ObjectId } from "mongoose";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import ClaimFormModel from "@/model/ClaimForm";

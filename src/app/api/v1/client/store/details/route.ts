@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
   try {
     // Extracting slug and access_type from request body
-    const { slug, store_status } = await req.json();
+    const { slug } = await req.json();
 
     if (!slug) {
       return new NextResponse(
@@ -21,9 +21,9 @@ export async function POST(req: Request) {
 
     const query: any = { slug };
 
-    query.store_status = 'ACTIVE'
+    query.store_status = "ACTIVE";
 
-    const store = await StoreModel.findOne(query);
+    const store = await StoreModel.findOne(query).select("-store_status");
 
     if (!store) {
       return new NextResponse(
@@ -33,12 +33,17 @@ export async function POST(req: Request) {
     }
 
     const relatedProducts = await CampaignModel.find({ store: store._id })
+      .select(
+        "store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id"
+      )
+      .lean()
       .populate("store", "name slug store_img")
       .populate("category", "name slug")
       .limit(10)
       .lean();
 
     const relatedCoupons = await CouponModel.find({ store: store._id })
+    .select('-description -status')
       .populate("store", "name slug store_img")
       .populate("category", "name slug")
       .limit(10)

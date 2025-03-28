@@ -29,6 +29,7 @@ export async function POST(req: Request) {
 
     // Fetch Stores with Filtering, Pagination & Sorting
     const stores = await StoreModel.find(query)
+    .select('-description -store_status')
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 });

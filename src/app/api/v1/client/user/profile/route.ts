@@ -26,7 +26,7 @@ const { authenticated, user, usertype, message } =
       );
     }
     
-    const userDetails = await UserModel.findOne({ email: user?.email });
+    const userDetails = await UserModel.findOne({ email: user?.email }).select('-password -verify_code -user_status');
 
     if (!userDetails) {
       return new NextResponse(

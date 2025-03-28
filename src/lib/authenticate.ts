@@ -48,7 +48,7 @@ export const authenticateAndValidateUser = async (req: Request): Promise<AuthRes
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY) as Payload;
 
-    const user = await UserModel.findOne({ email: decoded.email });
+    const user = await UserModel.findOne({ email: decoded.email }).select('-password -address -accept_terms_conditions_privacy_policy -subscribe_email -profile -verify_code');
 
     if (!user) {
       return {
@@ -59,7 +59,7 @@ export const authenticateAndValidateUser = async (req: Request): Promise<AuthRes
       };
     }
 
-    if (user.user_status == 'REMOVED') {
+    if (user?.user_status == 'REMOVED') {
       return {
         authenticated: false,
         user: null,

@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       { _id: user?._id },
       { $set: addressUpdate },
       { new: true, runValidators: true } 
-    );
+    ).select('address');
 
     if (!updatedUser) {
       return new NextResponse(

@@ -98,7 +98,7 @@ export async function POST(req: Request) {
       { email: user?.email },
       updateFields,
       { new: true }
-    );
+    ).select('-user_status -address -verify_code -password');
 
     if (!updatedUser) {
       return new NextResponse(

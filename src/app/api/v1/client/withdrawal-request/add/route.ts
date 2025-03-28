@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
-import { v4 as uuidv4 } from "uuid"; // Generate unique transaction ID
-import RecordModel from "@/model/OrderModel";
 import UserUPIModel from "@/model/UserUPIModel";
 
 export async function POST(req: Request) {

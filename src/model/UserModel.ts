@@ -25,7 +25,6 @@ export interface IUser  {
     state?: string;
     pincode?: string;
     country?: string;
-    deleted_address?: boolean;
   };
 }
 
@@ -121,11 +120,7 @@ const UserSchema = new Schema<IUser>(
         type: String,
         default: "India",
         trim: true,
-      },
-      deleted_address: {
-        type: Boolean,
-        default: false,
-      },
+      }
     },
   },
   { timestamps: true }

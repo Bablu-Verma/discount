@@ -25,7 +25,7 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
     },
     upi_id: {
       type: String,
-      required: true,
+      required: true, 
       trim: true,
     },
     status: {

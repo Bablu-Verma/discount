@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   try {
     // Fetch UPI document using the correct model
-    const upi_document = await UserUPIModel.find({ user_id: user?._id}).populate("user_id","name email" );
+    const upi_document = await UserUPIModel.find({ user_id: user?._id}).select('-createdAt -updatedAt -otp -status').populate("user_id","name" );
 
     if (!upi_document) {
       return new NextResponse(

@@ -54,14 +54,18 @@ export async function POST(req: Request) {
     const skip = (page - 1) * limit;
 
 
-    const blogs = await BlogModel.find(filters).populate("writer_id", "name email profile")
-    .populate("blog_category", "name slug")
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limit);
+    const blogs = await BlogModel.find(filters)
+    .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords')
+    .populate('writer_id', 'name email profile')
+    .populate('blog_category', 'name slug')
+    .sort(sortOptions || { createdAt: -1 }) 
+    .skip(skip || 0)
+    .limit(limit || 10)
+    .lean();
 
     const totalBlogs = await BlogModel.countDocuments(filters);
-    const blog_category = await BlogCategoryModel.find({status:'ACTIVE'})
+
+    const blog_category = await BlogCategoryModel.find({status:'ACTIVE'}).select('-description -status -imges').lean()
 
     return NextResponse.json(
       {

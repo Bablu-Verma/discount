@@ -142,6 +142,7 @@ export async function POST(request: Request) {
 
     
     upi_document.status = "ACTIVE";
+    
     await upi_document.save();
 
     return new NextResponse(

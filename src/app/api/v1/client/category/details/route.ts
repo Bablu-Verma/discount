@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     
 
     // Fetch data
-    const category_details = await CategoryModel.findOne(query).lean()
+    const category_details = await CategoryModel.findOne(query).select('-status').lean()
 
     if (!category_details) {
       return new NextResponse(
@@ -45,13 +45,14 @@ export async function POST(req: Request) {
     }
 
 
-    const relatedProducts = await CampaignModel.find({ category: category_details._id })
+    const relatedProducts = await CampaignModel.find({ category: category_details._id }).select('-user_id -description -redirect_url -product_tags -long_poster -main_banner -premium_product -flash_sale -t_and_c -meta_title -meta_keywords -meta_description -meta_robots -canonical_url -structured_data -og_image -og_title -og_description -product_status -createdAt -updatedAt')
     .populate("store", "name slug store_img")
     .populate("category", "name slug")
     .limit(10)
     .lean();
 
   const relatedCoupons = await CouponModel.find({ category: category_details._id })
+    .select('-description -expiry_date -category -status')
     .populate("store", "name slug store_img")
     .populate("category", "name slug")
     .limit(10)

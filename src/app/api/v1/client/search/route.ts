@@ -33,11 +33,11 @@ export async function POST(req: Request) {
 
     // Fetching active results with a limit of 10 per category
     const [blogs, stores, categories, coupons, campaigns] = await Promise.all([
-      BlogModel.find({ title: searchFilter, status: "ACTIVE" }).limit(10).populate('writer_id', 'name email profile').populate('blog_category', 'name slug'),
-      StoreModel.find({ name: searchFilter, store_status: "ACTIVE" }).limit(10),
-      CategoryModel.find({ name: searchFilter, status: "ACTIVE" }).limit(10),
-      CouponModel.find({ code: searchFilter, status: "ACTIVE" }).limit(10).populate('store', 'name slug store_img').populate('category', 'name slug'),
-      CampaignModel.find({ title: searchFilter, product_status: "ACTIVE" }).limit(10).populate('store', 'name slug store_img').populate('category', 'name slug'),
+      BlogModel.find({ title: searchFilter, status: "ACTIVE" }).limit(10).populate('writer_id', 'name email profile').populate('blog_category', 'name slug').select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords').lean(),
+      StoreModel.find({ name: searchFilter, store_status: "ACTIVE" }).limit(10).select('-description -store_link -cashback_type -store_status').lean(),
+      CategoryModel.find({ name: searchFilter, status: "ACTIVE" }).select('-description -status').limit(10),
+      CouponModel.find({ code: searchFilter, status: "ACTIVE" }).limit(10).populate('store', 'name slug store_img').populate('category', 'name slug').select('-description -expiry_date -status').lean(),
+      CampaignModel.find({ title: searchFilter, product_status: "ACTIVE" }).limit(10).populate('store', 'name slug store_img').populate('category', 'name slug').select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean(),
     ]);
 
     return new NextResponse(

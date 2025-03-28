@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const skip = (pageNumber - 1) * pageSize;
 
     // ✅ Fetch data with filtering, pagination & sorting (Latest first)
-    const coupons = await CouponModel.find(query)
+    const coupons = await CouponModel.find(query).select('-description -expiry_date -status')
       .populate("store", "name slug store_img") // Fetch store details
       .populate("category", "name slug") // Fetch category details
       .sort({ createdAt: -1 }) // Latest coupons first

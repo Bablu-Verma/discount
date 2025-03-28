@@ -20,7 +20,7 @@ export async function POST(req: Request) {
    
     // Pagination
     const skip = (page - 1) * limit;
-    const categories = await CategoryModel.find(query).skip(skip).limit(limit);
+    const categories = await CategoryModel.find(query).select('-status -description').skip(skip).limit(limit).lean();
     const totalCategories = await CategoryModel.countDocuments(query);
     const totalPages = Math.ceil(totalCategories / limit);
 

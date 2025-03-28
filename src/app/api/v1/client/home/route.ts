@@ -17,22 +17,22 @@ export async function POST(req: Request) {
       await authenticateAndValidateUser(req);
 
     // ✅ Ensure all queries are awaited
-    const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10);
-    const category = await CategoryModel.find({ status: "ACTIVE" });
-    const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20);
-    const coupon = await CouponModel.find({ status: "ACTIVE" }).limit(10).populate('store', 'name store_img').populate('category', 'name');
+    const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10) .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords').lean();
+    const category = await CategoryModel.find({ status: "ACTIVE" }).select('-status -description').lean();
+    const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20).select('-description -store_link -cashback_type -store_status').lean();
+    const coupon = await CouponModel.find({ status: "ACTIVE" }).select('-description -expiry_date -status').limit(10).populate('store', 'name store_img').populate('category', 'name').lean();
     const main_banner = await CampaignModel.find({
       product_status: "ACTIVE",
       main_banner: { $elemMatch: { is_active: true } },
-    }).limit(6);
+    }).limit(6).select('store category main_banner product_slug slug_type title').lean();
     const long_poster = await CampaignModel.find({
       product_status: "ACTIVE",
       long_poster: { $elemMatch: { is_active: true } },
-    }).limit(4);
+    }).limit(4).select('store category long_poster product_slug slug_type title').lean();
     const premium_product = await CampaignModel.find({
       product_status: "ACTIVE",
       premium_product: { $elemMatch: { is_active: true } },
-    });
+    }).select('store category premium_product product_slug slug_type title ').lean();
     const flash_sale = await CampaignModel.find({
       product_status: "ACTIVE",
       flash_sale: {
@@ -41,23 +41,23 @@ export async function POST(req: Request) {
           end_time: { $gte: currentDate.toISOString() }, 
         },
       },
-    });
+    }).select('store category flash_sale product_slug slug_type title  createAt updateAt _id').lean();
     const new_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "new",
-    }).limit(10);
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
     const hot_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "hot",
-    }).limit(10);
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
     const best_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "best",
-    }).limit(10);
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
     const offer_deal = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: { $in: ["new", "hot", "best"] }, // Ensures at least one tag exists
-    }).limit(20);
+    }).limit(20).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
 
     return new NextResponse(
       JSON.stringify({

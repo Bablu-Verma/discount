@@ -30,7 +30,8 @@ export async function POST(req: Request) {
     
     filters.product_status = 'ACTIVE'
     
-    const product = await CampaignModel.findOne(filters).populate('store', 'name slug store_img')
+    const product = await CampaignModel.findOne(filters)
+    .populate('store', 'name slug store_img')
     .populate('category', 'name slug');
 
     if (!product) {
@@ -48,13 +49,11 @@ export async function POST(req: Request) {
       );
     }
 
-
-
     const relatedProducts = await CampaignModel.find({
       store: product.store._id,
       _id: { $ne: product._id }, 
       product_status: "ACTIVE", 
-    })
+    }).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title _id').lean()
       .limit(10)
       .populate('store', 'name slug store_img')
       .populate('category', 'name slug');

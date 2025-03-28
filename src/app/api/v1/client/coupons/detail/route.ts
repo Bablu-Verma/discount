@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     query.status = 'ACTIVE'
 
     // ✅ Find coupon with store and category details
-    const coupon = await CouponModel.findOne(query)
+    const coupon = await CouponModel.findOne(query).select('-status')
       .populate("store", "name slug store_img store_link")
       .populate("category", "name slug")
       .lean();

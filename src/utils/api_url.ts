@@ -10,9 +10,9 @@ export const login_api = main_url + '/client/auth/login'
 export const contact_form_api = main_url + '/client/contactus/add'
 export const home_api = main_url + '/client/home'
 export const edit_profile_api = main_url + '/client/user/edit'
-export const category_list_api = main_url + '/category/list'
-export const category_details_api = main_url + '/category/details'
-
+export const category_list_api = main_url + '/client/category/list'
+export const category_details_api = main_url + '/client/category/details'
+export const blog_details = main_url + '/client/blog/details'
 
 
 // dashboard api 
@@ -54,7 +54,7 @@ export const wishlist_list_get_ = main_url + '/wishlist/list'
 export const wishlist_product_remove_ = main_url + '/wishlist/remover-product'
 export const wishlist__remove_ = main_url + '/wishlist/remove-wishlist'
 
-export const blog_details = main_url + '/blog/details'
+
 
 export const all_users = main_url + '/dashboard/user/list'
 export const users_details_admin = main_url + '/dashboard/user/user-details'

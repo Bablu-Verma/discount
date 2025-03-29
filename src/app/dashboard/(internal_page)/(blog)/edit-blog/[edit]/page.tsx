@@ -6,7 +6,7 @@ import { blog_type } from "@/constant";
 
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import { blog_category_list_api, blog_details, blog_edit, category_list_api } from "@/utils/api_url";
+import { blog_category_dashboard_list_api, blog_category_list_api, blog_dashboard_details, blog_details, blog_edit } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -82,7 +82,7 @@ const EditBlog = ({}) => {
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
-        blog_category_list_api,
+        blog_category_dashboard_list_api,
         { status: "ACTIVE" },
         {
           headers: {
@@ -124,7 +124,7 @@ const EditBlog = ({}) => {
   const getBlogData = async () => {
     try {
       const { data } = await axios.post(
-        blog_details,
+        blog_dashboard_details,
         {
           slug: urlslug,
         },
@@ -135,6 +135,8 @@ const EditBlog = ({}) => {
           },
         }
       );
+
+      console.log(data.data)
   
       const blogData = data.data;
       setForm_data({

@@ -7,14 +7,11 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import {
-  blog_category_list_api,
-  category_list_api,
-  get_All_blogs,
-  list_store_api,
-  product_list_,
+  blog_category_dashboard_list_api,
+  get_All_dashboard_blogs,
 } from "@/utils/api_url";
 import PaginationControls from "@/app/dashboard/_components/PaginationControls";
-import { ICampaign } from "@/model/CampaignModel";
+
 import { IBlog } from "@/model/BlogModal";
 
 const BlogList = () => {
@@ -22,7 +19,7 @@ const BlogList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = 10;
   const [blogcategoryList, setBlogCategoryList] = useState<
-    { name: string; slug: string }[]
+    { name: string; _id: string }[]
   >([]);
 
   const token = useSelector((state: RootState) => state.user.token);
@@ -53,7 +50,7 @@ const BlogList = () => {
   // ✅ Fetch Products
   const get_blog = async () => {
     try {
-      const { data } = await axios.post(get_All_blogs, filters, {
+      const { data } = await axios.post(get_All_dashboard_blogs, filters, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,12 +72,13 @@ const BlogList = () => {
     get_blog();
   }, []);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [categoryRes] = await Promise.all([
           axios.post(
-            blog_category_list_api,
+            blog_category_dashboard_list_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
@@ -137,7 +135,7 @@ const BlogList = () => {
 
             {blogcategoryList.map((item, i) => {
               return (
-                <option key={i} value={item.slug}>
+                <option key={i} value={item._id}>
                   {item.name}
                 </option>
               );
@@ -229,7 +227,7 @@ const BlogList = () => {
                   </td>
 
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {item.blog_category}
+                    {item.blog_category.name}
                   </td>
 
                   <td className="px-6 py-4 text-gray-600">{item.status}</td>

@@ -50,7 +50,6 @@ const AddBlog = () => {
 
   const [form_data, setForm_data] = useState<IClientBlog>({
     title: "",
-
     blog_category: "",
     blog_type: "" as
       | "Article"
@@ -532,7 +531,7 @@ const AddBlog = () => {
                     publish_schedule: date ?? new Date(),
                   }))
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm z-10"
                 value={
                   form_data.publish_schedule
                     ? new Date(form_data.publish_schedule)

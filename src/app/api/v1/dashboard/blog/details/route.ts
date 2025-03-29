@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
 
     // Fetch the blog with the applied filter
-    const blog = await BlogModel.findOne(slug)
+    const blog = await BlogModel.findOne({slug}).populate("blog_category" , 'name slug')
 
     if (!blog) {
       return NextResponse.json(

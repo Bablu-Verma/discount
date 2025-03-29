@@ -47,9 +47,8 @@ const AddStore = () => {
   if (!cashback_amount.trim()) return toast.error("Please enter a cashback amount.");
   if (isNaN(Number(cashback_amount)) || Number(cashback_amount) <= 0) return toast.error("Cashback amount must be a valid number greater than zero.");
   
-  // Optional: Validate URL format
-  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-  if (!urlPattern.test(store_link)) return toast.error("Please enter a valid store link URL.");
+
+  if (!store_link) return toast.error("Please enter a valid store link URL.");
 
   if (!editorContent.trim()) return toast.error("Please enter a store dec.");
 

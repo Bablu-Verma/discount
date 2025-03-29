@@ -64,7 +64,7 @@ export async function POST(req: Request) {
    
 
     // Fetch data
-    const category_details = await CategoryModel.findOne(slug).lean()
+    const category_details = await CategoryModel.findOne({slug})
 
     if (!category_details) {
       return new NextResponse(

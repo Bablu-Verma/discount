@@ -1,6 +1,6 @@
 "use client";
 
-import { category_details_api, category_edit_api } from "@/utils/api_url";
+import { category_details_api, category_details_dashboard_api, category_edit_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ const EditCategory: React.FC = () => {
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
-        category_details_api,
+        category_details_dashboard_api,
         { slug: urlslug },
         {
           headers: {
@@ -41,12 +41,19 @@ const EditCategory: React.FC = () => {
         }
       );
 
+
+
+      const category_details = data.data.category_details
+
+      console.log(category_details);
+
+
       setFormData({
-        categoryName: data.data.name || "",
-        images: data.data.imges || ['', ''], 
-        status: data.data.status || "ACTIVE",
+        categoryName: category_details.name || "",
+        images: category_details.imges || ['', ''], 
+        status: category_details.status || "ACTIVE",
       })
-      setEditorContent(data.data.description)
+      setEditorContent(category_details.description)
 
     } catch (error) {
       if (error instanceof AxiosError) {

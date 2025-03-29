@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { blog_category_list_api, category_list_api } from "@/utils/api_url";
+import { blog_category_dashboard_list_api, blog_category_list_api, category_list_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 
 const CategoryList = () => {
@@ -26,7 +26,7 @@ const CategoryList = () => {
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
-        blog_category_list_api, filters,
+        blog_category_dashboard_list_api, filters,
         {
           headers: {
            

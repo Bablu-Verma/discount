@@ -1,6 +1,6 @@
 "use client";
 
-import { blog_category_details_api, blog_category_edit_api, category_details_api, category_edit_api } from "@/utils/api_url";
+import { blog_category_dashboard_details_api, blog_category_details_api, blog_category_edit_api, category_details_api, category_edit_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ const EditCategory: React.FC = () => {
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
-        blog_category_details_api,
+        blog_category_dashboard_details_api,
         { slug: urlslug },
         {
           headers: {

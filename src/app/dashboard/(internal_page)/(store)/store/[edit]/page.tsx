@@ -1,6 +1,6 @@
 "use client";
 
-import { category_details_api, category_edit_api, edit_store_api, store_details_api } from "@/utils/api_url";
+import { category_details_api, category_edit_api, edit_store_api, store_details_api, store_details_dashboard_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,7 +36,7 @@ const EditCategory: React.FC = () => {
   const getstoredetail = async () => {
     try {
       const { data } = await axios.post(
-        store_details_api,
+        store_details_dashboard_api,
         { slug: urlslug },
         {
           headers: {
@@ -46,16 +46,19 @@ const EditCategory: React.FC = () => {
         }
       );
 
+      
+      const store_data = data.data.store
+      console.log(store_data)
       setFormData({
-        name: data.data.name || '',
-        store_img: data.data.store_img || '',
-        cashback_status: data.data.cashback_status || '',
-        store_link: data.data.store_link || '',
-        cashback_type: data.data.cashback_type || '',
-        cashback_amount: data.data.cashback_amount || "",
-        store_status: data.data.store_status || '',
+        name:store_data.name || '',
+        store_img: store_data.store_img || '',
+        cashback_status:store_data.cashback_status || '',
+        store_link: store_data.store_link || '',
+        cashback_type: store_data.cashback_type || '',
+        cashback_amount: store_data.cashback_amount || "",
+        store_status: store_data.store_status || '',
       })
-      setEditorContent(data.data.description)
+      setEditorContent(store_data.description)
 
     } catch (error) {
       if (error instanceof AxiosError) {

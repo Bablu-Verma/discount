@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import StoreModel from "@/model/StoreModel";
-import CouponModel from "@/model/CouponModel";
-import CampaignModel from "@/model/CampaignModel";
+
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 export async function POST(req: Request) {
@@ -42,7 +41,7 @@ export async function POST(req: Request) {
       );
     }
     // Extracting slug and access_type from request body
-    const { slug, store_status } = await req.json();
+    const { slug } = await req.json();
 
     if (!slug) {
       return new NextResponse(
@@ -53,11 +52,6 @@ export async function POST(req: Request) {
 
     const query: any = { slug };
 
-    if (store_status === "ALL") {
-      query.store_status = { $in: ["ACTIVE", "INACTIVE", "REMOVED"] };
-    } else if (["ACTIVE", "INACTIVE", "REMOVED"].includes(store_status)) {
-      query.store_status = store_status;
-    }
 
     const store = await StoreModel.findOne(query);
 
@@ -68,26 +62,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const relatedProducts = await CampaignModel.find({ store: store._id })
-      .populate("store", "name slug store_img")
-      .populate("category", "name slug")
-      .limit(10)
-      .lean();
-
-    const relatedCoupons = await CouponModel.find({ store: store._id })
-      .populate("store", "name slug store_img")
-      .populate("category", "name slug")
-      .limit(10)
-      .lean();
+   
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Store fetched successfully.",
         data: {
-          store: store,
-          related_product: relatedProducts,
-          related_coupons: relatedCoupons,
+          store: store
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

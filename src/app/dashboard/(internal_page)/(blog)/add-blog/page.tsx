@@ -6,6 +6,7 @@ import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
 import {
   add__blog_,
+  blog_category_dashboard_list_api,
   blog_category_list_api,
   category_list_api,
 } from "@/utils/api_url";
@@ -87,8 +88,8 @@ const AddBlog = () => {
   const getCategory = async () => {
     try {
       const { data } = await axios.post(
-        blog_category_list_api,
-        { status: "ACTIVE" },
+        blog_category_dashboard_list_api,
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -96,6 +97,10 @@ const AddBlog = () => {
         }
       );
       setCategoryList(data.data);
+
+      // console.log(data.data)
+
+
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -440,7 +445,7 @@ const AddBlog = () => {
                 </option>
                 {categoryList.map((item: ICategory, i) => {
                   return (
-                    <option key={i} value={item.slug}>
+                    <option key={i} value={item._id}>
                       {item.name}
                     </option>
                   );

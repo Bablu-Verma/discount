@@ -32,7 +32,6 @@ export async function POST(req: Request) {
       reading_time,
       keywords,
       publish_schedule,
-    
       status,
       meta_title,
       meta_description,

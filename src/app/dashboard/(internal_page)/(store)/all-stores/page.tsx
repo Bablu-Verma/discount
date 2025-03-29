@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { category_list_api, list_store_api } from "@/utils/api_url";
+import { list_store_dashboard_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 import { IStore } from "@/model/StoreModel";
 
@@ -28,7 +28,7 @@ const CategoryList = () => {
 
   const getStores = async () => {
     try {
-      const { data } = await axios.post(list_store_api, filters, {
+      const { data } = await axios.post(list_store_dashboard_api, filters, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

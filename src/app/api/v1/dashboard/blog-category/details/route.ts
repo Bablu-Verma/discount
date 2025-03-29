@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     }
 
     // Fetch data
-    const category_details = await BlogCategoryModel.findOne(slug)
+    const category_details = await BlogCategoryModel.findOne({slug})
 
     return new NextResponse(
       JSON.stringify({

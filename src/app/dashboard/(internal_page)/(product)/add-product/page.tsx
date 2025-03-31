@@ -6,7 +6,9 @@ import { RootState } from "@/redux-store/redux_store";
 import {
   add_product,
   category_list_api,
+  category_list_dashboard_api,
   list_store_api,
+  list_store_dashboard_api,
 } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
@@ -110,12 +112,12 @@ const AddProduct = () => {
       try {
         const [storeRes, categoryRes] = await Promise.all([
           axios.post(
-            list_store_api,
+            list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            category_list_api,
+            category_list_dashboard_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),

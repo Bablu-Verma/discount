@@ -1,6 +1,6 @@
 "use client";
 
-import { category_details_api, category_edit_api, category_list_api, coupons_detail_api, edit_coupons_api, list_store_api } from "@/utils/api_url";
+import { category_details_api, category_edit_api, category_list_api, category_list_dashboard_api, coupons_detail_api, coupons_detail_dashoard_api, edit_coupons_api, list_store_api, list_store_dashboard_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ const EditCoupons: React.FC = () => {
   const getCoupondetail = async () => {
     try {
       const { data } = await axios.post(
-        coupons_detail_api,
+        coupons_detail_dashoard_api,
         { coupon_id: urlslug },
         {
           headers: {
@@ -54,6 +54,9 @@ const EditCoupons: React.FC = () => {
           },
         }
       );
+
+
+      console.log(data)
 
       setFormData({
         title: data.data.title || '',
@@ -99,12 +102,12 @@ const EditCoupons: React.FC = () => {
       try {
         const [storeRes, categoryRes] = await Promise.all([
           axios.post(
-            list_store_api,
+            list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            category_list_api,
+            category_list_dashboard_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),

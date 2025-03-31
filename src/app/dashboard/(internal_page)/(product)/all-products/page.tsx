@@ -6,11 +6,7 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import {
-  category_list_api,
-  list_store_api,
-  product_list_,
-} from "@/utils/api_url";
+import { category_list_dashboard_api, list_store_dashboard_api, product_dashboard_list_ } from "@/utils/api_url";
 import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 import { ICampaign } from "@/model/CampaignModel";
 
@@ -19,9 +15,9 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = 10;
   const [categoryList, setCategoryList] = useState<
-    { name: string; slug: string }[]
+    { name: string; _id: string }[]
   >([]);
-  const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
+  const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
   const token = useSelector((state: RootState) => state.user.token);
@@ -79,7 +75,7 @@ const ProductList = () => {
   const get_product = async () => {
   
     try {
-      const { data } = await axios.post(product_list_, filters, {
+      const { data } = await axios.post(product_dashboard_list_, filters, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -106,12 +102,12 @@ const ProductList = () => {
       try {
         const [storeRes, categoryRes] = await Promise.all([
           axios.post(
-            list_store_api,
+            list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            category_list_api,
+            category_list_dashboard_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
@@ -173,7 +169,7 @@ const ProductList = () => {
 
             {categoryList.map((item, i) => {
               return (
-                <option key={i} value={item.slug}>
+                <option key={i} value={item._id}>
                   {item.name}
                 </option>
               );
@@ -189,7 +185,7 @@ const ProductList = () => {
 
             {storeList.map((item, i) => {
               return (
-                <option key={i} value={item.slug}>
+                <option key={i} value={item._id}>
                   {item.name}
                 </option>
               );

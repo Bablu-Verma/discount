@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const campaign = await CampaignModel.findOne({ product_id });
+    const campaign = await CampaignModel.findOne({ _id:product_id });
 
     if (!campaign) {
       return new NextResponse(

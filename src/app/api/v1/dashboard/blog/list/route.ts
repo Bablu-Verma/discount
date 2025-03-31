@@ -1,103 +1,85 @@
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import dbConnect from "@/lib/dbConnect";
+import BlogCategoryModel from "@/model/BlogCategoryModel";
 import BlogModel from "@/model/BlogModal";
 import { NextResponse } from "next/server";
 
-// Helper function to extract pagination parameters
-const getPaginationParams = (req: Request) => {
-  const { searchParams } = new URL(req.url);
-  const page = Math.max(Number(searchParams.get("page")) || 1, 1);
-  const limit = Math.max(Number(searchParams.get("limit")) || 10, 1);
-  return { page, limit };
-};
 
-// Function to process filter parameters
-const getFilterParams = async (req: Request) => {
-  const filter_ = await req.json();
-
-  const filters: any = {};
-  const sortOptions: any = { createdAt: -1 }; 
- 
-
-
-
-  if (filter_.status && filter_.status !== "ALL") {
-    if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(filter_.status)) {
-      throw new Error("Invalid status value.");
-    }
-    filters.status = filter_.status;
-  }
-
-  if (filter_.search) {
-    filters.$or = [
-      { title: { $regex: filter_.search, $options: "i" } }, 
-      { slug: filter_.search } 
-    ];
-  }
-
-  // Filtering by writer email
-  if (filter_.writer_id) {
-    filters.writer_id = filter_.writer_id;
-  }
-
-  // Filtering by date range
-  if (filter_.startDate && filter_.endDate) {
-    filters.createdAt = { $gte: new Date(filter_.startDate), $lte: new Date(filter_.endDate) };
-  } else if (filter_.startDate) {
-    filters.createdAt = { $gte: new Date(filter_.startDate) };
-  } else if (filter_.endDate) {
-    filters.createdAt = { $lte: new Date(filter_.endDate) };
-  }
-
-  
-  if (filter_.sortBy === "views") {
-    sortOptions.views = -1; // Sort by most viewed
-  } else if (filter_.sortBy === "createdAt") {
-    sortOptions.createdAt = -1; // Sort by newest first
-  }
-
-  return { filters, sortOptions };
-};
 
 // API Handler
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
+    const { authenticated, user, usertype, message } =
+      await authenticateAndValidateUser(req);
 
+    if (!authenticated) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: message || "User is not authenticated",
+        }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    if (!(usertype === "admin" || usertype === "blog_editor")) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Access denied: You do not have the required role",
+        }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-
-      const { authenticated, user, usertype, message } =
-          await authenticateAndValidateUser(req);
-    
-        if (!authenticated) {
-          return new NextResponse(
-            JSON.stringify({
-              success: false,
-              message: message || "User is not authenticated",
-            }),
-            { status: 401, headers: { "Content-Type": "application/json" } }
-          );
-        }
-        if (!(usertype === "admin" || usertype === "blog_editor")) {
-          return new NextResponse(
-            JSON.stringify({
-              success: false,
-              message: "Access denied: You do not have the required role",
-            }),
-            { status: 403, headers: { "Content-Type": "application/json" } }
-          );
-        }
-
-
-    const { page, limit } = getPaginationParams(req);
-    const { filters, sortOptions } = await getFilterParams(req);
-
+    const requestData = await req.json();
+ const {status,sortBy, search,writer_id,endDate,startDate,page = 1, limit = 10}  = requestData
+    const filters: any = {};
+    const sortOptions: any = { createdAt: -1 };
+  
+    if (status && status !== "ALL") {
+      if (!["ACTIVE", "INACTIVE", "REMOVED"].includes(status)) {
+        throw new Error("Invalid status value.");
+      }
+      filters.status = status;
+    }
+  
+    if (search) {
+      filters.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { slug: search },
+      ];
+    }
+  
+    // Filtering by writer email
+    if (writer_id) {
+      filters.writer_id = writer_id;
+    }
+  
+    // Filtering by date range
+    if (startDate && endDate) {
+      filters.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    } else if (startDate) {
+      filters.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      filters.createdAt = { $lte: new Date(endDate) };
+    }
+  
+    if (sortBy === "views") {
+      sortOptions.views = -1; // Sort by most viewed
+    } else if (sortBy === "createdAt") {
+      sortOptions.createdAt = -1; // Sort by newest first
+    }
     const skip = (page - 1) * limit;
-
+   
     // Fetch blogs with filters, sorting, and pagination
-    const blogs = await BlogModel.find(filters).populate("writer_id", "name email profile")
-    .populate("blog_category", "name slug")
+    const blogs = await BlogModel.find(filters)
+      .populate("writer_id", "name email profile")
+      .populate("blog_category", 'name slug')
       .lean()
       .sort(sortOptions)
       .skip(skip)
@@ -105,13 +87,13 @@ export async function POST(req: Request) {
 
     const totalBlogs = await BlogModel.countDocuments(filters);
 
+   
     return NextResponse.json(
       {
         success: true,
         message: "Blog posts fetched successfully.",
         data: blogs,
         pagination: {
-          total: totalBlogs,
           page,
           limit,
           totalPages: Math.ceil(totalBlogs / limit),

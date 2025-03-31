@@ -13,6 +13,12 @@ export const edit_profile_api = main_url + '/client/user/edit'
 export const category_list_api = main_url + '/client/category/list'
 export const category_details_api = main_url + '/client/category/details'
 export const blog_details = main_url + '/client/blog/details'
+export const product_list_ = main_url + '/product/get-all'
+export const product_details_ = main_url + '/product/get-details'
+
+
+
+
 
 
 // dashboard api 
@@ -34,20 +40,23 @@ export const blog_edit = main_url + '/dashboard/blog/edit'
 export const blog_delete = main_url + 'dashboard/blog/delete'
 export const blog_dashboard_details = main_url + '/dashboard/blog/details'
 export const get_All_dashboard_blogs = main_url + '/dashboard/blog/list'
-
-
-
-
+export const add_coupons_api = main_url + '/dashboard/coupons/add'
+export const coupons_list_dashboard_api = main_url + '/dashboard/coupons/get'
+export const edit_coupons_api = main_url + '/dashboard/coupons/edit'
+export const coupons_detail_dashoard_api = main_url + '/dashboard/coupons/detail'
+export const add_product = main_url + '/dashboard/product/add'
+export const product_edit_ = main_url + '/dashboard/product/edit'
+export const product_dashboard_list_ = main_url + '/dashboard/product/get-all'
+export const product_dashboard_details_ = main_url + '/dashboard/product/get-details'
 
 
 
 export const edit_user_address_api = main_url + '/user-address/edit'
 export const user_profile_api = main_url + '/user/profile'
-export const add_product = main_url + '/product/add'
+
 export const get_All_blogs = main_url + '/blog/list'
-export const product_list_ = main_url + '/product/get-all'
-export const product_details_ = main_url + '/product/get-details'
-export const product_edit_ = main_url + '/product/edit'
+
+
 export const search_client_ = main_url + '/search'
 export const wishlist_add_ = main_url + '/wishlist/add'
 export const wishlist_list_get_ = main_url + '/wishlist/list'
@@ -66,7 +75,7 @@ export const create_order_api = main_url + '/order/add'
 
 export const store_details_api = main_url + '/store/details'
 export const list_store_api = main_url + '/store/list'
-export const add_coupons_api = main_url + '/coupons/add'
+
 export const bank_upi_api = main_url + '/bank/add'
 export const bank_upi_verify_api = main_url + '/bank/upi-verify'
 export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
@@ -76,7 +85,6 @@ export const blog_category_list_api = main_url + '/blog-category/list'
 
 export const blog_category_details_api = main_url + '/blog-category/details'
 export const coupons_list_api = main_url + '/coupons/get'
-export const edit_coupons_api = main_url + '/coupons/edit'
 export const coupons_detail_api = main_url + '/coupons/detail'
 export const order_list_api = main_url + '/order/list'
 

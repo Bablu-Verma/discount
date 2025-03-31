@@ -6,7 +6,7 @@ import { blog_type } from "@/constant";
 
 import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
-import { blog_category_dashboard_list_api, blog_category_list_api, blog_dashboard_details, blog_details, blog_edit } from "@/utils/api_url";
+import { blog_category_dashboard_list_api, blog_dashboard_details, blog_details, blog_edit } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -15,8 +15,6 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
 import DateTimePicker from "react-datetime-picker";
-
-
 
 interface IClientBlog {
   blog_id:'',
@@ -45,8 +43,6 @@ const EditBlog = ({}) => {
   const router = useRouter();
   const [categoryList, setCategoryList] = useState([]);
   const [loding, setLoading] = useState<boolean>(false);
-
-
   const [form_data, setForm_data] = useState<IClientBlog>({
     blog_id:'',
     title: "",
@@ -136,9 +132,9 @@ const EditBlog = ({}) => {
         }
       );
 
-      console.log(data.data)
+      console.log(data.data.blog)
   
-      const blogData = data.data;
+      const blogData = data.data.blog;
       setForm_data({
         blog_id:blogData._id,
         title: blogData.title || "",
@@ -382,7 +378,7 @@ const EditBlog = ({}) => {
                 </option>
                 {categoryList.map((item: ICategory, i) => {
                   return (
-                    <option key={i} value={item.slug}>
+                    <option key={i} value={item._id}>
                       {item.name}
                     </option>
                   );

@@ -74,6 +74,7 @@ export async function POST(request: Request) {
     }
 
     const upiDocuments = await UserUPIModel.find(filters)
+      .select(' -otp ')
       .populate("user_id", "name email profile phone")
       .skip((page - 1) * limit)
       .limit(parseInt(limit)).lean();

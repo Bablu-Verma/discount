@@ -8,6 +8,9 @@ import {
   category_list_api,
   product_details_,
   list_store_api,
+  product_dashboard_details_,
+  category_list_dashboard_api,
+  list_store_dashboard_api,
 } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,13 +26,13 @@ import { IClintCampaign } from "../../../add-product/page";
 const EditProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [productDetails, setProductDetails] = useState<ICampaign>();
-  const [categoryList, setCategoryList] = useState<ICategory[]>([]);
+  const [categoryList, setCategoryList] = useState<{name: string; _id: string}[]>([]);
   const [images, setImages] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
-  const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
+  const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
   const [editorT_and_c, setEditor_t_and_c] = useState("");
@@ -86,26 +89,24 @@ const EditProduct = () => {
     product_status: "ACTIVE" as "ACTIVE" | "PAUSE",
   });
 
-  useEffect(() => {
-    getCategory();
-  }, []);
 
   const urlslug = pathname.split("/").pop() || "";
 
   const GetData = async (slug: string) => {
     try {
       let { data } = await axios.post(
-        product_details_,
+        product_dashboard_details_,
         {
           product_slug: slug,
         },
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
+      console.log(data.data)
       setProductDetails(data.data);
       toast.success(data.message);
     } catch (error) {
@@ -127,7 +128,6 @@ const EditProduct = () => {
   useEffect(() => {
     if (productDetails) {
       setForm_data((prev) => ({
-        ...prev,
         title: productDetails?.title || "",
         product_id: productDetails?.product_id || "",
         actual_price: productDetails?.actual_price || 0,
@@ -168,41 +168,18 @@ const EditProduct = () => {
     setEditor_t_and_c(productDetails?.t_and_c || "some error");
   }, [productDetails]);
 
-  const getCategory = async () => {
-    try {
-      const { data } = await axios.post(
-        category_list_api,
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCategoryList(data.data);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message || "Error fetching categories"
-        );
-      } else {
-        console.error("Unknown error", error);
-      }
-    }
-  };
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [storeRes, categoryRes] = await Promise.all([
           axios.post(
-            list_store_api,
+            list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            category_list_api,
+            category_list_dashboard_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
@@ -278,6 +255,7 @@ const EditProduct = () => {
       // Clone form data
       const formPayload = {
         ...form_data,
+        product_id:productDetails?._id,
         description: editorContent,
         t_and_c: editorT_and_c,
       };
@@ -357,7 +335,7 @@ const EditProduct = () => {
         <UploadImageGetLink />
 
         <h4 className="mb-3 text-base text-secondary select-none font-semibold">
-          Product id: #{productDetails?.product_id}
+          Product id: #{productDetails?._id}
         </h4>
         <form
           onSubmit={(e) => {
@@ -419,7 +397,7 @@ const EditProduct = () => {
                   Slected Store
                 </option>
                 {storeList.map((item, i) => {
-                  return <option value={item.slug}>{item.name}</option>;
+                  return <option value={item._id}>{item.name}</option>;
                 })}
               </select>
             </div>
@@ -442,7 +420,7 @@ const EditProduct = () => {
                 </option>
                 {categoryList.map((item, i) => {
                   return (
-                    <option key={i} value={item.slug}>
+                    <option key={i} value={item._id}>
                       {item.name}
                     </option>
                   );

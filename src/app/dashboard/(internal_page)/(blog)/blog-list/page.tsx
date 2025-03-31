@@ -57,6 +57,7 @@ const BlogList = () => {
       });
 
       setBlogList(data.data);
+      // console.log(data.data)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);

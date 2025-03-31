@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { category_list_api, coupons_list_api, list_store_api } from "@/utils/api_url";
+import { blog_category_dashboard_list_api, category_list_api, coupons_list_api, coupons_list_dashboard_api, list_store_api, list_store_dashboard_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 import { ICoupon } from "@/model/CouponModel";
 
@@ -34,7 +34,7 @@ const CategoryList = () => {
   const getCoupons = async () => {
     try {
       const { data } = await axios.post(
-        coupons_list_api, filters,
+        coupons_list_dashboard_api, filters,
         {
           headers: {
            
@@ -63,17 +63,16 @@ const CategoryList = () => {
       try {
         const [storeRes, categoryRes] = await Promise.all([
           axios.post(
-            list_store_api,
+            list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            category_list_api,
+            blog_category_dashboard_list_api,
             { status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
         ]);
-
         setStoreList(storeRes.data.data || []);
         setCategoryList(categoryRes.data.data || []);
       } catch (error) {
@@ -194,9 +193,6 @@ const CategoryList = () => {
           </button>
         </div>
       )}
-
-
-
      
       <div className="pt-5 py-5 px-0 relative w-full">
         <div className="overflow-x-auto pb-4">
@@ -215,11 +211,12 @@ const CategoryList = () => {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  Store
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
                 discount
                 </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  Store
+                </th>
+              
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
                 </th>

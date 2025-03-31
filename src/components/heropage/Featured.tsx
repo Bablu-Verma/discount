@@ -23,7 +23,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
       >
         <div className="absolute left-5 bottom-5 w-[80%]">
           <h3 className="font-semibold text-2xl md:text-3xl text-white tracking-wide pb-2">
-            {featured_1?.store}
+            {featured_1?.store.name}
           </h3>
           <p className="text-sm md:text-base text-white line-clamp-2">
             {featured_1?.title}
@@ -49,7 +49,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
         >
           <div className="absolute left-5 bottom-5 w-[80%]">
             <h3 className="font-semibold text-2xl md:text-3xl text-white tracking-wide pb-2">
-              {featured_2.store}
+              {featured_2.store.name}
             </h3>
             <p className="text-sm md:text-base text-white line-clamp-2">
               {featured_3?.title}
@@ -77,7 +77,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
         >
           <div className="absolute left-5 bottom-5 w-[80%]">
             <h3 className="font-semibold text-2xl md:text-3xl text-white tracking-wide pb-2">
-              {featured_3?.store}
+              {featured_3?.store.name}
             </h3>
             <p className="text-sm md:text-base text-white line-clamp-2">
               {featured_3?.title}
@@ -105,7 +105,7 @@ const Featured: React.FC<FeaturedProps> = ({ arrival }) => {
         >
           <div className="absolute left-5 bottom-5 w-[80%]">
             <h3 className="font-semibold text-2xl md:text-3xl text-white tracking-wide pb-2">
-              {featured_4?.store}
+              {featured_4?.store.name}
             </h3>
             <p className="text-sm md:text-base text-white line-clamp-2">
               {featured_4?.title}

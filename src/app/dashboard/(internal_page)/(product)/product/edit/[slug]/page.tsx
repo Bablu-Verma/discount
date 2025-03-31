@@ -274,7 +274,7 @@ const EditProduct = () => {
         }
       );
 
-      toast.success("Product added successfully!");
+      toast.success("Product update successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "An error occurred");

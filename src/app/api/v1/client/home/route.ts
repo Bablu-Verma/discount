@@ -24,15 +24,18 @@ export async function POST(req: Request) {
     const main_banner = await CampaignModel.find({
       product_status: "ACTIVE",
       main_banner: { $elemMatch: { is_active: true } },
-    }).limit(6).select('store category main_banner product_slug slug_type title').lean();
+    }).limit(6).populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").select('store category main_banner product_slug slug_type title').lean();
     const long_poster = await CampaignModel.find({
       product_status: "ACTIVE",
       long_poster: { $elemMatch: { is_active: true } },
-    }).limit(4).select('store category long_poster product_slug slug_type title').lean();
+    }).limit(4).select('store category long_poster product_slug slug_type title').populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").lean();
     const premium_product = await CampaignModel.find({
       product_status: "ACTIVE",
       premium_product: { $elemMatch: { is_active: true } },
-    }).select('store category premium_product product_slug slug_type title ').lean();
+    }).select('store category premium_product product_slug slug_type title ').populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").lean();
     const flash_sale = await CampaignModel.find({
       product_status: "ACTIVE",
       flash_sale: {
@@ -41,23 +44,27 @@ export async function POST(req: Request) {
           end_time: { $gte: currentDate.toISOString() }, 
         },
       },
-    }).select('store category flash_sale product_slug slug_type title  createAt updateAt _id').lean();
-    const new_product = await CampaignModel.find({
-      product_status: "ACTIVE",
-      product_tags: "new",
-    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
-    const hot_product = await CampaignModel.find({
-      product_status: "ACTIVE",
-      product_tags: "hot",
-    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    }).select('store category flash_sale product_slug slug_type title  createAt updateAt _id').populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").lean();
+    // const new_product = await CampaignModel.find({
+    //   product_status: "ACTIVE",
+    //   product_tags: "new",
+    // }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    // const hot_product = await CampaignModel.find({
+    //   product_status: "ACTIVE",
+    //   product_tags: "hot",
+    // }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
     const best_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "best",
-    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id') .populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").lean();
     const offer_deal = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: { $in: ["new", "hot", "best"] }, // Ensures at least one tag exists
-    }).limit(20).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    }).limit(20)
+    .populate("store", "name slug store_img store_link")
+    .populate("category", "name slug").select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
 
     return new NextResponse(
       JSON.stringify({
@@ -72,8 +79,6 @@ export async function POST(req: Request) {
           category,
           blog,
           store,
-          new_product,
-          hot_product,
           best_product,
           offer_deal,
         },

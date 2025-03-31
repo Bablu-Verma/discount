@@ -11,6 +11,9 @@ interface CardProp {
 const ProductCard: React.FC<CardProp> = ({ card_data }) => {
   const timeAgo = getTimeAgo(card_data.createdAt ?? new Date());
 
+  // console.log(card_data)
+
+
   return (
     <Link
       href={
@@ -44,7 +47,7 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
           <span className="capitalize font-normal text-xs text-gray-500">
             {/* <i className="fa-solid fa-store mr-1"></i> */}
             <i className="fa-solid fa-shop mr-1"></i>
-            {card_data?.store}
+            {card_data?.store.name}
           </span>
           <span className="capitalize font-normal text-xs text-gray-500">
             <i className="fa-regular fa-clock mr-1"></i>

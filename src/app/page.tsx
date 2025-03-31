@@ -49,6 +49,10 @@ export default async function Home() {
   const page_data = await GetData(token);
 
   console.log("Home", page_data);
+  
+
+  
+
   return (
     <>
       <TopHeader />
@@ -133,7 +137,7 @@ export default async function Home() {
           <HowToWork />
         </div>
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

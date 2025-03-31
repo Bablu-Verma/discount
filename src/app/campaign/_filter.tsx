@@ -20,7 +20,7 @@ const Filter = () => {
   return (
     <>
       <div className="col-span-2 hidden md:block">
-        <h1 className="text-lg text-secondary">Filters</h1>
+        {/* <h1 className="text-lg text-secondary">Filters</h1> */}
         <FilterContent />
       </div>
       <div className="relative md:hidden">
@@ -139,7 +139,7 @@ const FilterContent = () => {
   };
 
   return (
-    <div className="space-y-4 bg-[#fff] px-4 pt-1 pb-4 mt-4 rounded-lg">
+    <div className="space-y-4 bg-[#fff] px-4 pt-1 pb-4  rounded-lg">
       {/* Category Filters */}
       <div className="mt-5">
         <p className="text-base mb-2 text-secondary capitalize">Category</p>

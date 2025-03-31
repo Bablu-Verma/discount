@@ -11,6 +11,7 @@ interface SellingProps {
 const BestSalling:React.FC<SellingProps > = ({best_product}) => {
   
 
+
   return (
     <div className="max-w-6xl mx-auto px-2  pt-2 mb-4 relative">
       <div className="absolute right-4 top-[-33px] lg:top-[-44px]">

@@ -13,8 +13,8 @@ export const edit_profile_api = main_url + '/client/user/edit'
 export const category_list_api = main_url + '/client/category/list'
 export const category_details_api = main_url + '/client/category/details'
 export const blog_details = main_url + '/client/blog/details'
-export const product_list_ = main_url + '/product/get-all'
-export const product_details_ = main_url + '/product/get-details'
+export const product_list_ = main_url + '/client/product/get-all'
+export const product_details_ = main_url + '/client/product/get-details'
 
 
 

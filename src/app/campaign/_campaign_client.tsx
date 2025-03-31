@@ -66,7 +66,7 @@ const CampaignClient:React.FC<productProps> = ({product_}) => {
     <div className="md:grid grid-cols-8 gap-8">
     <Filter />
      <div className="col-span-6">
-       <div className="max-w-[1400px] mx-auto lg:px-4 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">
+       <div className=" grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-4">
         {
             products.map((item,i)=>{
                 return <ProductCard key={i} card_data={item}/>

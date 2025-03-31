@@ -59,6 +59,15 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
 
   const page_data = await GetData(token, slug);
 
+
+
+  const {product, relatedProducts,relatedcoupons} = page_data
+
+
+
+  // console.log(page_data)
+  // return
+
   return (
     <>
       <TopHeader />
@@ -67,40 +76,38 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
         <section className="max-w-6xl mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
-              <Campaign_banner campaign_data={page_data.img_array} />
-              <Campaign_user_event campaign_data={page_data} />
+              <Campaign_banner campaign_data={product.img_array} />
+              <Campaign_user_event campaign_data={product} />
             </div>
 
             <div>
               <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
-                {page_data?.title}
+                {product?.title}
               </h1>
               <div className="flex gap-3 mb-4 items-center">
                 <p>
                   <i className="fa-regular fa-clock mr-1 "></i>
-                  <span>{getTimeAgo(page_data.createdAt)}</span>
-                </p>  |  {page_data?.flash_sale[0].is_active && (
-                <Offer_end_component time_data={page_data?.flash_sale[0].end_time} />
+                  <span>{getTimeAgo(product.createdAt)}</span>
+                </p>  |  {product?.flash_sale[0].is_active && (
+                <Offer_end_component time_data={product?.flash_sale[0].end_time} />
               )}
                 
               </div>
               <div className="flex items-center mt-1">
                 <strong className="text-secondary text-3xl mr-3">
-                  ₹{page_data?.offer_price}/-
+                  ₹{product?.offer_price}/-
                 </strong>
                 <span className="text-gray-600 text-xl font-medium line-through">
-                  ₹{page_data?.actual_price}
+                  ₹{product?.actual_price}
                 </span>
                 <small className="text-red-500 text-base py-.5 px-2 ml-4 border-[1px] border-red-500 ">
-                  ₹{page_data?.calculated_cashback} Off
+                  ₹{product?.calculated_cashback} Off
                 </small>
               </div>
               <div className="py-7 flex justify- gap-5 items-center">
-               <ShopNowButton page_data={page_data} />
-                {/* <button className=" py-2 px-5 capitalize text-base text-center outline-none border-none text-secondary hover:underline duration-200 ">
-                  Help to Avail this offer?
-                </button> */}
-                <Watchlistadd oneitem={page_data} />
+               <ShopNowButton page_data={product} />
+            
+                <Watchlistadd oneitem={product} />
               </div>
              
 
@@ -109,31 +116,27 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                   {" "}
                   <small>Brand:</small>
                   <span className="text-secondary text-xl">
-                    {page_data?.store}
+                    {product?.store.name}
                   </span>
                 </p>
                 <p className="text-base text-gray-700 capitalize">
                   {" "}
                   <small>Category:</small>{" "}
                   <span className="text-secondary text-xl">
-                    {page_data?.category}
+                    {product?.category.name}
                   </span>
                 </p>
               </div>
               <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
                 <div
                   className={`${styles.product_style} text-base text-gray-500`}
-                  dangerouslySetInnerHTML={{ __html: page_data.description || ''}}
+                  dangerouslySetInnerHTML={{ __html: product.description || ''}}
                 ></div>
               </div>
             </div>
           </div>
 
-          {/* <SubHeading title="This Month" />
-          <div className="max-w-[1400px] mx-auto px-4 flex mt-7 md:mt-10 justify-start items-end mb-4 relative">
-            <MainHeading title="Best Selling Products" />
-          </div> */}
-          {/* <BestSalling /> */}
+        
         </section>
         <BottomToTop />
       </main>

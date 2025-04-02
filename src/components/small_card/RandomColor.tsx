@@ -12,7 +12,7 @@ const RandomColor: React.FC = () => {
     setRandomColor(getRandomRGBA());
   }, []);
 
-  return randomColor ? <div className="h-1 w-16 rounded-r-full" style={{ backgroundColor: randomColor }} /> : null;
+  return randomColor ? <div className="min-h-1 w-16 rounded-r-full" style={{ backgroundColor: randomColor }} /> : null;
 };
 
 export default RandomColor;

@@ -103,13 +103,12 @@ export default async function Home() {
           </div>
         </div>
 
-{
-  page_data.data.premium_product.length > 0 && <div className="py-7">
-  <MainHeading title="New Arrival" />
-  <Featured arrival={page_data.data.premium_product} />
-</div>
-}
-        
+        {page_data.data.premium_product.length > 0 && (
+          <div className="py-7">
+            <MainHeading title="New Arrival" />
+            <Featured arrival={page_data.data.premium_product} />
+          </div>
+        )}
 
         <div className="py-7">
           <MainHeading title="New Coupon" />

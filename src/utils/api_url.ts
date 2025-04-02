@@ -13,11 +13,16 @@ export const edit_profile_api = main_url + '/client/user/edit'
 export const category_list_api = main_url + '/client/category/list'
 export const category_details_api = main_url + '/client/category/details'
 export const blog_details = main_url + '/client/blog/details'
+export const get_All_blogs = main_url + '/client/blog/list'
 export const product_list_ = main_url + '/client/product/get-all'
 export const product_details_ = main_url + '/client/product/get-details'
-
-
-
+export const wishlist_list_get_ = main_url + '/client/wishlist/list'
+export const store_details_api = main_url + '/client/store/details'
+export const coupons_detail_api = main_url + '/client/coupons/detail'
+export const blog_category_list_api = main_url + '/client/blog-category/list'
+export const blog_category_details_api = main_url + '/client/blog-category/details'
+export const bank_upi_api = main_url + '/client/bank/add'
+export const bank_upi_verify_api = main_url + '/client/bank/upi-verify'
 
 
 
@@ -54,12 +59,12 @@ export const product_dashboard_details_ = main_url + '/dashboard/product/get-det
 export const edit_user_address_api = main_url + '/user-address/edit'
 export const user_profile_api = main_url + '/user/profile'
 
-export const get_All_blogs = main_url + '/blog/list'
+
 
 
 export const search_client_ = main_url + '/search'
 export const wishlist_add_ = main_url + '/wishlist/add'
-export const wishlist_list_get_ = main_url + '/wishlist/list'
+
 export const wishlist_product_remove_ = main_url + '/wishlist/remover-product'
 export const wishlist__remove_ = main_url + '/wishlist/remove-wishlist'
 
@@ -73,19 +78,16 @@ export const contact_us_update_api = main_url + '/contactus/edit'
 
 export const create_order_api = main_url + '/order/add'
 
-export const store_details_api = main_url + '/store/details'
+
 export const list_store_api = main_url + '/store/list'
 
-export const bank_upi_api = main_url + '/bank/add'
-export const bank_upi_verify_api = main_url + '/bank/upi-verify'
+
 export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 
 
-export const blog_category_list_api = main_url + '/blog-category/list'
 
-export const blog_category_details_api = main_url + '/blog-category/details'
 export const coupons_list_api = main_url + '/coupons/get'
-export const coupons_detail_api = main_url + '/coupons/detail'
+
 export const order_list_api = main_url + '/order/list'
 
 

@@ -31,24 +31,22 @@ const user = useSelector(
 
   return (
     <>
-      <div className="rounded grid grid-cols-2 border-2 border-gray-200  mb-5 my-12  p-3 ">
-        <button
+       <button
           onClick={() => setOpentc(true) }
           type="button"
-          className="flex justify-center gap-2 sm:gap-5 items-center py-5 border-r-2 cursor-pointer"
+          className=" border-2 inline-flex border-gray-200  my-7 justify-center gap-2 sm:gap-3 items-center cursor-pointer px-5 py-2 rounded-full"
         >
-          <i className="fa-solid fa-note-sticky text-red-500 text-xl sm:text-4xl"></i>
-          <h4 className="text-secondary text-sm sm:text-base font-normal">
-            Tream and Condition
+          <i className="fa-solid fa-note-sticky text-red-500 text-xl sm:text-2xl"></i>
+          <h4 className="text-secondary text-[12px] sm:text-base text-nowrap font-normal">
+           Important Information
           </h4>
         </button>
-      </div>
 
       {opentc && (
         <div className="fixed top-0 left-0 w-full h-screen  flex justify-center items-center z-50 bg-[rgba(0,0,0,.3)] ">
           <div className=" md:max-w-[700px] max-h-[700px] overflow-y-auto bg-white p-5 rounded-md">
             <h3 className="text-xl font-medium mb-3 text-secondary select-none">
-              Tream and Condition
+            Important Information
             </h3>
 
             <div dangerouslySetInnerHTML={{ __html: campaign_data?.t_and_c || ''}}>
@@ -57,7 +55,7 @@ const user = useSelector(
               onClick={() => setOpentc(false)}
               className="mt-2 underline hover:text-red-500"
             >
-              I am read this Tream and Condition
+              I am read this Information
             </button>
           </div>
         </div>

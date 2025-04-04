@@ -28,14 +28,14 @@ const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaign_data }) => {
           <div
             key={i}
             onClick={() => setActiveImage(item)}
-            className="w-12 h-12 sm:w-16 sm:h-16 rounded opacity-80 hover:opacity-100 overflow-hidden shadow-lg border-2 border-gray-100 p-0.5 duration-150 hover:border-gray-200 cursor-pointer"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-white opacity-80 hover:opacity-100 overflow-hidden shadow-lg border-2 border-gray-100 p-0.5 duration-150 hover:border-gray-200 cursor-pointer "
           >
             <Image
               height={300}
               width={300}
               src={item}
               alt={`Product Image ${i + 1}`}
-              className="w-full"
+              className="w-full rounded-xl"
             />
           </div>
         ))}

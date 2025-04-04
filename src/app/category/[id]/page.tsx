@@ -25,7 +25,6 @@ export const GetData = async (token:string, slug:string) => {
       },
       {
         headers: {
-          Authorization: token,
           "Content-Type": "application/json",
         },
       }
@@ -48,12 +47,12 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
   const awaitslug = await params;
   const slug = awaitslug.id
 
-  console.log("token ",token)
 
-  console.log("awaitslug",awaitslug)
 
   const page_data = await GetData(token, slug);
-  console.log("page_data",page_data);
+  // console.log("page_data",page_data);
+
+  const {category_details, relatedProducts , relatedCoupons} =  page_data 
 
   return (
     <>
@@ -62,22 +61,22 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
       <main className="">
         <section className="max-w-6xl  px-2 mx-auto mt-4 lg:mt-14 mb-16">
           <div className="text-sm lg:text-base">
-            <span>Home</span> / <span>Category</span> / <span>{page_data.name}</span>
+            <span>Home</span> / <span>Category</span> / <span>{category_details.name}</span>
           </div>
           <div className="mt-8 text-center items-center">
-            <div className="h-48 w-48 rounded-full overflow-hidden justify-center items-center flex shadow-lg m-auto mb-10]">
+            <div className="h-32 w-32 rounded-full overflow-hidden justify-center items-center flex shadow-lg m-auto mb-10]">
               <Image
-                src={page_data.img}
+                src={category_details.imges[0]}
                 alt="WvzprEv"
                 width={500}
                 className="w-full h-auto"
                 height={500}
               />
             </div>
-            <h1 className="text-xl text-secondary font-medium  my-3">
-              {page_data.name}
+            <h1 className="text-xl text-secondary capitalize font-medium  my-3">
+              {category_details.name}
             </h1>
-            <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: page_data.description || ''}}>
+            <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: category_details.description || ''}}>
             </div>
           </div>
 

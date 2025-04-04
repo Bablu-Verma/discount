@@ -44,6 +44,9 @@ export default async function Category() {
    const token = await getServerToken()
     const page_data = await GetData(token)
 
+
+    console.log(page_data)
+
   return (
     <>
 
@@ -51,7 +54,7 @@ export default async function Category() {
     <main>
       <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-14 mb-16">
          
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-8 mt-6 lg:mt-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-6 lg:mt-10">
           {
             page_data.map((item:ICoupon) => (
               <CouponcodeCard item={item}/>

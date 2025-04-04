@@ -14,7 +14,6 @@ export const GetData = async (token: string) => {
   try {
     let { data } = await axios.post(list_store_api,{store_status:"ACTIVE"}, {
       headers: {
-        Authorization: token,
         "Content-Type": "application/json",
       },
     });
@@ -39,7 +38,7 @@ export default async function Category() {
       <MainHeader />
       <main>
         <div className="max-w-6xl px-2 m-auto mt-4 lg:mt-14 mb-16">
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-8 mt-6 lg:mt-10">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-8 mt-6 lg:mt-10">
             {page_data.map((item: IStore) => (
               <StoreCard item={item} />
             ))}

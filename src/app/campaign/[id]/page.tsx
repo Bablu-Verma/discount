@@ -17,6 +17,7 @@ import Offer_end_component from "./_offer_end_component";
 import Watchlistadd from "./_watchlistadd";
 import styles from "./product_page.module.css";
 import ShopNowButton from "./_shop_now";
+import Link from "next/link";
 
 interface DetailsProps {
   params: { id: string };
@@ -64,10 +65,6 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
   const {product, relatedProducts,relatedcoupons} = page_data
 
 
-
-  // console.log(page_data)
-  // return
-
   return (
     <>
       <TopHeader />
@@ -77,10 +74,18 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
           <div className="md:grid md:grid-cols-2 gap-5">
             <div>
               <Campaign_banner campaign_data={product.img_array} />
-              <Campaign_user_event campaign_data={product} />
+              <div className="hidden md:flex  justify-start gap-10 items-center pt-10 ">
+                 <Link href={`/store/${product.store.slug}`} className="text-secondary text-xl inline-flex items-center gap-3 ml-3">
+                  <Image src={product.store.store_img} alt="" className="w-16 h-16 rounded-full" width={100} height={100} />
+                    <span className="mt-1">{product?.store.name}</span>
+                  </Link>
+                  <Campaign_user_event campaign_data={product} />
+              </div>
+
+             
             </div>
 
-            <div>
+            <div className="mt-8 md:mt-0">
               <h1 className="text-lg sm:text-xl text-secondary font-medium  mb-3">
                 {product?.title}
               </h1>
@@ -100,7 +105,7 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <span className="text-gray-600 text-xl font-medium line-through">
                   ₹{product?.actual_price}
                 </span>
-                <small className="text-red-500 text-base py-.5 px-2 ml-4 border-[1px] border-red-500 ">
+                <small className="text-red-500 text-sm py-1 px-3 ml-4 border-[1px] border-red-500 rounded-full ">
                   ₹{product?.calculated_cashback} Off
                 </small>
               </div>
@@ -110,23 +115,14 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <Watchlistadd oneitem={product} />
               </div>
              
-
-              <div className="flex justify-start gap-10 items-center">
-                <p className="text-base text-gray-700 capitalize">
-                  {" "}
-                  <small>Brand:</small>
-                  <span className="text-secondary text-xl">
-                    {product?.store.name}
-                  </span>
-                </p>
-                <p className="text-base text-gray-700 capitalize">
-                  {" "}
-                  <small>Category:</small>{" "}
-                  <span className="text-secondary text-xl">
-                    {product?.category.name}
-                  </span>
-                </p>
+              <div className="flex md:hidden   justify-start gap-10 items-center md:pt-10 ">
+                 <Link href={`/store/${product.store.slug}`} className="text-secondary  inline-flex items-center gap-3">
+                  <Image src={product.store.store_img} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-full" width={100} height={100} />
+                    <span className="mt-1 text-base sm:text-xl">{product?.store.name}</span>
+                  </Link>
+                  <Campaign_user_event campaign_data={product} />
               </div>
+             
               <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
                 <div
                   className={`${styles.product_style} text-base text-gray-500`}

@@ -16,7 +16,6 @@ export const GetData = async (token:string) => {
       category_list_api,
       {
         headers: {
-          Authorization: token,
           "Content-Type": "application/json",
         },
       }
@@ -37,6 +36,10 @@ export default async function Category() {
 
    const token = await getServerToken()
     const page_data = await GetData(token)
+
+
+
+    console.log(page_data)
 
   return (
     <>

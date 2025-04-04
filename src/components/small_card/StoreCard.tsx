@@ -22,12 +22,10 @@ const StoreCard: React.FC<istorecard> = ({ item }) => {
         alt={item.name}
         width={100}
         height={70}
-        className="rounded-md mb-3"
+        className="rounded-md mb-3 h-auto"
       />
 
-      <div
-        className="text-base capitalize text underline text-blue-500"
-      >
+      <div className="text-base capitalize text underline text-blue-500">
         {item.name}
       </div>
 

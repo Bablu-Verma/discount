@@ -23,6 +23,13 @@ export const blog_category_list_api = main_url + '/client/blog-category/list'
 export const blog_category_details_api = main_url + '/client/blog-category/details'
 export const bank_upi_api = main_url + '/client/bank/add'
 export const bank_upi_verify_api = main_url + '/client/bank/upi-verify'
+export const coupons_list_api = main_url + '/client/coupons/get'
+export const list_store_api = main_url + '/client/store/list'
+
+
+
+
+
 
 
 
@@ -79,14 +86,13 @@ export const contact_us_update_api = main_url + '/contactus/edit'
 export const create_order_api = main_url + '/order/add'
 
 
-export const list_store_api = main_url + '/store/list'
 
 
 export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 
 
 
-export const coupons_list_api = main_url + '/coupons/get'
+
 
 export const order_list_api = main_url + '/order/list'
 

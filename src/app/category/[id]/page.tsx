@@ -10,6 +10,7 @@ import axios, { AxiosError } from "axios";
 import { category_details_api } from "@/utils/api_url";
 import { getServerToken } from "@/helpers/server/server_function";
 import toast from "react-hot-toast";
+import CategoryClientTab from "./category_client_tab";
 
 
 interface CategoryDetailsProps {
@@ -79,9 +80,10 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: category_details.description || ''}}>
             </div>
           </div>
-
+          <CategoryClientTab relatedProducts={relatedProducts}  relatedCoupons={relatedCoupons}/>
         
         </section>
+        
         <BottomToTop />
       </main>
       <Footer />

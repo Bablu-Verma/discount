@@ -3,13 +3,11 @@ const AutoIncrementFactory = require("mongoose-sequence");
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
-
-
 export interface IStore extends Document {
   name: string;
   description: string;
   slug: string;
-  store_id?: number; 
+  store_id?: number;
   store_img: string;
   cashback_status: "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK";
   store_link: string;
@@ -25,6 +23,12 @@ const StoreSchema = new Schema<IStore>(
       required: [true, "Store name is required"],
       unique: true,
       trim: true,
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      index: true,
+      ref: "Category",
+      required: [true, "Category is required"],
     },
     store_id: {
       type: Number,
@@ -68,7 +72,16 @@ const StoreSchema = new Schema<IStore>(
       default: "ACTIVE",
       enum: ["ACTIVE", "INACTIVE", "REMOVED"],
     },
-   
+    tc:{
+      type: String,
+      required: [true, "Store terms & Conditions is required"],
+      trim: true
+    },
+    tracking:{
+      type: String,
+      required: [true, "Add Cashback tracking "],
+      trim: true
+    }
   },
   { timestamps: true }
 );

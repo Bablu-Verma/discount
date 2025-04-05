@@ -3,7 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import StoreModel from "@/model/StoreModel";
 import CouponModel from "@/model/CouponModel";
 import CampaignModel from "@/model/CampaignModel";
-import { authenticateAndValidateUser } from "@/lib/authenticate";
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     query.store_status = "ACTIVE";
 
-    const store = await StoreModel.findOne(query).select("-store_status");
+    const store = await StoreModel.findOne(query).select("-store_status").populate('category', 'name slug');
 
     if (!store) {
       return new NextResponse(
@@ -49,6 +49,30 @@ export async function POST(req: Request) {
       .limit(10)
       .lean();
 
+
+    
+    const relatedStores = await StoreModel.find({
+      category: store.category?._id,
+      slug: { $ne: store.slug },
+      store_status: "ACTIVE",
+    })
+      .select("name slug store_img")
+      .populate("category", "name slug")
+      .limit(10)
+      .lean();
+
+
+    const topStores = await StoreModel.find({
+      store_status: "ACTIVE",
+    })
+      .select("name slug store_img")
+      .populate("category", "name slug")
+      .sort({ createdAt: -1 }) 
+      .limit(5)
+      .lean();
+
+
+
     return new NextResponse(
       JSON.stringify({
         success: true,
@@ -57,6 +81,8 @@ export async function POST(req: Request) {
           store: store,
           related_product: relatedProducts,
           related_coupons: relatedCoupons,
+          related_stores:relatedStores,
+          top_stores:topStores
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

@@ -100,6 +100,7 @@ export async function POST(req: Request) {
     // Fetch Stores with Filtering, Pagination & Sorting
     const stores = await StoreModel.find(query)
       .skip(skip)
+      .populate('category', 'name category')
       .limit(pageSize)
       .sort({ createdAt: -1 });
 

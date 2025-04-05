@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { slug, description, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } =
+    const { slug, description,category,tc, tracking, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } =
       await req.json();
 
     if (!slug) {
@@ -67,6 +67,9 @@ export async function POST(req: Request) {
     if (cashback_type !== undefined && cashback_type !== "") store.cashback_type = cashback_type;
     if (cashback_amount !== undefined && cashback_amount !== "") store.cashback_amount = cashback_amount;
     if (store_status !== undefined && store_status !== "") store.store_status = store_status;
+    if (category !== undefined && category !== "") store.category = category;
+    if (tc !== undefined && tc !== "") store.tc = tc;
+    if (tracking !== undefined && tracking !== "") store.tracking = tracking;
 
     await store.save();
 

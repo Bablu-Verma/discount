@@ -53,7 +53,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
   const page_data = await GetData(token, slug);
   // console.log("page_data",page_data);
 
-  const {category_details, relatedProducts , relatedCoupons} =  page_data 
+  const {category_details, relatedProducts , relatedCoupons, relatedStore} =  page_data 
 
   return (
     <>
@@ -80,7 +80,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: category_details.description || ''}}>
             </div>
           </div>
-          <CategoryClientTab relatedProducts={relatedProducts}  relatedCoupons={relatedCoupons}/>
+          <CategoryClientTab relatedProducts={relatedProducts} relatedStore={relatedStore} relatedCoupons={relatedCoupons}/>
         
         </section>
         

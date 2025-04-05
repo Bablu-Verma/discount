@@ -4,6 +4,7 @@ import CategoryModel from "@/model/CategoryModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import CampaignModel from "@/model/CampaignModel";
 import CouponModel from "@/model/CouponModel";
+import StoreModel from "@/model/StoreModel";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -58,7 +59,9 @@ export async function POST(req: Request) {
     .limit(10)
     .lean();
 
-
+    const relatedStore = await StoreModel.find({ category: category_details._id })
+    .limit(10).select('-tc -store_status -description').lean()
+      
     return new NextResponse(
       JSON.stringify({
         success: true,
@@ -67,6 +70,7 @@ export async function POST(req: Request) {
           category_details:category_details,
           relatedProducts,
           relatedCoupons,
+          relatedStore
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

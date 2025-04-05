@@ -4,6 +4,7 @@ import StoreModel from "@/model/StoreModel";
 import { upload_image } from "@/helpers/server/upload_image";
 import { generateSlug } from "@/helpers/client/client_function";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
+import CategoryModel from "@/model/CategoryModel";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -29,20 +30,22 @@ export async function POST(req: Request) {
 
     // Extract Request Data
     const requestData = await req.json();
-    const { name, description, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } = requestData;
+    const { name, description, store_img,category,tc, tracking, cashback_status, store_link, cashback_type, cashback_amount, store_status } = requestData;
+
+    // console.log(requestData)
+
+
 
     // Validate Required Fields
-    if (!name || !description || !store_img || !store_link || !cashback_type) {
+    if (!name || !description || !store_img || !store_link || !cashback_type || !category || !tc || !tracking) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Missing required fields: name, description, store_img, store_link, cashback_type" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Generate Slug
     const slug = generateSlug(name);
 
-    // Check for Existing Store
     const existingStore = await StoreModel.findOne({ $or: [{ name }, { slug }] });
     if (existingStore) {
       return new NextResponse(
@@ -51,9 +54,22 @@ export async function POST(req: Request) {
       );
     }
 
+
+    const findCategory = await CategoryModel.findById(category)
+
+    if (!findCategory) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Add valid category id" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     // Create Store
     const newStore = new StoreModel({
       name,
+      category,
+      tc,
+      tracking,
       description,
       slug,
       store_img,

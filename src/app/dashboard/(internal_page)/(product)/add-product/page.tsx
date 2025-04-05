@@ -775,7 +775,7 @@ const AddProduct = () => {
                         ],
                       }))
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm z-10"
                     value={
                       form_data.flash_sale[0].end_time
                         ? new Date(form_data.flash_sale[0].end_time) // Convert string to Date

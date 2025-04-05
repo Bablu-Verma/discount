@@ -3,9 +3,9 @@
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_link";
 import { RootState } from "@/redux-store/redux_store";
-import { add_store_api, category_add_api } from "@/utils/api_url";
+import { add_store_api, category_add_api, category_list_dashboard_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -18,11 +18,21 @@ const AddStore = () => {
     cashback_type: "PERCENTAGE" as "PERCENTAGE" | "FLAT_AMOUNT",
     cashback_amount: "",
     store_status: "ACTIVE" as "ACTIVE" | "INACTIVE",
+   
+    category: "",
+    tracking: ''
   });
 
   const [editorContent, setEditorContent] = useState("");
+  const [editorContentTc, setEditorContentTc] = useState("");
   const [loading, setLoading] = useState(false);
   const token = useSelector((state: RootState) => state.user.token);
+  const [categoryList, setCategoryList] = useState<
+    { name: string; _id: string }[]
+  >([]);
+
+
+
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -38,25 +48,28 @@ const AddStore = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status } = formData;
+    const { name, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status,category,tracking } = formData;
 
     if (!name.trim()) return toast.error("Please enter a store name.");
-   
-  if (!store_img.trim()) return toast.error("Please enter a store image link.");
-  if (!store_link.trim()) return toast.error("Please enter a store link.");
-  if (!cashback_amount.trim()) return toast.error("Please enter a cashback amount.");
-  if (isNaN(Number(cashback_amount)) || Number(cashback_amount) <= 0) return toast.error("Cashback amount must be a valid number greater than zero.");
-  
 
-  if (!store_link) return toast.error("Please enter a valid store link URL.");
+    if (!store_img.trim()) return toast.error("Please enter a store image link.");
+    if (!store_link.trim()) return toast.error("Please enter a store link.");
+    if (!cashback_amount.trim()) return toast.error("Please enter a cashback amount.");
+    if (isNaN(Number(cashback_amount)) || Number(cashback_amount) <= 0) return toast.error("Cashback amount must be a valid number greater than zero.");
 
-  if (!editorContent.trim()) return toast.error("Please enter a store dec.");
+
+    if (!store_link) return toast.error("Please enter a valid store link URL.");
+
+    if (!editorContent.trim()) return toast.error("Please enter a store dec.");
+    if (!editorContentTc.trim()) return toast.error("Please enter a store  tc.");
+    if (!category.trim()) return toast.error("Please add category.");
+    if (!tracking.trim()) return toast.error("Please store tracking time dec.");
 
     setLoading(true);
 
     try {
       const { data } = await axios.post(
-       add_store_api, 
+        add_store_api,
         {
           name,
           description: editorContent,
@@ -66,6 +79,8 @@ const AddStore = () => {
           cashback_type,
           cashback_amount,
           store_status,
+          tc:editorContentTc,
+           category,tracking
         },
         {
           headers: {
@@ -88,11 +103,34 @@ const AddStore = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoryRes] = await Promise.all([
+
+          axios.post(
+            category_list_dashboard_api,
+            { status: "ACTIVE" },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
+        setCategoryList(categoryRes.data.data || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">Add Store</h1>
       <div className="max-w-4xl my-10 mx-auto p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
-      <UploadImageGetLink />
+        <UploadImageGetLink />
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
@@ -135,7 +173,7 @@ const AddStore = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-          
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Amount/Percentage</label>
               <input
@@ -177,6 +215,46 @@ const AddStore = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-5">
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tracking time</label>
+              <input
+                type="text"
+                name="tracking"
+                value={formData.tracking}
+                onChange={handleInputChange}
+                placeholder="Enter tracking time "
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+              >
+                <option value="" disabled selected>
+                  Select a category
+                </option>
+                {categoryList.map((item, i) => {
+                  return (
+                    <option key={i} value={item._id}>
+                      {item.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+          </div>
+
+
           {/* Store Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Store Status</label>
@@ -195,6 +273,10 @@ const AddStore = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Store Description</label>
             <TextEditor editorContent={editorContent} setEditorContent={setEditorContent} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Store tC</label>
+            <TextEditor editorContent={editorContentTc} setEditorContent={setEditorContentTc} />
           </div>
 
           {/* Submit Button */}

@@ -29,13 +29,14 @@ export async function POST(req: Request) {
 
     // Fetch Stores with Filtering, Pagination & Sorting
     const stores = await StoreModel.find(query)
-    .select('-description -store_status')
       .skip(skip)
+      .select('-description -store_status -tc -tracking')
       .limit(pageSize)
-      .sort({ createdAt: -1 });
+      .populate('category', 'name slug')
+      .sort({ createdAt: -1 }).lean();
 
     // Count Total Matching Stores
-    const totalStores = await StoreModel.countDocuments(query);
+    const totalStores = await StoreModel.countDocuments(query)
 
     return new NextResponse(
       JSON.stringify({

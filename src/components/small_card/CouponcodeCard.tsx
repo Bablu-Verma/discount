@@ -24,7 +24,7 @@ const CouponcodeCard: React.FC<CouponcodeCardProps> = ({ item }) => {
         className="rounded-md ml-1 mb-3"
       />
       <h2 className="text-lg text-secondary font-semibold tracking-wide mb-1">
-        Flat ₹{item.discount} Off
+        Flat {item.discount} Off
       </h2>
       <h4 className="text-sm lg:text-base text-primary font-medium line-clamp-2 capitalize">
         {item.title}

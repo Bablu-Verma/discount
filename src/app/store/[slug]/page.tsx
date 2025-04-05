@@ -8,12 +8,13 @@ import { MainHeading } from "@/components/Heading";
 import BestSalling from "@/components/homepage/BestSelling";
 import axios, { AxiosError } from "axios";
 import {
-  category_details_api,
-  list_store_api,
   store_details_api,
 } from "@/utils/api_url";
 import { getServerToken } from "@/helpers/server/server_function";
 import toast from "react-hot-toast";
+import { StoreDesc } from "./store_desc_tc";
+import Link from "next/link";
+import StoreClientTab from "./store_client_tab";
 
 interface IStoreDetailsProps {
   params: { slug: string };
@@ -51,7 +52,7 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
 
   const page_data = await GetData(token, slug);
 
-  const { store, related_product, related_coupons } = page_data;
+  const { store, related_product, related_coupons,related_stores, top_stores } = page_data;
 
   console.log(page_data);
 
@@ -60,25 +61,63 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <section className="max-w-6xl px-2 mx-auto mt-4 lg:mt-14 mb-16">
-          <div className="mt-8 shadow-md p-4 gap-4 rounded flex ">
-            <div className="h-24 w-28  justify-center items-center flex border-r-2 pr-4">
-              <Image
-                src={store.store_img}
-                alt="WvzprEv"
-                width={500}
-                className="w-full h-auto"
-                height={500}
-              />
+        <section className="w-full bg-primary px-2 mx-auto ">
+          <div className="max-w-6xl py-20 px-2.5 mx-auto relative">
+            <div className="grid grid-cols-[10%_90%] gap-5">
+              <div className="">
+                <Image
+                  src={store.store_img}
+                  alt="WvzprEv"
+                  width={40}
+                  className="w-full"
+                  height={40}
+                />
+
+              </div>
+              <div>
+                <h1 className="text-2xl capitalize  text-white font-medium ">
+                  {store.name}  
+                </h1>
+               
+                <StoreDesc html_={store.description || ""} />
+                 <a className="border-[1px] text-base rounded px-6 py-2 text-white inline-block mt-6" href={store.store_link}>Shop & Earn</a>
+              </div>
             </div>
-            <h1 className="text-xl text-secondary font-medium ">
-              {store.name}
-            </h1>
           </div>
-          <div
-            className="pt-4 text-sm text-left"
-            dangerouslySetInnerHTML={{ __html: store.description || "" }}
-          ></div>
+        </section>
+        <section className="max-w-6xl mx-auto h-12 relative">
+          <div className="p-2 px-5   shadow-md bg-white border border-gray-100 -top-4">
+            |
+            <p><span>Tracking Speed: </span><strong>{store.tracking}</strong></p>
+
+          </div>
+        </section>
+        <section className="max-w-6xl my-12 mx-auto grid gap-16 min-h-60 grid-cols-4">
+          <div className="col-span-1">
+            <div className="p-3 border-[1px] rounded shadow-sm border-gray-300 mb-10 ">
+              <h3 className="text-center text-xl font-medium mb-3">Top Store</h3>
+              {
+                top_stores && top_stores.length > 0 && top_stores.map((item, i) => {
+                  return (
+                   <p className="text-lg capitalize text-secondary mb-2" key={i}> {i+1}. <Link className=" hover:underline" href=''>{item.name}</Link></p>
+                  )
+                })
+              }
+            </div>
+            <div className="p-3 border-[1px] rounded shadow-sm border-gray-300 mb-10 ">
+              <h3 className="text-center text-xl font-medium mb-3">Related Store</h3>
+              {
+                related_stores && related_stores.length > 0 && related_stores.map((item, i) => {
+                  return (
+                   <p className="text-lg capitalize text-secondary mb-2" key={i}> {i+1}. <Link className=" hover:underline hover:text-primary" href=''>{item.name}</Link></p>
+                  )
+                })
+              }
+            </div>
+          </div>
+          <div className="col-span-3 ">
+              <StoreClientTab relatedProducts={related_product} relatedCoupons={related_coupons} />
+          </div>
         </section>
         <BottomToTop />
       </main>

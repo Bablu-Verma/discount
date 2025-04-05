@@ -5,7 +5,10 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface IStore extends Document {
   name: string;
+  category:mongoose.Types.ObjectId,
   description: string;
+  tc:String,
+  tracking:String,
   slug: string;
   store_id?: number;
   store_img: string;

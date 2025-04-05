@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const query: any = { slug };
 
 
-    const store = await StoreModel.findOne(query);
+    const store = await StoreModel.findOne(query).populate('category', "name slug");
 
     if (!store) {
       return new NextResponse(

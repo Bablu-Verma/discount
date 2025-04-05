@@ -1,13 +1,13 @@
 "use client";
 
-import { category_details_api, category_edit_api, edit_store_api, store_details_api, store_details_dashboard_api } from "@/utils/api_url";
+import { category_details_api, category_edit_api, category_list_dashboard_api, edit_store_api, store_details_api, store_details_dashboard_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { setEditorData } from "@/redux-store/slice/editorSlice";
+
 import { RootState } from "@/redux-store/redux_store";
 import TextEditor from "@/app/dashboard/_components/TextEditor";
 import UploadImageGetLink from "@/app/dashboard/_components/Upload_image_get_link";
@@ -28,9 +28,16 @@ const EditCategory: React.FC = () => {
      cashback_type: "" ,
      cashback_amount: "",
      store_status: "" ,
+     category:'', tracking:''
    });
   const [editorContent, setEditorContent] = useState("");
   const urlslug = pathname.split("/").pop() || "";
+const [editorContentTc, setEditorContentTc] = useState("");
+  const [categoryList, setCategoryList] = useState<
+    { name: string; _id: string }[]
+  >([]);
+
+
 
 
   const getstoredetail = async () => {
@@ -48,7 +55,7 @@ const EditCategory: React.FC = () => {
 
       
       const store_data = data.data.store
-      console.log(store_data)
+      // console.log(store_data)
       setFormData({
         name:store_data.name || '',
         store_img: store_data.store_img || '',
@@ -57,8 +64,12 @@ const EditCategory: React.FC = () => {
         cashback_type: store_data.cashback_type || '',
         cashback_amount: store_data.cashback_amount || "",
         store_status: store_data.store_status || '',
+        category: store_data.category || '',
+        tracking: store_data.tracking || '',
+    
       })
       setEditorContent(store_data.description)
+      setEditorContentTc(store_data.tc)
 
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -93,6 +104,9 @@ const EditCategory: React.FC = () => {
           cashback_type:formData.cashback_type,
           cashback_amount:formData.cashback_amount,
           store_status:formData.store_status,
+          tc:editorContentTc,
+          tracking:formData.tracking,
+          category:formData.category,
         },
         {
           headers: {
@@ -122,6 +136,27 @@ const EditCategory: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoryRes] = await Promise.all([
+
+          axios.post(
+            category_list_dashboard_api,
+            { status: "ACTIVE" },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
+        setCategoryList(categoryRes.data.data || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
 
   return (
@@ -222,6 +257,45 @@ const EditCategory: React.FC = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-5">
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">Tracking time</label>
+  <input
+    type="text"
+    name="tracking"
+    value={formData.tracking}
+    onChange={handleInputChange}
+    placeholder="Enter tracking time "
+    className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+  />
+</div>
+
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+  <select
+    id="category"
+    name="category"
+    value={formData.category}
+    onChange={handleInputChange}
+    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
+  >
+    <option value="" disabled selected>
+      Select a category
+    </option>
+    {categoryList.map((item, i) => {
+      return (
+        <option key={i} value={item._id}>
+          {item.name}
+        </option>
+      );
+    })}
+  </select>
+</div>
+
+</div>
+
           {/* Store Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Store Status</label>
@@ -240,6 +314,10 @@ const EditCategory: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Store Description</label>
             <TextEditor editorContent={editorContent} setEditorContent={setEditorContent} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Store Description</label>
+            <TextEditor editorContent={editorContentTc} setEditorContent={setEditorContentTc} />
           </div>
 
           {/* Submit Button */}

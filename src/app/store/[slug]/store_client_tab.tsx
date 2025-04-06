@@ -30,7 +30,7 @@ const StoreClientTab = ({ relatedProducts, relatedCoupons }) => {
       {openTab == "Product" &&
         relatedProducts &&
         relatedProducts.length > 0 && (
-          <div className="grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-6">
+          <div className="grid grid-rows-1 sm:grid-cols-2  lg:grid-cols-3 gap-3 md:gap-6">
             {relatedProducts.map((item, i) => {
               return <ProductCard card_data={item} key={i} />;
             })}

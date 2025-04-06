@@ -13,6 +13,8 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
 
   // console.log(card_data)
 
+  console.log("card_data.createdAt",card_data.createdAt)
+
 
   return (
     <Link

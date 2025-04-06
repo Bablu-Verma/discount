@@ -25,11 +25,11 @@ export async function POST(req: Request) {
       product_status: "ACTIVE",
       main_banner: { $elemMatch: { is_active: true } },
     }).limit(6).populate("store", "name slug store_img store_link")
-    .populate("category", "name slug").select('store category main_banner product_slug slug_type title').lean();
+    .populate("category", "name slug").select('store category main_banner product_slug slug_type title createdAt updatedAt').lean();
     const long_poster = await CampaignModel.find({
       product_status: "ACTIVE",
       long_poster: { $elemMatch: { is_active: true } },
-    }).limit(4).select('store category long_poster product_slug slug_type title').populate("store", "name slug store_img store_link")
+    }).limit(4).select('store category long_poster product_slug slug_type  title').populate("store", "name slug store_img store_link")
     .populate("category", "name slug").lean();
     const premium_product = await CampaignModel.find({
       product_status: "ACTIVE",
@@ -57,14 +57,14 @@ export async function POST(req: Request) {
     const best_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "best",
-    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id') .populate("store", "name slug store_img store_link")
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createdAt updatedAt _id') .populate("store", "name slug store_img store_link")
     .populate("category", "name slug").lean();
     const offer_deal = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: { $in: ["new", "hot", "best"] }, // Ensures at least one tag exists
     }).limit(20)
     .populate("store", "name slug store_img store_link")
-    .populate("category", "name slug").select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    .populate("category", "name slug").select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createdAt updatedAt _id').lean();
 
     return new NextResponse(
       JSON.stringify({

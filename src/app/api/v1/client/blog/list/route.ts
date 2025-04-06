@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
     const totalBlogs = await BlogModel.countDocuments(filters);
 
-    const blog_category = await BlogCategoryModel.find({status:'ACTIVE'}).select('-description -status -imges').lean()
+    const blog_category = await BlogCategoryModel.find({status:'ACTIVE'}).select('-description -status ').lean()
 
     return NextResponse.json(
       {

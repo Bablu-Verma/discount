@@ -8,22 +8,21 @@ import axios from "axios";
 import { get_All_blogs } from "@/utils/api_url";
 import ClientBlog from "./_clientblog";
 import { getServerToken } from "@/helpers/server/server_function";
+import blogbanner from '../../../public/blogbanner.jpg'
 
 
 
-
-const fetchData = async (token:string) => {
+const fetchData = async (token: string) => {
   try {
     const { data } = await axios.post(get_All_blogs, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!data.success) {
       throw new Error("Failed to fetch data");
     }
-    return data;
+    return data.data;
   } catch (error) {
     console.error(error);
   }
@@ -34,8 +33,11 @@ const AllBlog = async () => {
   const fetchBlogData = await fetchData(token);
 
 
-  const blogs = fetchBlogData.data
 
+
+  const { blogs, blog_type, category } = fetchBlogData
+
+  // console.log(category)
 
 
   return (
@@ -43,21 +45,20 @@ const AllBlog = async () => {
       <TopHeader />
       <MainHeader />
       <main>
-      <div className="max-w-6xl mx-auto">
-            <Image
-              sizes="100vw"
-              priority
-              unoptimized
-              src="https://i.imgur.com/ml6BQvo.jpeg"
-              alt="blog"
-              height={200}
-              width={500}
-              className="h-40 object-cover lg:h-auto w-full"
-            />
-          </div>
+        <div className="">
+          <Image
+            sizes="100vw"
+            priority
+            src={blogbanner}
+            alt="blog"
+            height={200}
+            width={500}
+            className="h-40 object-cover lg:h-auto w-full"
+          />
+        </div>
         <section className="max-w-6xl mx-auto  mb-16 p-2 xl:p-0">
-      
-         <ClientBlog blog={blogs} />
+
+          <ClientBlog blog={blogs} category={category} />
         </section>
 
         <BottomToTop />

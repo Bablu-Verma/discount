@@ -21,9 +21,10 @@ export async function POST(req: Request) {
     filter.status = "ACTIVE";
 
     // Fetch the blog with the applied filter
-    const blog = await BlogModel.findOne(filter).select('-status')
+    const blog = await BlogModel.findOne(filter)
+      .select('-status')
       .populate("writer_id", "name email profile")
-      .populate("blog_category", "name slug");
+      .populate("blog_category", 'name slug');
 
     if (!blog) {
       return NextResponse.json(
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
       blog_category: blog.blog_category._id,
       _id: { $ne: blog._id },
     })
-    .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords')
+      .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords')
       .limit(5)
       .populate("writer_id", "name email profile")
       .populate("blog_category", "name slug")

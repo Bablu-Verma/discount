@@ -1,26 +1,51 @@
+'use client'
+
 import BlogCard from '@/components/small_card/BlogCard'
 
 import React from 'react'
-import Filter from './_filter'
+// import Filter from './_filter'
 import { IBlog } from '@/model/BlogModal'
+import { IBCategory } from '@/model/BlogCategoryModel'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import Image from 'next/image'
 
 
 interface CBProps {
-    blog:IBlog[]
+  blog: IBlog[]
+  category: IBCategory[]
 }
 
-const ClientBlog:React.FC<CBProps> = ({blog}) => {
+const ClientBlog: React.FC<CBProps> = ({ blog, category }) => {
   return (
-    <div className="md:grid grid-cols-8 gap-8 mt-12 lg:mt-20">
-    {/* <Filter /> */}
-    <div className="col-span-6">
-      <div className="max-w-[1400px] mx-auto px-2 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-4 gap-3 md:gap-6">
-        {blog?.map((item:IBlog, i) => (
-          <BlogCard item={item} key={i}/>
+
+    <>
+      <div className=" px-2.5 py-8 flex justify-start items-center gap-8">
+        {category && category.length > 0 && category.map((item, i) => (
+          <div>
+            <button className='rounded-full border-[4px] border-primary  hover:border-secondary cursor-pointer  '>
+              <Image
+                alt=''
+                sizes='100vw'
+                className='w-20 h-20 rounded-full'
+                src={item.imges[0]}
+                width={20}
+                height={20}
+              />
+
+            </button>
+            <h4 className='text-center text-lg text-secondary capitalize'>{item.name}</h4>
+          </div>
         ))}
       </div>
-    </div>
-  </div>
+      <div className="mx-auto px-2 pt-2 grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-4 gap-3 md:gap-6">
+        {blog?.map((item: IBlog, i) => (
+          <BlogCard item={item} key={i} />
+        ))}
+      </div>
+    </>
+
+
+
   )
 }
 

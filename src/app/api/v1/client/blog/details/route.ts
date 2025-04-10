@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const blog = await BlogModel.findOne(filter)
       .select('-status')
       .populate("writer_id", "name email profile")
-      .populate("blog_category", 'name slug');
+      .populate("blog_category", "name slug");
 
     if (!blog) {
       return NextResponse.json(

@@ -13,7 +13,6 @@ export interface ICampaign {
   store: mongoose.Types.ObjectId;
   category: mongoose.Types.ObjectId;
   description: string;
-  redirect_url: string;
   img_array: string[];
   product_tags?: ("new" | "hot" | "best")[];
   long_poster: { is_active: boolean; image: string }[];
@@ -65,7 +64,6 @@ const CampaignSchema = new Schema<ICampaign>(
     category: {type: Schema.Types.ObjectId,index: true,
       ref:'Category' , required: [true, "Category is required"] },
     description: { type: String, required: [true, "Description is required"] },
-    redirect_url: { type: String, required: [true, "Client URL is required"] },
     img_array: { type: [String], required: [true, "Images are required"] },
 
     product_tags: {

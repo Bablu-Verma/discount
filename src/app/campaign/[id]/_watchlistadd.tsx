@@ -22,11 +22,11 @@ const Watchlistadd:React.FC<IWAadProps> = ({oneitem}) => {
  const dispatch = useDispatch()
 
 
- console.log(wishlist)
+//  console.log(wishlist)
 
 //  console.log(oneitem)
 
-  const isInWishlist = wishlist.some((item) => item.product_id === Number(oneitem.product_id));
+  const isInWishlist = wishlist.some((item) => item._id === oneitem._id)
 
   const router = useRouter();
 
@@ -43,7 +43,7 @@ const Watchlistadd:React.FC<IWAadProps> = ({oneitem}) => {
       const { data } = await axios.post(
         wishlist_add_,
         {
-          product_id:oneitem.product_id
+          product_id:oneitem._id
         },
         {
           headers: {

@@ -16,11 +16,11 @@ export async function POST(req: Request) {
     const { authenticated, user, usertype, message } =
       await authenticateAndValidateUser(req);
 
-    // ✅ Ensure all queries are awaited
+
     const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10) .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords').lean();
     const category = await CategoryModel.find({ status: "ACTIVE" }).select('-status -description').lean();
     const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20).select('-description -store_link -cashback_type -store_status').lean();
-    const coupon = await CouponModel.find({ status: "ACTIVE" }).select('-description -expiry_date -status').limit(10).populate('store', 'name store_img').populate('category', 'name').lean();
+    const coupon = await CouponModel.find({ status: "ACTIVE" }).select('-description -expiry_date -status').limit(10).populate('store', 'name store_link store_img').populate('category', 'name').lean();
     const main_banner = await CampaignModel.find({
       product_status: "ACTIVE",
       main_banner: { $elemMatch: { is_active: true } },
@@ -46,14 +46,7 @@ export async function POST(req: Request) {
       },
     }).select('store category flash_sale product_slug slug_type title  createAt updateAt _id').populate("store", "name slug store_img store_link")
     .populate("category", "name slug").lean();
-    // const new_product = await CampaignModel.find({
-    //   product_status: "ACTIVE",
-    //   product_tags: "new",
-    // }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
-    // const hot_product = await CampaignModel.find({
-    //   product_status: "ACTIVE",
-    //   product_tags: "hot",
-    // }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id').lean();
+    
     const best_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "best",

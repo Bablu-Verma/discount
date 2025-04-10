@@ -24,7 +24,6 @@ export interface IClintCampaign {
   calculation_mode: "PERCENTAGE" | "FIX"; 
   store: string;
   category: string;
-  redirect_url: string;
   img_array: string[];
   product_tags: string[];
   long_poster: { is_active: boolean; image: string }[];
@@ -64,7 +63,6 @@ const AddProduct = () => {
     calculation_mode: "" as "PERCENTAGE" | "FIX",
     store: "",
     category: "",
-    redirect_url: "",
     img_array: [],
     product_tags: [],
     long_poster: [
@@ -156,7 +154,6 @@ const AddProduct = () => {
         "calculation_mode",
         "store",
         "category",
-        "redirect_url",
         "img_array",
         "product_tags",
         "slug_type",
@@ -293,23 +290,7 @@ const AddProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             />
           </div>
-          <div>
-            <label
-              htmlFor="redirect_url"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Redirect url
-            </label>
-            <input
-              type="text"
-              id="redirect_url"
-              name="redirect_url"
-              value={form_data.redirect_url}
-              onChange={handleChange}
-              placeholder="Product url"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-            />
-          </div>
+         
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label

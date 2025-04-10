@@ -40,7 +40,6 @@ export async function POST(req: Request) {
       store,
       category,
       description,
-      redirect_url,
       img_array,
       calculation_mode,
       t_and_c,
@@ -177,7 +176,6 @@ export async function POST(req: Request) {
     updateIfValid("title", title);
     updateIfValid("store", store);
     updateIfValid("category", category);
-    updateIfValid("redirect_url", redirect_url);
     updateIfValid("t_and_c", t_and_c);
     updateIfValid("meta_title", meta_title);
     updateIfValid("meta_description", meta_description);

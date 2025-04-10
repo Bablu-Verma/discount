@@ -41,6 +41,10 @@ const Wishlist = async () => {
 
   const page_data = await GetData(token);
 
+  // console.log(page_data)
+
+  // return
+
   const wishlist_products = page_data.products;
 
   return (
@@ -48,25 +52,20 @@ const Wishlist = async () => {
       <TopHeader />
       <MainHeader />
       <main className="min-h-screen">
-        <div className="max-w-6xl  mx-auto px-4 flex mt-7 md:mt-10 justify-between items-end mb-4 relative">
-          <h2 className="text-xl font-semibold text-gray-700 capitalize pr-5 md:pr-10 gap-10">
-            Total ({page_data?.count})
-          </h2>
+        <div className="max-w-6xl  mx-auto px-4 flex mt-7 md:mt-10 justify-end items-end mb-4 relative">
+         
          <Wishlist_remove id={page_data?.wishlist_id} />
         </div>
         <div className="overflow-auto">
-        <div className="max-w-6xl min-w-[800px] mx-auto px-4 pt-2  mb-4 gap-3 ">
-          <div className="grid grid-cols-10 w-full mt-10 py-2 text-xl font-semibold mb-2 select-none px-4">
+        <div className="max-w-6xl min-w-[800px] mx-auto p-4   mb-4 gap-3 border-[1px] rounded-3xl mt-20 border-gray-500 ">
+          <div className="grid grid-cols-8 w-full pt-3 pb-5 text-xl font-semibold mb-4  select-none px-4 border-b-[1px] border-b-gray-200">
             <h3 className="text-base text-secondary">S No.</h3>
-            <h3 className="col-span-3 text-base text-secondary">Product...</h3>
-            <h3 className="text-base text-secondary">Partner</h3>
-            <h3 className="text-base text-secondary"></h3>
+            <h3 className="col-span-3 text-base text-secondary">Product Name</h3>
+            <h3 className="text-base text-secondary col-span-2">Brand</h3>
             <h3 className="text-base text-secondary">Offer</h3>
-            <h3 className="text-base text-secondary">Status</h3>
-            <h3 className="text-base text-secondary">Action</h3>
+            <h3 className="text-base text-secondary">Remove</h3>
           </div>
           <Wishlist_client item_={wishlist_products}/>
-
         </div>
         </div>
         <BottomToTop />

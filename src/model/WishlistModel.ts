@@ -14,7 +14,7 @@ const WishlistSchema = new Schema<IWishlist>(
     },
     campaigns: {
       type: [Schema.Types.ObjectId], 
-      required: [true, "Campaign list is required"],
+      required: [true, "Campaign is required"],
     },
   },
   { timestamps: true } 

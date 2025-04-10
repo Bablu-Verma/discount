@@ -25,7 +25,9 @@ export const bank_upi_api = main_url + '/client/bank/add'
 export const bank_upi_verify_api = main_url + '/client/bank/upi-verify'
 export const coupons_list_api = main_url + '/client/coupons/get'
 export const list_store_api = main_url + '/client/store/list'
-
+export const wishlist_add_ = main_url + '/client/wishlist/add'
+export const wishlist_product_remove_ = main_url + '/client/wishlist/remover-product'
+export const wishlist__remove_ = main_url + '/client/wishlist/remove-wishlist'
 
 
 
@@ -70,10 +72,7 @@ export const user_profile_api = main_url + '/user/profile'
 
 
 export const search_client_ = main_url + '/search'
-export const wishlist_add_ = main_url + '/wishlist/add'
 
-export const wishlist_product_remove_ = main_url + '/wishlist/remover-product'
-export const wishlist__remove_ = main_url + '/wishlist/remove-wishlist'
 
 
 

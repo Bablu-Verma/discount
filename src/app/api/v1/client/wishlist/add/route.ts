@@ -44,6 +44,8 @@ export async function POST(req: Request) {
         }
       );
     }
+    
+    console.log('product_id', product_id)
 
     let wishlist = await WishlistModel.findOne({ user_id });
 

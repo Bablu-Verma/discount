@@ -27,7 +27,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
 
 
 
-  const remover_data = async (id: number) => {
+  const remover_data = async (id) => {
     try {
       const { data } = await axios.post(
         wishlist_product_remove_,
@@ -60,7 +60,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
         return (
           <div
             key={i}
-            className="grid grid-cols-10 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 items-center px-4 rounded"
+            className="grid grid-cols-8 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-100 items-center px-4 rounded-full shadow-sm"
           >
             <span className="text-sm text-secondary">{i + 1}.</span>
             <Link
@@ -75,30 +75,26 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
                 height={20}
                 alt={item.title}
               />
-              <span className="mx-3 line-clamp-1 text-primary hover:text-blue-500 text-sm hover:underline">{item.title}</span>
+              <span className="mx-3 line-clamp-1 text-primary hover:text-blue-500 text-base hover:underline">{item.title}</span>
               </Link>
-            <span className="col-span-2 text-sm capitalize line-clamp-1">{item.store}</span>
+            <Link href={`/store/${item.store.slug}`} className="col-span-2 text-base capitalize line-clamp-1">{item.store.name}</Link>
             <span className="text-base font-medium capitalize line-clamp-1">₹{item.calculated_cashback.toString()}</span>
-            <span>
-              {item.product_status == 'ACTIVE' ? (
-                <b className="text-green-700 text-sm ">ACTIVE</b>
-              ) : item.product_status == 'PAUSE' ? (
-                <b className="text-red-700 text-sm ">Expire</b>
-              ):''}
-            </span>
+         
             {/* <Link
               href={`/campaign/${item.product_slug}`}
               className="text-primary hover:text-blue-500 text-sm hover:underline"
             >
               More Info
             </Link> */}
+              <span>
               <button
-                className=" hover:bg-red-300 py-1 px-5 rounded-md text-secondary inline-block"
+                className="p-1 rounded-md text-red-300 hover:text-red-700 inline"
                 title="Remove this item"
-                onClick={() => remover_data(item.product_id ?? 0)}
+                onClick={() => remover_data(item._id ?? 0)}
               >
-                <i className="fa-solid fa-trash text-sm"></i>
+                <i className="fa-solid fa-trash text-base"></i>
               </button>
+              </span>
           </div>
         );
       })}

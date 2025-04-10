@@ -45,7 +45,7 @@ const Wishlist_remove:React.FC<IWRProps> = ({id}) => {
   }
 
   return (
-    <button onClick={remover_wishlist} className="text-gray-700 bg-white py-1.5 px-4 rounded capitalize font-medium text-[11px] border-2 border-gray-600 text-sm hover:shadow-sm hover:rounded-md duration-200">
+    <button onClick={remover_wishlist} className="text-blue-500 underline hover:text-red-400 capitalize font-normal text-sm ">
     Remove all 
   </button>
   )

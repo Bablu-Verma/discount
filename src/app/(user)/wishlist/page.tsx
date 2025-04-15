@@ -58,12 +58,12 @@ const Wishlist = async () => {
         </div>
         <div className="overflow-auto">
         <div className="max-w-6xl min-w-[800px] mx-auto p-4   mb-4 gap-3 border-[1px] rounded-3xl mt-20 border-gray-500 ">
-          <div className="grid grid-cols-8 w-full pt-3 pb-5 text-xl font-semibold mb-4  select-none px-4 border-b-[1px] border-b-gray-200">
+          <div className="grid grid-cols-8 w-full pt-3 pb-5 text-xl font-semibold mb-4  rounded-md select-none px-4 shadow-sm border-b-[1px] border-b-gray-200">
             <h3 className="text-base text-secondary">S No.</h3>
             <h3 className="col-span-3 text-base text-secondary">Product Name</h3>
             <h3 className="text-base text-secondary col-span-2">Brand</h3>
             <h3 className="text-base text-secondary">Offer</h3>
-            <h3 className="text-base text-secondary">Remove</h3>
+            <h3 className="text-base text-secondary">Action</h3>
           </div>
           <Wishlist_client item_={wishlist_products}/>
         </div>

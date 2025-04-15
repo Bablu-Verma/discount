@@ -60,12 +60,11 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
         return (
           <div
             key={i}
-            className="grid grid-cols-8 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-100 items-center px-4 rounded-full shadow-sm"
+            className="grid grid-cols-8 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 rounded-md  items-center px-4 "
           >
             <span className="text-sm text-secondary">{i + 1}.</span>
-            <Link
-              href={`/campaign/${item.product_slug}`}
-              className="text-primary hover:text-blue-500 text-sm hover:underline col-span-3 flex items-center pr-3"
+            <span
+              className="  text-sm  col-span-3 flex items-center pr-3"
             >
               <Image
                 src={item.img_array[0]}
@@ -75,8 +74,8 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
                 height={20}
                 alt={item.title}
               />
-              <span className="mx-3 line-clamp-1 text-primary hover:text-blue-500 text-base hover:underline">{item.title}</span>
-              </Link>
+               <span className="mx-3 line-clamp-1 text-secondary  text-base ">{item.title}</span>
+              </span>
             <Link href={`/store/${item.store.slug}`} className="col-span-2 text-base capitalize line-clamp-1">{item.store.name}</Link>
             <span className="text-base font-medium capitalize line-clamp-1">₹{item.calculated_cashback.toString()}</span>
          
@@ -86,7 +85,13 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
             >
               More Info
             </Link> */}
-              <span>
+              <span >
+                <Link
+                className="p-1 rounded-md text-blue-300 hover:text-blue-600 mr-5 inline-block"
+                 href={`/campaign/${item.product_slug}`}
+                >
+                  <i className="fa-regular fa-eye"></i>
+                </Link>
               <button
                 className="p-1 rounded-md text-red-300 hover:text-red-700 inline"
                 title="Remove this item"

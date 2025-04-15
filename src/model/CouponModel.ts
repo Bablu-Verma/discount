@@ -16,8 +16,6 @@ export interface ICoupon {
   status: CouponStatus;
 }
 
-
-
 const CouponSchema = new Schema<ICoupon>(
   {
     title: {

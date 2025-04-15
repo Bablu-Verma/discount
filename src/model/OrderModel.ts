@@ -1,24 +1,22 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const ORDER_STATUSES = ["Redirected", "Order", "Completed", "Cancelled"] as const;
-const PAYMENT_STATUSES = ["Pending", "confirm", "Failed"] as const;
+const PAYMENT_STATUSES = ["Pending", "Confirmed", "Failed"] as const;
 
 interface IHistory {
   status: string;
   date: Date;
   details: string;
-  proof_document?: string;
 }
 
-export interface IRecord extends Document {
+export interface IOrder extends Document {
   user_id: mongoose.Types.ObjectId;
-  product_id: mongoose.Types.ObjectId;
-  product_url: string;
-  price: Number;
-  offer_price: Number;
-  cashback_: Number;
-  calculated_cashback: Number;
+  store_id: mongoose.Types.ObjectId;
+  price: number;
+  offer_price: number;
+  cashback_rate: number;
+  calculated_cashback: number;
   calculation_mode: "PERCENTAGE" | "FIX";
   transaction_id: string;
   order_status: (typeof ORDER_STATUSES)[number];
@@ -29,8 +27,7 @@ export interface IRecord extends Document {
   updatedAt?: Date;
 }
 
-// Order Schema
-const RecordSchema = new Schema<IRecord>(
+const OrderSchema = new Schema<IOrder>(
   {
     user_id: {
       type: Schema.Types.ObjectId,
@@ -38,36 +35,26 @@ const RecordSchema = new Schema<IRecord>(
       ref: "User",
       index: true,
     },
-    product_id: {
+    store_id: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: "Store",
       index: true,
-      ref:'Campaign'
     },
-    product_url: {
-      type: String,
-      required: true,
-    },
+   
     transaction_id: {
       type: String,
-      unique: true,  
+      unique: true,
       default: uuidv4,
       required: true,
     },
-    price: { type: Number, required: [true, "Price is required"] },
-    offer_price: { type: Number, required: [true, "Offer price is required"] },
-    calculated_cashback:{
-      type: Number,
-      required: [true, "Calculated Cashback is required"],
-    },
+    price: { type: Number, required: true },
+    calculated_cashback: { type: Number, required: true },
+    cashback_rate: { type: Number, required: true }, 
     calculation_mode: {
       type: String,
       enum: ["PERCENTAGE", "FIX"],
-      required: [true, "Calculation mode is required"],
-    },
-    cashback_: {
-      type: Number,
-      required: [true, "Cashback is required"],
+      required: true,
     },
     order_status: {
       type: String,
@@ -81,47 +68,35 @@ const RecordSchema = new Schema<IRecord>(
     },
     order_history: [
       {
-        status: {
-          type: String,
-          required: true,
-          enum: ORDER_STATUSES,
-        },
+        status: { type: String, enum: ORDER_STATUSES, required: true },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
-       
       },
     ],
     payment_history: [
       {
-        status: {
-          type: String,
-          required: true,
-          enum: PAYMENT_STATUSES,
-        },
+        status: { type: String, enum: PAYMENT_STATUSES, required: true },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
-        
       },
     ],
   },
   { timestamps: true }
 );
 
-// Middleware to track history and auto-set payment status
-RecordSchema.pre("save", function (next) {
-  if (this.isNew ) {
+// ✅ Auto-push initial order history on creation
+OrderSchema.pre("save", function (next) {
+  if (this.isNew) {
     this.order_history.push({
       status: this.order_status,
       date: new Date(),
       details: `Order created with status ${this.order_status}`,
     });
-
   }
   next();
 });
 
+const OrderModel: Model<IOrder> =
+  mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchema);
 
-const RecordModel: Model<IRecord> =
-  mongoose.models.Record || mongoose.model<IRecord>("Record", RecordSchema);
-
-export default RecordModel;
+export default OrderModel;

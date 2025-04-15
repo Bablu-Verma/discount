@@ -3,21 +3,52 @@ const AutoIncrementFactory = require("mongoose-sequence");
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
+export interface ICashbackHistory {
+  cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
+  cashback_amount: string;
+  start_date: Date;
+  end_date?: Date;
+}
+
 export interface IStore extends Document {
   name: string;
-  category:mongoose.Types.ObjectId,
+  category: mongoose.Types.ObjectId;
   description: string;
-  tc:String,
-  tracking:String,
+  tc: string;
+  tracking: string;
   slug: string;
   store_id?: number;
   store_img: string;
   cashback_status: "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK";
   store_link: string;
+
   cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
-  cashback_amount?: string;
+  cashback_amount: string;
+  cashback_history: ICashbackHistory[];
   store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
+  click_count?: number;
 }
+
+const CashbackHistorySchema = new Schema<ICashbackHistory>({
+  cashback_type: {
+    type: String,
+    enum: ["PERCENTAGE", "FLAT_AMOUNT"],
+    required: true,
+  },
+  cashback_amount: {
+    type: String,
+    required: true,
+  },
+  start_date: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  end_date: {
+    type: Date,
+    default: null,
+  },
+});
 
 const StoreSchema = new Schema<IStore>(
   {
@@ -62,6 +93,7 @@ const StoreSchema = new Schema<IStore>(
       type: String,
       required: true,
     },
+   
     cashback_type: {
       type: String,
       enum: ["PERCENTAGE", "FLAT_AMOUNT"],
@@ -69,22 +101,31 @@ const StoreSchema = new Schema<IStore>(
     },
     cashback_amount: {
       type: String,
+      required: true,
+    },
+    cashback_history: {
+      type: [CashbackHistorySchema],
+      default: [],
     },
     store_status: {
       type: String,
       default: "ACTIVE",
       enum: ["ACTIVE", "INACTIVE", "REMOVED"],
     },
-    tc:{
+    tc: {
       type: String,
       required: [true, "Store terms & Conditions is required"],
-      trim: true
+      trim: true,
     },
-    tracking:{
+    tracking: {
       type: String,
       required: [true, "Add Cashback tracking "],
-      trim: true
-    }
+      trim: true,
+    },
+    click_count: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

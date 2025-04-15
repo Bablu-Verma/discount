@@ -14,7 +14,7 @@ import {
   product_list_,
 } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
-import { IRecord } from "@/model/OrderModel";
+import { IRecord } from "@/model/CashbackOrderModel";
 
 const OrderList = () => {
   const token = useSelector((state: RootState) => state.user.token);

@@ -3,6 +3,9 @@ import dbConnect from "@/lib/dbConnect";
 import WishlistModel from "@/model/WishlistModel";
 
 import { authenticateAndValidateUser } from "@/lib/authenticate";
+import mongoose from "mongoose";
+
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -64,11 +67,12 @@ export async function POST(req: Request) {
     }
 
     wishlist.campaigns = wishlist.campaigns.filter(
-      (id: number) => id !== product_id
+      (id: mongoose.Types.ObjectId | string) =>
+        id.toString() !== product_id.toString()
     );
 
     await wishlist.save();
-
+    console.log('Campaign removed from wishlist successfully.')
     return new NextResponse(
       JSON.stringify({
         success: true,

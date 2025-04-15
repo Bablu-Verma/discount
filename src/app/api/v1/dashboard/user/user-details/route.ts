@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-import RecordModel from "@/model/OrderModel";
+import RecordModel from "@/model/CashbackOrderModel";
 import UserUPIModel from "@/model/UserUPIModel";
 import ClaimFormModel from "@/model/ClaimForm";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";

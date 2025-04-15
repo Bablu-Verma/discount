@@ -3,79 +3,75 @@ import dbConnect from "@/lib/dbConnect";
 
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import CampaignModel from "@/model/CampaignModel";
-import RecordModel from "@/model/OrderModel";
+import OrderModel from "@/model/CashbackOrderModel";
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate user
     const { authenticated, user, message } = await authenticateAndValidateUser(req);
     if (!authenticated || !user) {
-      return new NextResponse(JSON.stringify({ success: false, message }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ success: false, message }, { status: 401 });
     }
 
-
-
-    // Parse request data
     const { product_id } = await req.json();
     if (!product_id) {
-      return new NextResponse(JSON.stringify({ success: false, message: "Product ID is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ success: false, message: "Product ID is required" }, { status: 400 });
     }
 
-    // Fetch product details
-    const product = await CampaignModel.findOne({_id:product_id, product_status: "ACTIVE"}) 
+    const product = await CampaignModel.findOne({
+      _id: product_id,
+      product_status: "ACTIVE",
+    });
+
     if (!product) {
-      return new NextResponse(JSON.stringify({ success: false, message: "Product not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
     }
-   
 
+    const calculated_cashback =
+      product.calculation_mode === "PERCENTAGE"
+        ? (product.offer_price * product.cashback_) / 100
+        : product.cashback_;
 
+    const transaction_id = uuidv4();
 
-    const newOrder = new RecordModel({
+    const order = new OrderModel({
       user_id: user._id,
+      store_id: product.store_id, // store ref (if exists in CampaignModel)
       product_id: product._id,
       product_url: product.redirect_url,
-      price:product.actual_price,
-      offer_price:product.offer_price,
-      calculated_cashback:product.calculated_cashback,
-      calculation_mode:product.calculation_mode,
-      cashback_:product.cashback_,
+      price: product.actual_price,
+      offer_price: product.offer_price,
+      cashback_snapshot: product.cashback_,
+      calculation_mode: product.calculation_mode,
+      calculated_cashback,
+      transaction_id,
+      source_type: "click", // default if created from redirect
       order_status: "Redirected",
       payment_status: null,
-      order_history: [],
+      order_history: [{
+        status: "Redirected",
+        date: new Date(),
+        details: "User redirected to product via cashback link",
+      }],
       payment_history: [],
     });
 
-  const save_order =  await newOrder.save();
+    const saved = await order.save();
 
- 
-  return  new NextResponse(
-    JSON.stringify({
+    return NextResponse.json({
       success: true,
       message: "Order created successfully",
       order: {
-        url: `${product.redirect_url}/?utm_source=${save_order.transaction_id}`,
+        url: `${product.redirect_url}/?utm_source=${transaction_id}`,
+        transaction_id,
       },
-    }),
-    {
-      status: 201,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+    }, { status: 201 });
 
-  } catch (error) {
+  }catch (error) {
     if (error instanceof Error) {
       console.error("Failed to create order:", error.message);
       return new NextResponse(

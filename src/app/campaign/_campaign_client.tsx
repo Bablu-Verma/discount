@@ -47,7 +47,7 @@ const CampaignClient:React.FC<productProps> = ({product_}) => {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
-        toast.error(error.response?.data.message);
+        // toast.error(error.response?.data.message);
       } else {
         console.error("Unknown error", error);
       }
@@ -61,6 +61,7 @@ const CampaignClient:React.FC<productProps> = ({product_}) => {
   },[pfilter])
 
 
+  console.log('products',products)
  
   return (
     <div className="md:grid grid-cols-8 gap-8">

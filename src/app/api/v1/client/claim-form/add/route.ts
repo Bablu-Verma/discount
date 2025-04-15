@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import ClaimFormModel from "@/model/ClaimForm";
-import RecordModel from "@/model/OrderModel";
+import RecordModel from "@/model/CashbackOrderModel";
 
 export async function POST(req: Request) {
   await dbConnect();

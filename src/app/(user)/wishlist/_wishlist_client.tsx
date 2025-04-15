@@ -42,7 +42,8 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
 
       
       dispatch(removeItem(id));
-      toast.success("Product removed successfully!");
+      // toast.success("Product removed successfully!");
+      console.log('data', data)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error Product remove ", error.response?.data.message);
@@ -63,8 +64,9 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
             className="grid grid-cols-8 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 rounded-md  items-center px-4 "
           >
             <span className="text-sm text-secondary">{i + 1}.</span>
-            <span
-              className="  text-sm  col-span-3 flex items-center pr-3"
+            <div
+             
+              className="col-span-3 flex items-center pr-3"
             >
               <Image
                 src={item.img_array[0]}
@@ -74,24 +76,18 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
                 height={20}
                 alt={item.title}
               />
-               <span className="mx-3 line-clamp-1 text-secondary  text-base ">{item.title}</span>
-              </span>
+              <span className="mx-3 line-clamp-1 text-secondary  text-base">{item.title}</span>
+              </div>
             <Link href={`/store/${item.store.slug}`} className="col-span-2 text-base capitalize line-clamp-1">{item.store.name}</Link>
-            <span className="text-base font-medium capitalize line-clamp-1">₹{item.calculated_cashback.toString()}</span>
-         
-            {/* <Link
+            <span className="text-base font-medium capitalize text-green-500 line-clamp-1">Up to ₹{item.calculated_cashback.toString()}</span>
+        
+              <span>
+              <Link
               href={`/campaign/${item.product_slug}`}
-              className="text-primary hover:text-blue-500 text-sm hover:underline"
+              className="text-primary mr-10 hover:text-blue-500 text-sm hover:underline"
             >
               More Info
-            </Link> */}
-              <span >
-                <Link
-                className="p-1 rounded-md text-blue-300 hover:text-blue-600 mr-5 inline-block"
-                 href={`/campaign/${item.product_slug}`}
-                >
-                  <i className="fa-regular fa-eye"></i>
-                </Link>
+            </Link>
               <button
                 className="p-1 rounded-md text-red-300 hover:text-red-700 inline"
                 title="Remove this item"

@@ -28,7 +28,7 @@ export const GetData = async (token:string) => {
   } catch (error) {
     if (error instanceof AxiosError) { 
       console.error("Error registering user", error.response?.data.message);
-      toast.error(error.response?.data.message);
+      // toast.error(error.response?.data.message);
     } else {
       console.error("Unknown error", error);
     }

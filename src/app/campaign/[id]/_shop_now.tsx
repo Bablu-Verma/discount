@@ -53,8 +53,8 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
         console.log(data);
         setTimeout(() => {
           setModelOpen(false);
-          if (data?.order?.url && typeof data.order.url === "string") {
-            window.open(data.order.url, "_blank");
+          if (data?.url && typeof data.url === "string") {
+            window.open(data.url, "_blank");
           } else {
             console.error("Invalid URL");
           }

@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
 
     const coupon = await CouponModel.findOne(query)
-      .populate("store", "name slug store_img store_link")
+      .populate("store", "name cashback_type cashback_rate store_link store_img")
       .populate("category", "name slug")
       .lean();
 

@@ -57,9 +57,9 @@ export async function POST(req: Request) {
     // Fetch Products with Pagination
     const products = await CampaignModel.find(filters)
       .skip(skip)
-      .select('store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createdAt updatedAt _id')
+      .select('store category offer_price calculated_cashback calculation_mode img_array product_tags actual_price product_slug slug_type title  createdAt updatedAt _id')
       .limit(Number(limit))
-      .populate('store', 'name slug store_img')
+      .populate('store', 'name cashback_type cashback_rate store_link store_img')
       .populate('category', 'name slug')
       .sort({ createdAt: -1 }).lean();
 

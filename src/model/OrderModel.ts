@@ -41,15 +41,14 @@ const OrderSchema = new Schema<IOrder>(
       ref: "Store",
       index: true,
     },
-   
     transaction_id: {
       type: String,
       unique: true,
       default: uuidv4,
       required: true,
     },
-    price: { type: Number, required: true },
-    calculated_cashback: { type: Number, required: true },
+    order_value: { type: Number, required: true },
+    cashback: { type: Number, required: true },
     cashback_rate: { type: Number, required: true }, 
     calculation_mode: {
       type: String,

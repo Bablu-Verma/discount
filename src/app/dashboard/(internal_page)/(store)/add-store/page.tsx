@@ -16,9 +16,8 @@ const AddStore = () => {
     cashback_status: "ACTIVE_CASHBACK" as "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK",
     store_link: "",
     cashback_type: "PERCENTAGE" as "PERCENTAGE" | "FLAT_AMOUNT",
-    cashback_amount: "",
+    cashback_rate: "",
     store_status: "ACTIVE" as "ACTIVE" | "INACTIVE",
-   
     category: "",
     tracking: ''
   });
@@ -48,14 +47,14 @@ const AddStore = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, store_img, cashback_status, store_link, cashback_type, cashback_amount, store_status,category,tracking } = formData;
+    const { name, store_img, cashback_status, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
 
     if (!name.trim()) return toast.error("Please enter a store name.");
 
     if (!store_img.trim()) return toast.error("Please enter a store image link.");
     if (!store_link.trim()) return toast.error("Please enter a store link.");
-    if (!cashback_amount.trim()) return toast.error("Please enter a cashback amount.");
-    if (isNaN(Number(cashback_amount)) || Number(cashback_amount) <= 0) return toast.error("Cashback amount must be a valid number greater than zero.");
+    if (!cashback_rate.trim()) return toast.error("Please enter a cashback amount.");
+    if (isNaN(Number(cashback_rate)) || Number(cashback_rate) <= 0) return toast.error("Cashback amount must be a valid number greater than zero.");
 
 
     if (!store_link) return toast.error("Please enter a valid store link URL.");
@@ -77,7 +76,7 @@ const AddStore = () => {
           cashback_status,
           store_link,
           cashback_type,
-          cashback_amount,
+          cashback_rate,
           store_status,
           tc:editorContentTc,
            category,tracking
@@ -175,13 +174,13 @@ const AddStore = () => {
           <div className="grid grid-cols-3 gap-5">
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Amount/Percentage</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Rate</label>
               <input
                 type="number"
-                name="cashback_amount"
-                value={formData.cashback_amount}
+                name="cashback_rate"
+                value={formData.cashback_rate}
                 onChange={handleInputChange}
-                placeholder="Enter cashback amount/percentage"
+                placeholder="Enter cashback cashback_rate"
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               />
             </div>

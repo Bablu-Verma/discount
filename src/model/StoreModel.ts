@@ -5,7 +5,7 @@ const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface ICashbackHistory {
   cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
-  cashback_amount: string;
+  cashback_rate: string;
   start_date: Date;
   end_date?: Date;
 }
@@ -23,7 +23,7 @@ export interface IStore extends Document {
   store_link: string;
 
   cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
-  cashback_amount: string;
+  cashback_rate: string;
   cashback_history: ICashbackHistory[];
   store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
   click_count?: number;
@@ -35,7 +35,7 @@ const CashbackHistorySchema = new Schema<ICashbackHistory>({
     enum: ["PERCENTAGE", "FLAT_AMOUNT"],
     required: true,
   },
-  cashback_amount: {
+  cashback_rate: {
     type: String,
     required: true,
   },
@@ -99,7 +99,7 @@ const StoreSchema = new Schema<IStore>(
       enum: ["PERCENTAGE", "FLAT_AMOUNT"],
       required: true,
     },
-    cashback_amount: {
+    cashback_rate: {
       type: String,
       required: true,
     },

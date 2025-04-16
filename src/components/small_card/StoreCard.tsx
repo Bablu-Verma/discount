@@ -14,8 +14,8 @@ const StoreCard: React.FC<istorecard> = ({ item }) => {
       className="bg-white rounded-md px-3 pb-2 justify-center gap-1 flex flex-col items-center border-[1px] border-gray-200 pt-10 relative hover:shadow-orange-300"
     >
       <p className="text-[12px] min-w-[50%] text-center text-light bg-primary rounded-b-xl px-3 py-[1px] absolute top-0 ">
-        {item.cashback_type == "FLAT_AMOUNT" && <>₹{item.cashback_amount}.00</>}
-        {item.cashback_type == "PERCENTAGE" && <>{item.cashback_amount}%</>} Off
+        {item.cashback_type == "FLAT_AMOUNT" && <>₹{item.cashback_rate}.00</>}
+        {item.cashback_type == "PERCENTAGE" && <>{item.cashback_rate}%</>} Off
       </p>
       <Image
         src={item.store_img}
@@ -34,9 +34,9 @@ const StoreCard: React.FC<istorecard> = ({ item }) => {
         <span>Upto</span>
         <span>
           {item.cashback_type == "FLAT_AMOUNT" && (
-            <>₹{item.cashback_amount}.00</>
+            <>₹{item.cashback_rate}.00</>
           )}
-          {item.cashback_type == "PERCENTAGE" && <>{item.cashback_amount}%</>}{" "}
+          {item.cashback_type == "PERCENTAGE" && <>{item.cashback_rate}%</>}{" "}
         </span>
         <span>Cashback</span>
       </div>

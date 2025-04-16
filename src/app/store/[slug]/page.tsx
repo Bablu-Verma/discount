@@ -80,8 +80,8 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
                     {store.name}
                   </h1>
                   <p className="text-2xl text-center font-medium text-light pt-1 ">
-                    {store.cashback_type == "FLAT_AMOUNT" && <>Up to ₹{store.cashback_amount}.00</>}
-                    {store.cashback_type == "PERCENTAGE" && <>Up to {store.cashback_amount}%</>} Off
+                    {store.cashback_type == "FLAT_AMOUNT" && <>Up to ₹{store.cashback_rate}.00</>}
+                    {store.cashback_type == "PERCENTAGE" && <>Up to {store.cashback_rate}%</>} Off
                   </p>
 
                 </div>
@@ -95,8 +95,8 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
                 <div className="sm:flex gap-5  mt-6">
                   <a className="border-[1px] text-base rounded px-6 py-2 text-white inline-block" href={store.store_link}>Shop & Earn</a>
                   <p className="hidden sm:inline-block text-xl text-center font-medium text-light pt-1 ">
-                    {store.cashback_type == "FLAT_AMOUNT" && <>Up to ₹{store.cashback_amount}.00</>}
-                    {store.cashback_type == "PERCENTAGE" && <>Up to {store.cashback_amount}%</>} Off
+                    {store.cashback_type == "FLAT_AMOUNT" && <>Up to ₹{store.cashback_rate}.00</>}
+                    {store.cashback_type == "PERCENTAGE" && <>Up to {store.cashback_rate}%</>} Off
                   </p>
                 </div>
 

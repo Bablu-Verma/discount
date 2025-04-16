@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     // Extract Request Data
     const requestData = await req.json();
-    const { name, description, store_img,category,tc, tracking, cashback_status, store_link, cashback_type, cashback_amount, store_status } = requestData;
+    const { name, description, store_img,category,tc, tracking, cashback_status, store_link, cashback_type, cashback_rate, store_status } = requestData;
 
     // console.log(requestData)
 
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       cashback_status,
       store_link,
       cashback_type,
-      cashback_amount,
+      cashback_rate,
       store_status,
     });
 

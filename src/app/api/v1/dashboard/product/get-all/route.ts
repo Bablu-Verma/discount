@@ -108,7 +108,7 @@ export async function POST(req: Request) {
     const products = await CampaignModel.find(filters)
       .skip(skip)
       .limit(Number(limit))
-      .populate('store', 'name slug store_img')
+      .populate('store', 'name cashback_type cashback_rate store_link store_img')
       .populate('category', 'name slug')
       .sort({ createdAt: -1 }).lean();
 

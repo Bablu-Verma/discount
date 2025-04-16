@@ -4,6 +4,7 @@ import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
+import StoreModel from "@/model/StoreModel";
 
 import { NextResponse } from "next/server";
 
@@ -48,13 +49,10 @@ export async function POST(req: Request) {
     const requiredFields = [
       "title",
       "actual_price",
-      "cashback_",
       "store",
       "category",
       "description",
-      
       "img_array",
-      "calculation_mode",
       "t_and_c",
       "meta_title",
       "meta_description",
@@ -78,12 +76,10 @@ export async function POST(req: Request) {
     const {
       title,
       actual_price,
-      cashback_,
       store,
       category,
       description,
       img_array,
-      calculation_mode,
       t_and_c,
       meta_title,
       meta_description,
@@ -133,9 +129,11 @@ export async function POST(req: Request) {
       }
     }
 
+    const getStroe = await StoreModel.findById(store).select('_id cashback_rate cashback_type')
+
     // Validate Number Fields
     const actualPriceNum = Number(actual_price);
-    const cashbackNum = Number(cashback_);
+    const cashbackNum = Number(getStroe.cashback_rate);
 
     // Ensure both values are valid numbers
     if (isNaN(actualPriceNum) || actualPriceNum < 0) {
@@ -162,9 +160,9 @@ export async function POST(req: Request) {
     let calculated_cashback_ = 0;
     let offer_price_ = actualPriceNum;
 
-    if (calculation_mode === "FIX") {
+    if (getStroe.cashback_type === "FIX") {
       calculated_cashback_ = cashbackNum;
-    } else if (calculation_mode === "PERCENTAGE") {
+    } else if (getStroe.cashback_type === "PERCENTAGE") {
       calculated_cashback_ = (actualPriceNum * cashbackNum) / 100;
     }
 
@@ -176,9 +174,7 @@ export async function POST(req: Request) {
       title,
       actual_price,
       offer_price: offer_price_,
-      cashback_: cashback_,
       calculated_cashback: calculated_cashback_,
-      calculation_mode,
       user_id: user?._id,
       store,
       category,

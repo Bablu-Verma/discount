@@ -195,7 +195,7 @@ export async function POST(req: Request) {
     updateIfValid("calculated_cashback", calculated_cashback_);
     updateIfValid("offer_price", offer_price_);
 
-    // Handle Enum fields (validate values before updating)
+  
     if (calculation_mode && ["PERCENTAGE", "FIX"].includes(calculation_mode)) {
       campaign.calculation_mode = calculation_mode;
     }

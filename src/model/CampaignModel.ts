@@ -6,9 +6,7 @@ export interface ICampaign {
   _id: string;
   actual_price: Number;
   offer_price: Number;
-  cashback_: Number;
   calculated_cashback: Number;
-  calculation_mode: "PERCENTAGE" | "FIX";
   user_id:  mongoose.Types.ObjectId;
   store: mongoose.Types.ObjectId;
   category: mongoose.Types.ObjectId;
@@ -42,18 +40,10 @@ const CampaignSchema = new Schema<ICampaign>(
     title: { type: String, required: [true, "Title is required"] },
     actual_price: { type: Number, required: [true, "Price is required"] },
     offer_price: { type: Number, required: [true, "Offer price is required"] },
-    cashback_: {
-      type: Number,
-      required: [true, "Cashback is required"],
-    },
+   
     calculated_cashback:{
       type: Number,
       required: [true, "Calculated Cashback is required"],
-    },
-    calculation_mode: {
-      type: String,
-      enum: ["PERCENTAGE", "FIX"],
-      required: [true, "Calculation mode is required"],
     },
     user_id: { type: Schema.Types.ObjectId, required: [true, "Email is required"] , index: true,
       ref:'User' },

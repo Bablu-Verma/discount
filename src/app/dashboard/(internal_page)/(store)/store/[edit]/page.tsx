@@ -26,7 +26,7 @@ const EditCategory: React.FC = () => {
      cashback_status: "" ,
      store_link: "",
      cashback_type: "" ,
-     cashback_amount: "",
+     cashback_rate: "",
      store_status: "" ,
      category:'', tracking:''
    });
@@ -62,7 +62,7 @@ const [editorContentTc, setEditorContentTc] = useState("");
         cashback_status:store_data.cashback_status || '',
         store_link: store_data.store_link || '',
         cashback_type: store_data.cashback_type || '',
-        cashback_amount: store_data.cashback_amount || "",
+        cashback_rate: store_data.cashback_rate || "",
         store_status: store_data.store_status || '',
         category: store_data.category || '',
         tracking: store_data.tracking || '',
@@ -102,7 +102,7 @@ const [editorContentTc, setEditorContentTc] = useState("");
           cashback_status:formData.cashback_status,
           store_link:formData.store_link,
           cashback_type:formData.cashback_type,
-          cashback_amount:formData.cashback_amount,
+          cashback_rate:formData.cashback_rate,
           store_status:formData.store_status,
           tc:editorContentTc,
           tracking:formData.tracking,
@@ -217,13 +217,13 @@ const [editorContentTc, setEditorContentTc] = useState("");
           <div className="grid grid-cols-3 gap-5">
           
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Amount/Percentage</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Cashback rate</label>
               <input
                 type="number"
-                name="cashback_amount"
-                value={formData.cashback_amount}
+                name="cashback_rate"
+                value={formData.cashback_rate}
                 onChange={handleInputChange}
-                placeholder="Enter cashback amount/percentage"
+                placeholder="Enter cashback rate"
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
               />
             </div>

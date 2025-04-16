@@ -34,17 +34,17 @@ export async function POST(req: Request) {
 
     const relatedProducts = await CampaignModel.find({ store: store._id })
       .select(
-        "store category offer_price calculated_cashback calculation_mode img_array product_tags cashback_ actual_price product_slug slug_type title  createAt updateAt _id"
+        "store category offer_price calculated_cashback calculation_mode img_array product_tags actual_price product_slug slug_type title  createAt updateAt _id"
       )
       .lean()
-      .populate("store", "name slug store_img")
+      .populate("store", "name cashback_type cashback_rate store_link store_img")
       .populate("category", "name slug")
       .limit(10)
       .lean();
 
     const relatedCoupons = await CouponModel.find({ store: store._id })
     .select('-description -status')
-      .populate("store", "name slug store_img")
+      .populate("store", "name cashback_type cashback_rate store_link store_img")
       .populate("category", "name slug")
       .limit(10)
       .lean();

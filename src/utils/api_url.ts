@@ -29,7 +29,7 @@ export const wishlist_add_ = main_url + '/client/wishlist/add'
 export const wishlist_product_remove_ = main_url + '/client/wishlist/remover-product'
 export const wishlist__remove_ = main_url + '/client/wishlist/remove-wishlist'
 export const search_client_ = main_url + '/client/search'
-
+export const create_order_api = main_url + '/client/order/add'
 
 
 
@@ -82,7 +82,7 @@ export const users_detail_edit_by_admin = main_url + '/dashboard/user/edit'
 export const contact_us_list_api = main_url + '/contactus/list'
 export const contact_us_update_api = main_url + '/contactus/edit'
 
-export const create_order_api = main_url + '/order/add'
+
 
 
 

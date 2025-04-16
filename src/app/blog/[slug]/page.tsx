@@ -37,7 +37,7 @@ export const GetData = async (token: string, slug: string) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error registering user", error.response?.data.message);
-      toast.error(error.response?.data.message);
+      // toast.error(error.response?.data.message);
     } else {
       console.error("Unknown error", error);
     }
@@ -51,7 +51,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
 
   const page_data = await GetData(token, slug);
 
-
+console.log("page_data",page_data)
 
   const { blog, relatedblogs } = page_data
 
@@ -62,44 +62,7 @@ const BlogDetail = async ({ params }: CategoryDetailsProps) => {
     return create_d.toDateString();
   };
 
-  const simpal_data = [
-    {
-      title: "Amazon Great Freedom Festival 2024: Get Ready to Save Big",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-    {
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-    {
-      title: "Great Freedom Festival 2024: Get Ready to Save Big",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-    {
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-    {
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-    {
-      title: "Amazon Great Freedom Festival 2024: Get Ready to Save Big",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel sem sed felis malesuada malesuada. Sed vel sem sed felis malesuada malesuada.",
-      slug: "",
-    },
-  ];
+ 
 
   return (
     <>

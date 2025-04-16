@@ -69,7 +69,7 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
               className="col-span-3 flex items-center pr-3"
             >
               <Image
-                src={item.img_array[0]}
+                src={item.product_img}
                 className="h-12 w-12 aspect-auto "
                 width={20}
                 sizes="100vw"

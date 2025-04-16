@@ -41,10 +41,6 @@ const Wishlist = async () => {
 
   const page_data = await GetData(token);
 
-  // console.log(page_data)
-
-  // return
-
   const wishlist_products = page_data.products;
 
   return (

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const blog = await BlogModel.findOne(filter)
       .select('-status')
       .populate("writer_id", "name email profile")
-      .populate("blog_category", "name slug");
+      .populate("");
 
     if (!blog) {
       return NextResponse.json(
@@ -42,9 +42,9 @@ export async function POST(req: Request) {
       _id: { $ne: blog._id },
     })
       .select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords')
-      .limit(5)
       .populate("writer_id", "name email profile")
       .populate("blog_category", "name slug")
+      .limit(5)
       .lean();
 
     return NextResponse.json(
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error fetching blog post:", error);
+
 
     return new NextResponse(
       JSON.stringify({

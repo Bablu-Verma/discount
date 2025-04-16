@@ -20,11 +20,9 @@ export interface IClintCampaign {
   title: string;
   product_id: number;
   actual_price: number;
-  cashback_: number | string;
-  calculation_mode: "PERCENTAGE" | "FIX"; 
   store: string;
   category: string;
-  img_array: string[];
+  product_img: string;
   product_tags: string[];
   long_poster: { is_active: boolean; image: string }[];
   main_banner: { is_active: boolean; image: string }[];
@@ -59,11 +57,9 @@ const AddProduct = () => {
     title: "",
     product_id:0,
     actual_price: 0,
-    cashback_: 0,
-    calculation_mode: "" as "PERCENTAGE" | "FIX",
     store: "",
     category: "",
-    img_array: [],
+    product_img:'',
     product_tags: [],
     long_poster: [
       {
@@ -150,11 +146,9 @@ const AddProduct = () => {
       const requiredFields = [
         "title",
         "actual_price",
-        "cashback_",
-        "calculation_mode",
         "store",
         "category",
-        "img_array",
+        "product_img",
         "product_tags",
         "slug_type",
         "meta_title",
@@ -216,45 +210,10 @@ const AddProduct = () => {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImages(e.target.value);
-  };
-  const addImage = () => {
-    if (images.trim() && form_data.img_array) {
-      setForm_data((prev) => ({
-        ...prev,
-        img_array: [...prev.img_array!, images.trim()],
-      }));
-      setImages("");
-    }
-  };
+ 
+ 
 
-  // Remove Image Link
-  const removeImage = (index: number) => {
-    setForm_data((prev) => ({
-      ...prev,
-      img_array: prev.img_array!.filter((_, i) => i !== index),
-    }));
-  };
 
-  const renderImagePreview = () => {
-    return form_data.img_array!.map((image: string, index: number) => (
-      <div key={index} className="flex items-center space-x-2">
-        <img
-          src={image}
-          alt={`Preview ${index + 1}`}
-          className="w-16 h-16 object-cover rounded"
-        />
-        <button
-          type="button"
-          onClick={() => removeImage(index)}
-          className="text-red-500 flex justify-center items-center bg-gray-200 rounded-full w-5 h-5"
-        >
-          <i className="fa-solid fa-x text-[12px]"></i>
-        </button>
-      </div>
-    ));
-  };
 
   return (
     <>
@@ -341,7 +300,7 @@ const AddProduct = () => {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div>
               <label
                 htmlFor="actual_price"
@@ -360,82 +319,27 @@ const AddProduct = () => {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="Cashback_"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Cashback
-                <span className="text-red-400">
-                  {form_data.calculation_mode == "PERCENTAGE"
-                    ? " - PERCENTAGE"
-                    : form_data.calculation_mode == "FIX"
-                    ? " - FIX"
-                    : ""}
-                </span>
-              </label>
-              <input
-                type="number"
-                id="Cashback_"
-                name="cashback_"
-                value={form_data.cashback_}
-                onChange={handleChange}
-                placeholder="Enter  Amount / Persantage"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="calculation_mode"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Calculation mode
-              </label>
-              <select
-                id="calculation_mode"
-                name="calculation_mode"
-                value={form_data.calculation_mode}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              >
-                <option value="" disabled selected>
-                  calculation_mode
-                </option>
-                <option value="PERCENTAGE">PERCENTAGE</option>
-                <option value="FIX">FIX</option>
-              </select>
-            </div>
-          </div>
-          <div className="">
+            <div className="">
             <label
               htmlFor="images"
               className="block text-sm font-medium text-gray-700"
             >
               Product Images
             </label>
-            <div className="flex gap-1">
               <input
                 type="text"
                 id="images"
                 placeholder="add your image link"
-                name="images"
-                value={images}
+                name="product_img"
+                value={form_data.product_img}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                onChange={handleImageChange}
+                onChange={handleChange}
               />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-4 py-2 ml-5 w-[260px] bg-blue-500 text-white rounded-lg shadow-sm"
-              >
-                Add
-              </button>
+             
             </div>
-
-            <div id="imagePreview" className="mt-4 flex space-x-6">
-              {renderImagePreview()}
-            </div>
+           
           </div>
+         
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label

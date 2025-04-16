@@ -21,9 +21,8 @@ export interface IStore extends Document {
   store_img: string;
   cashback_status: "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK";
   store_link: string;
-
   cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
-  cashback_rate: string;
+  cashback_rate: number;
   cashback_history: ICashbackHistory[];
   store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
   click_count?: number;
@@ -93,14 +92,13 @@ const StoreSchema = new Schema<IStore>(
       type: String,
       required: true,
     },
-   
     cashback_type: {
       type: String,
       enum: ["PERCENTAGE", "FLAT_AMOUNT"],
       required: true,
     },
     cashback_rate: {
-      type: String,
+      type: Number,
       required: true,
     },
     cashback_history: {
@@ -134,6 +132,7 @@ StoreSchema.plugin(AutoIncrement, {
   inc_field: "store_id",
   start_seq: 1,
 });
+
 
 const StoreModel =
   mongoose.models.Store || mongoose.model<IStore>("Store", StoreSchema);

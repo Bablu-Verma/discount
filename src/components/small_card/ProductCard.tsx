@@ -11,10 +11,6 @@ interface CardProp {
 const ProductCard: React.FC<CardProp> = ({ card_data }) => {
   const timeAgo = getTimeAgo(card_data.createdAt ?? new Date());
 
-  // console.log(card_data)
-
-  console.log("card_data.createdAt",card_data.createdAt)
-
 
   return (
     <Link
@@ -36,7 +32,7 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
       ) : null}
       <div className=" overflow-hidden relative p-3 flex justify-center items-center">
         <Image
-          src={card_data?.img_array[0]}
+          src={card_data?.product_img}
           className="w-full  h-[150px] rounded-t-md"
           height={200}
           width={200}

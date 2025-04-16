@@ -15,8 +15,7 @@ interface IShopNowProps {
 }
 const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
   const token = useSelector((state: RootState) => state.user.token);
-  // const pathname = usePathname();
-  // const searchParams = useSearchParams();
+  
 
 
   const [modelOpen, setModelOpen] = React.useState<boolean>(false);
@@ -36,13 +35,11 @@ const ShopNowButton: React.FC<IShopNowProps> = ({ page_data }) => {
 
     setModelOpen(true);
 
-
-
     try {
       let { data } = await axios.post(
         create_order_api,
         {
-          product_id: page_data._id,
+          store_id: page_data.store._id,
         },
         {
           headers: {

@@ -50,14 +50,14 @@ export async function POST(req: Request) {
     const best_product = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: "best",
-    }).limit(10).select('store category offer_price calculated_cashback calculation_mode img_array product_tags actual_price product_slug slug_type title  createdAt updatedAt _id').populate("store", "name cashback_type cashback_rate store_link store_img")
+    }).limit(10).select('store category offer_price calculated_cashback calculation_mode product_img product_tags actual_price product_slug slug_type title  createdAt updatedAt _id').populate("store", "name cashback_type cashback_rate store_link store_img")
     .populate("category", "name slug").lean();
     const offer_deal = await CampaignModel.find({
       product_status: "ACTIVE",
       product_tags: { $in: ["new", "hot", "best"] }, // Ensures at least one tag exists
     }).limit(20)
       .populate("store", "name cashback_type cashback_rate store_link store_img")
-      .populate("category", "name slug").select('store category offer_price calculated_cashback calculation_mode img_array product_tags actual_price product_slug slug_type title  createdAt updatedAt _id').lean();
+      .populate("category", "name slug").select('store category offer_price calculated_cashback calculation_mode product_img product_tags actual_price product_slug slug_type title  createdAt updatedAt _id').lean();
 
     return new NextResponse(
       JSON.stringify({

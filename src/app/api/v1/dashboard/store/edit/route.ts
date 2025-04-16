@@ -17,9 +17,7 @@ export async function POST(req: Request) {
         }),
         {
           status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -32,15 +30,24 @@ export async function POST(req: Request) {
         }),
         {
           status: 403,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
-    const { slug, description,category,tc, tracking, store_img, cashback_status, store_link, cashback_type, cashback_rate, store_status } =
-      await req.json();
+    const {
+      slug,
+      description,
+      category,
+      tc,
+      tracking,
+      store_img,
+      cashback_status,
+      store_link,
+      cashback_type,
+      cashback_rate,
+      store_status,
+    } = await req.json();
 
     if (!slug) {
       return new NextResponse(
@@ -49,7 +56,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find the store by slug
     const store = await StoreModel.findOne({ slug });
 
     if (!store) {
@@ -59,13 +65,43 @@ export async function POST(req: Request) {
       );
     }
 
-    // Update only allowed fields (excluding name)
+    console.log("Existing cashback_type:", store.cashback_type);
+console.log("Incoming cashback_type:", cashback_type);
+console.log("Existing cashback_rate:", store.cashback_rate);
+console.log("Incoming cashback_rate:", cashback_rate);
+
+   
+    const isCashbackTypeChanged = cashback_type && cashback_type !== store.cashback_type;
+    const isCashbackRateChanged =
+  cashback_rate !== undefined &&
+  cashback_rate.toString() !== store.cashback_rate.toString();
+
+
+    if (isCashbackTypeChanged || isCashbackRateChanged) {
+    
+      if (store.cashback_history.length > 0) {
+        const lastHistory = store.cashback_history[store.cashback_history.length - 1];
+        if (!lastHistory.end_date) {
+          lastHistory.end_date = new Date();
+        }
+      }
+
+      store.cashback_history.push({
+        cashback_type: cashback_type || store.cashback_type,
+        cashback_rate: cashback_rate?.toString() || store.cashback_rate.toString(),
+        start_date: new Date(),
+      });
+
+  
+      if (isCashbackTypeChanged) store.cashback_type = cashback_type;
+      if (isCashbackRateChanged) store.cashback_rate = cashback_rate.toString();;
+    }
+
+
     if (description !== undefined && description !== "") store.description = description;
     if (store_img !== undefined && store_img !== "") store.store_img = store_img;
     if (cashback_status !== undefined && cashback_status !== "") store.cashback_status = cashback_status;
     if (store_link !== undefined && store_link !== "") store.store_link = store_link;
-    if (cashback_type !== undefined && cashback_type !== "") store.cashback_type = cashback_type;
-    if (cashback_rate !== undefined && cashback_rate !== "") store.cashback_rate = cashback_rate;
     if (store_status !== undefined && store_status !== "") store.store_status = store_status;
     if (category !== undefined && category !== "") store.category = category;
     if (tc !== undefined && tc !== "") store.tc = tc;

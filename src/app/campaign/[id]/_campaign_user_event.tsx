@@ -21,9 +21,6 @@ const Campaign_user_event: React.FC<campaign__event_props> = ({
 
 
 
-const user = useSelector(
-    (state: RootState) => state.user.user
-  ) as IUser | null;
 
 
 

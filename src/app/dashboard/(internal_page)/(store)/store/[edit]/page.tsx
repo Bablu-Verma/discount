@@ -28,7 +28,8 @@ const EditCategory: React.FC = () => {
      cashback_type: "" ,
      cashback_rate: "",
      store_status: "" ,
-     category:'', tracking:''
+     category:'', 
+     tracking:''
    });
   const [editorContent, setEditorContent] = useState("");
   const urlslug = pathname.split("/").pop() || "";

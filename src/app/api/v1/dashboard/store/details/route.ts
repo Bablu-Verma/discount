@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-
+    // Step 1: Authenticate the user
     const { authenticated, usertype, message } = await authenticateAndValidateUser(req);
 
     if (!authenticated) {
@@ -19,13 +19,12 @@ export async function POST(req: Request) {
         }),
         {
           status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
+    
     if (!(usertype === "admin" || usertype === "data_editor")) {
       return new NextResponse(
         JSON.stringify({
@@ -34,26 +33,23 @@ export async function POST(req: Request) {
         }),
         {
           status: 403,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
-    // Extracting slug and access_type from request body
+
+    // Step 3: Parse request body
     const { slug } = await req.json();
 
-    if (!slug) {
+    if (!slug || typeof slug !== "string") {
       return new NextResponse(
-        JSON.stringify({ success: false, message: "Slug is required." }),
+        JSON.stringify({ success: false, message: "A valid slug is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const query: any = { slug };
-
-
-    const store = await StoreModel.findOne(query).populate('category', "name slug");
+    // Step 4: Query the store
+    const store = await StoreModel.findOne({ slug }).populate("category", "name slug");
 
     if (!store) {
       return new NextResponse(
@@ -62,15 +58,12 @@ export async function POST(req: Request) {
       );
     }
 
-   
-
+    // Step 5: Respond with store data
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Store fetched successfully.",
-        data: {
-          store: store
-        },
+        data: { store },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

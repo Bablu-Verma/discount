@@ -40,7 +40,7 @@ export async function POST(req: Request) {
             }
           );
         }
-    // Extract Query Parameters from Request Body
+   
     const {
       page = 1,
       limit = 10,
@@ -85,10 +85,10 @@ export async function POST(req: Request) {
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) {
-        query.createdAt.$gte = new Date(startDate); // Start Date (Greater than or equal to)
+        query.createdAt.$gte = new Date(startDate); 
       }
       if (endDate) {
-        query.createdAt.$lte = new Date(endDate); // End Date (Less than or equal to)
+        query.createdAt.$lte = new Date(endDate); 
       }
     }
 
@@ -101,6 +101,7 @@ export async function POST(req: Request) {
     const stores = await StoreModel.find(query)
       .skip(skip)
       .populate('category', 'name category')
+      .select('-description -tc')
       .limit(pageSize)
       .sort({ createdAt: -1 });
 

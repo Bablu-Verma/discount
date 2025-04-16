@@ -4,9 +4,7 @@ import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import Image from "next/image";
 import React from "react";
-import Campaign_banner from "./_campaign_banner";
-import { MainHeading } from "@/components/Heading";
-import BestSalling from "@/components/homepage/BestSelling";
+
 import { getServerToken } from "@/helpers/server/server_function";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -29,7 +27,7 @@ export const GetData = async (token: string, slug: string) => {
       product_details_,
       {
         product_slug: slug,
-        product_status:'ACTIVE'
+        product_status: "ACTIVE",
       },
       {
         headers: {
@@ -56,14 +54,11 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
   let { id } = await params;
   let slug = id;
 
-  // console.log('slug__',slug)
+  
 
   const page_data = await GetData(token, slug);
 
-
-
-  const {product, relatedProducts,relatedcoupons} = page_data
-
+  const { product, relatedProducts, relatedcoupons } = page_data;
 
   return (
     <>
@@ -71,18 +66,34 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
       <MainHeader />
       <main className="">
         <section className="max-w-6xl mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">
-          <div className="md:grid md:grid-cols-2 gap-5">
+          <div className="md:grid md:grid-cols-[42%_55%] gap-[3%] bg-white rounded-md p-4">
             <div>
-              <Campaign_banner campaign_data={product.img_array} />
-              <div className="hidden md:flex  justify-start gap-10 items-center pt-10 ">
-                 <Link href={`/store/${product.store.slug}`} className="text-secondary text-xl inline-flex items-center gap-3 ml-3">
-                  <Image src={product.store.store_img} alt="" className="w-16 h-16 rounded-full" width={100} height={100} />
-                    <span className="mt-1">{product?.store.name}</span>
-                  </Link>
-                  <Campaign_user_event campaign_data={product} />
-              </div>
-
              
+              <div className=" w-[100%]  rounded-md  justify-center shadow-sm items-center flex overflow-hidden">
+                <Image
+                  src={product.product_img || "https://i.imgur.com/AZoKCRT.png"}
+                  alt="Active Product Image"
+                  height={400}
+                  width={400}
+                  className="w-full md:min-h-80"
+                />
+              </div>
+              <div className="hidden md:flex  justify-start gap-10 items-center pt-10 ">
+                <Link
+                  href={`/store/${product.store.slug}`}
+                  className="text-secondary text-xl inline-flex items-center gap-3 ml-3"
+                >
+                  <Image
+                    src={product.store.store_img}
+                    alt=""
+                    className="w-16 h-16 rounded-full"
+                    width={100}
+                    height={100}
+                  />
+                  <span className="mt-1">{product?.store.name}</span>
+                </Link>
+                <Campaign_user_event campaign_data={product} />
+              </div>
             </div>
 
             <div className="mt-8 md:mt-0">
@@ -93,10 +104,13 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 <p>
                   <i className="fa-regular fa-clock mr-1 "></i>
                   <span>{getTimeAgo(product.createdAt)}</span>
-                </p>  |  {product?.flash_sale[0].is_active && (
-                <Offer_end_component time_data={product?.flash_sale[0].end_time} />
-              )}
-                
+                </p>{" "}
+                |{" "}
+                {product?.flash_sale[0].is_active && (
+                  <Offer_end_component
+                    time_data={product?.flash_sale[0].end_time}
+                  />
+                )}
               </div>
               <div className="flex items-center mt-1">
                 <strong className="text-secondary text-3xl mr-3">
@@ -110,29 +124,40 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
                 </small>
               </div>
               <div className="py-7 flex justify- gap-5 items-center">
-               <ShopNowButton page_data={product} />
-            
+                <ShopNowButton page_data={product} />
+
                 <Watchlistadd oneitem={product} />
               </div>
-             
+
               <div className="flex md:hidden   justify-start gap-10 items-center md:pt-10 ">
-                 <Link href={`/store/${product.store.slug}`} className="text-secondary  inline-flex items-center gap-3">
-                  <Image src={product.store.store_img} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-full" width={100} height={100} />
-                    <span className="mt-1 text-base sm:text-xl">{product?.store.name}</span>
-                  </Link>
-                  <Campaign_user_event campaign_data={product} />
+                <Link
+                  href={`/store/${product.store.slug}`}
+                  className="text-secondary  inline-flex items-center gap-3"
+                >
+                  <Image
+                    src={product.store.store_img}
+                    alt=""
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full"
+                    width={100}
+                    height={100}
+                  />
+                  <span className="mt-1 text-base sm:text-xl">
+                    {product?.store.name}
+                  </span>
+                </Link>
+                <Campaign_user_event campaign_data={product} />
               </div>
-             
-              <div className="max-h-[700px] overflow-y-auto w-full border-[1px] mt-6 border-gray-300 p-3 rounded">
+
+              <div className=" w-full  mt-6  rounded">
                 <div
                   className={`${styles.product_style} text-base text-gray-500`}
-                  dangerouslySetInnerHTML={{ __html: product.description || ''}}
+                  dangerouslySetInnerHTML={{
+                    __html: product.description || "",
+                  }}
                 ></div>
               </div>
             </div>
           </div>
-
-        
         </section>
         <BottomToTop />
       </main>

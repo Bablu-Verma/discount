@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       StoreModel.find({ name: searchFilter, store_status: "ACTIVE" }).limit(10).select('-description -store_link -cashback_type -store_status').lean(),
       CategoryModel.find({ name: searchFilter, status: "ACTIVE" }).select('-description -status').limit(10),
       CouponModel.find({ code: searchFilter, status: "ACTIVE" }).limit(10).populate('store', 'name slug store_img').populate('category', 'name slug').select('-description -expiry_date -status').lean(),
-      CampaignModel.find({ title: searchFilter, product_status: "ACTIVE" }).limit(10).populate('store', 'name cashback_type cashback_rate store_link store_img').populate('category', 'name slug').select('store category offer_price calculated_cashback calculation_mode img_array product_tags  actual_price product_slug slug_type title  createdAt updatedAt _id').lean(),
+      CampaignModel.find({ title: searchFilter, product_status: "ACTIVE" }).limit(10).populate('store', 'name cashback_type cashback_rate store_link store_img').populate('category', 'name slug').select('store category offer_price calculated_cashback calculation_mode product_img product_tags  actual_price product_slug slug_type title  createdAt updatedAt _id').lean(),
     ]);
 
     return new NextResponse(

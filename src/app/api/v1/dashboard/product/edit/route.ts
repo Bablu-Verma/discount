@@ -2,6 +2,7 @@ import { generateSlug } from "@/helpers/client/client_function";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import dbConnect from "@/lib/dbConnect";
 import CampaignModel from "@/model/CampaignModel";
+import StoreModel from "@/model/StoreModel";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -36,12 +37,10 @@ export async function POST(req: Request) {
       product_id,
       title,
       actual_price,
-      cashback_,
       store,
       category,
       description,
-      img_array,
-      calculation_mode,
+      product_img,
       t_and_c,
       meta_title,
       meta_description,
@@ -109,61 +108,47 @@ export async function POST(req: Request) {
       );
     }
 
-    if (actual_price !== undefined && isNaN(Number(actual_price))) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Invalid actual_price. Must be a number.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
 
-    if (cashback_ !== undefined && isNaN(Number(cashback_))) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Invalid cashback_. Must be a number.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    // Ensure actual_price and cashback_ are valid numbers
-    const actualPriceNum = Number(actual_price);
-    const cashbackNum = Number(cashback_);
+    const getStroe = await StoreModel.findById(store).select('_id cashback_rate cashback_type')
+    console.log("getStroe",getStroe)
 
-    if (isNaN(actualPriceNum) || actualPriceNum < 0) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Invalid actual_price. Must be a positive number.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    if (isNaN(cashbackNum) || cashbackNum < 0) {
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          message: "Invalid cashback_. Must be a non-negative number.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+     // Validate Number Fields
+     const actualPriceNum = Number(actual_price);
+     const cashbackNum = Number(getStroe.cashback_rate);
+ 
+     // Ensure both values are valid numbers
+     if (isNaN(actualPriceNum) || actualPriceNum < 0) {
+       return new NextResponse(
+         JSON.stringify({
+           success: false,
+           message: "Invalid actual_price. Must be a positive number.",
+         }),
+         { status: 400, headers: { "Content-Type": "application/json" } }
+       );
+     }
+ 
+     if (isNaN(cashbackNum) || cashbackNum < 0) {
+       return new NextResponse(
+         JSON.stringify({
+           success: false,
+           message: "Invalid cashback_. Must be a non-negative number.",
+         }),
+         { status: 400, headers: { "Content-Type": "application/json" } }
+       );
+     }
 
     // Calculate cashback and offer price
     let calculated_cashback_ = 0;
     let offer_price_ = actualPriceNum;
 
-    if (actualPriceNum > 0) {
-      if (calculation_mode === "FIX") {
-        calculated_cashback_ = cashbackNum;
-      } else if (calculation_mode === "PERCENTAGE") {
-        calculated_cashback_ = (actualPriceNum * cashbackNum) / 100;
-      }
-      offer_price_ = actualPriceNum - calculated_cashback_;
+    if (getStroe.cashback_type === "FLAT_AMOUNT") {
+      calculated_cashback_ = cashbackNum;
+    } else if (getStroe.cashback_type === "PERCENTAGE") {
+      calculated_cashback_ = (actualPriceNum * cashbackNum) / 100;
     }
+
+    // Ensure offer price does not go negative
+    offer_price_ = Math.max(0, actualPriceNum - calculated_cashback_);
 
     // Update fields if provided (avoid overwriting with empty/null/undefined values)
     const updateIfValid = (field: string, value: any) => {
@@ -186,19 +171,17 @@ export async function POST(req: Request) {
     updateIfValid("og_title", og_title);
     updateIfValid("structured_data", structured_data);
     updateIfValid("og_description", og_description);
+    updateIfValid("product_img", product_img);
     updateIfValid(
       "meta_keywords",
       Array.isArray(meta_keywords) ? meta_keywords : undefined
     );
     updateIfValid("actual_price", actual_price);
-    updateIfValid("cashback_", cashback_);
     updateIfValid("calculated_cashback", calculated_cashback_);
     updateIfValid("offer_price", offer_price_);
 
   
-    if (calculation_mode && ["PERCENTAGE", "FIX"].includes(calculation_mode)) {
-      campaign.calculation_mode = calculation_mode;
-    }
+    
     if (slug_type && ["INTERNAL", "EXTERNAL"].includes(slug_type)) {
       campaign.slug_type = slug_type;
     }
@@ -206,15 +189,10 @@ export async function POST(req: Request) {
       campaign.product_status = product_status;
     }
 
-    // Handle Array fields
-    if (Array.isArray(img_array) && img_array.length > 0) {
-      campaign.img_array = img_array;
-    }
     if (Array.isArray(product_tags)) {
       campaign.product_tags = product_tags;
     }
-
-    // Handle Object Array Fields (validate structure before updating)
+    
     const validateImageArray = (value: any) =>
       Array.isArray(value) &&
       value.every(

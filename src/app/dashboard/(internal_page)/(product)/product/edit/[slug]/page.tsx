@@ -1,13 +1,10 @@
 "use client";
 
 import { ICampaign } from "@/model/CampaignModel";
-import { ICategory } from "@/model/CategoryModel";
 import { RootState } from "@/redux-store/redux_store";
 import {
   product_edit_,
-  category_list_api,
-  product_details_,
-  list_store_api,
+
   product_dashboard_details_,
   category_list_dashboard_api,
   list_store_dashboard_api,
@@ -27,11 +24,9 @@ const EditProduct = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [productDetails, setProductDetails] = useState<ICampaign>();
   const [categoryList, setCategoryList] = useState<{name: string; _id: string}[]>([]);
-  const [images, setImages] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const pathname = usePathname();
-  const router = useRouter();
-  const dispatch = useDispatch();
+
   const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
@@ -42,11 +37,9 @@ const EditProduct = () => {
     title: "",
     product_id: 0,
     actual_price: 0,
-    cashback_: 0,
-    calculation_mode: "" as "PERCENTAGE" | "FIX",
     store: "",
     category: "",
-    img_array: [],
+    product_img: '',
     product_tags: [],
     long_poster: [
       {
@@ -105,7 +98,7 @@ const EditProduct = () => {
           },
         }
       );
-      console.log(data.data)
+    
       setProductDetails(data.data);
       toast.success(data.message);
     } catch (error) {
@@ -130,11 +123,9 @@ const EditProduct = () => {
         title: productDetails?.title || "",
         product_id: productDetails?.product_id || "",
         actual_price: productDetails?.actual_price || 0,
-        cashback_: productDetails?.cashback_ || 0,
-        calculation_mode: productDetails?.calculation_mode || "PERCENTAGE",
         store: productDetails?.store || "",
         category: productDetails?.category || "",
-        img_array: productDetails?.img_array || [],
+        product_img: productDetails?.product_img || '',
         product_tags: productDetails?.product_tags || [],
         long_poster: productDetails?.long_poster || [
           { is_active: false, image: "" },
@@ -212,11 +203,9 @@ const EditProduct = () => {
       const requiredFields = [
         "title",
         "actual_price",
-        "cashback_",
-        "calculation_mode",
         "store",
         "category",
-        "img_array",
+        "product_img",
         "product_tags",
         "slug_type",
         "meta_title",
@@ -257,9 +246,6 @@ const EditProduct = () => {
         t_and_c: editorT_and_c,
       };
 
-      // console.log("Submitting:", formPayload);
-
-      // Send JSON payload (file uploads should be handled separately)
       const { data } = await axios.post(
         product_edit_,
         JSON.stringify(formPayload),
@@ -283,45 +269,7 @@ const EditProduct = () => {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImages(e.target.value);
-  };
-  const addImage = () => {
-    if (images.trim() && form_data.img_array) {
-      setForm_data((prev) => ({
-        ...prev,
-        img_array: [...prev.img_array!, images.trim()],
-      }));
-      setImages("");
-    }
-  };
 
-  // Remove Image Link
-  const removeImage = (index: number) => {
-    setForm_data((prev) => ({
-      ...prev,
-      img_array: prev.img_array!.filter((_, i) => i !== index),
-    }));
-  };
-
-  const renderImagePreview = () => {
-    return form_data.img_array!.map((image: string, index: number) => (
-      <div key={index} className="flex items-center space-x-2">
-        <img
-          src={image}
-          alt={`Preview ${index + 1}`}
-          className="w-16 h-16 object-cover rounded"
-        />
-        <button
-          type="button"
-          onClick={() => removeImage(index)}
-          className="text-red-500 flex justify-center items-center bg-gray-200 rounded-full w-5 h-5"
-        >
-          <i className="fa-solid fa-x text-[12px]"></i>
-        </button>
-      </div>
-    ));
-  };
 
   return (
     <>
@@ -409,7 +357,7 @@ const EditProduct = () => {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div>
               <label
                 htmlFor="actual_price"
@@ -428,82 +376,26 @@ const EditProduct = () => {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="Cashback_"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Cashback
-                <span className="text-red-400">
-                  {form_data.calculation_mode == "PERCENTAGE"
-                    ? " - PERCENTAGE"
-                    : form_data.calculation_mode == "FIX"
-                    ? " - FIX"
-                    : ""}
-                </span>
-              </label>
-              <input
-                type="number"
-                id="Cashback_"
-                name="cashback_"
-                value={form_data.cashback_}
-                onChange={handleChange}
-                placeholder="Enter  Amount / Persantage"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="calculation_mode"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Calculation mode
-              </label>
-              <select
-                id="calculation_mode"
-                name="calculation_mode"
-                value={form_data.calculation_mode}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-              >
-                <option value="" disabled selected>
-                  calculation_mode
-                </option>
-                <option value="PERCENTAGE">PERCENTAGE</option>
-                <option value="FIX">FIX</option>
-              </select>
-            </div>
-          </div>
-          <div className="">
+            <div className="">
             <label
               htmlFor="images"
               className="block text-sm font-medium text-gray-700"
             >
               Product Images
             </label>
-            <div className="flex gap-1">
               <input
                 type="text"
                 id="images"
                 placeholder="add your image link"
-                name="images"
-                value={images}
+                name="product_img"
+                value={form_data.product_img}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
-                onChange={handleImageChange}
+                onChange={handleChange}
               />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-4 py-2 ml-5 w-[260px] bg-blue-500 text-white rounded-lg shadow-sm"
-              >
-                Add
-              </button>
             </div>
-
-            <div id="imagePreview" className="mt-4 flex space-x-6">
-              {renderImagePreview()}
-            </div>
+           
           </div>
+         
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label
@@ -551,7 +443,6 @@ const EditProduct = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-5">
-            {/* Long Poster Section */}
             <div>
               <label
                 htmlFor="long_poster"
@@ -559,7 +450,6 @@ const EditProduct = () => {
               >
                 Long Poster
               </label>
-              {/* Yes Radio */}
               <input
                 type="radio"
                 id="long_posterYes"

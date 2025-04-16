@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 const AddStore = () => {
   const [formData, setFormData] = useState({
     name: "",
-    store_img: "", // Main store image
+    store_img: "", 
     cashback_status: "ACTIVE_CASHBACK" as "ACTIVE_CASHBACK" | "INACTIVE_CASHBACK",
     store_link: "",
     cashback_type: "PERCENTAGE" as "PERCENTAGE" | "FLAT_AMOUNT",
@@ -50,7 +50,6 @@ const AddStore = () => {
     const { name, store_img, cashback_status, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
 
     if (!name.trim()) return toast.error("Please enter a store name.");
-
     if (!store_img.trim()) return toast.error("Please enter a store image link.");
     if (!store_link.trim()) return toast.error("Please enter a store link.");
     if (!cashback_rate.trim()) return toast.error("Please enter a cashback amount.");
@@ -79,7 +78,8 @@ const AddStore = () => {
           cashback_rate,
           store_status,
           tc:editorContentTc,
-           category,tracking
+          category,
+          tracking
         },
         {
           headers: {

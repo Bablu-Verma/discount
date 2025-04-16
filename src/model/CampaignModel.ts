@@ -1,17 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 
-
 export interface ICampaign {
   title: string;
   _id: string;
   actual_price: Number;
   offer_price: Number;
   calculated_cashback: Number;
-  user_id:  mongoose.Types.ObjectId;
+  user_id: mongoose.Types.ObjectId;
   store: mongoose.Types.ObjectId;
   category: mongoose.Types.ObjectId;
   description: string;
-  img_array: string[];
+  product_img: string;
   product_tags?: ("new" | "hot" | "best")[];
   long_poster: { is_active: boolean; image: string }[];
   main_banner: { is_active: boolean; image: string }[];
@@ -40,21 +39,33 @@ const CampaignSchema = new Schema<ICampaign>(
     title: { type: String, required: [true, "Title is required"] },
     actual_price: { type: Number, required: [true, "Price is required"] },
     offer_price: { type: Number, required: [true, "Offer price is required"] },
-   
-    calculated_cashback:{
+    calculated_cashback: {
       type: Number,
       required: [true, "Calculated Cashback is required"],
     },
-    user_id: { type: Schema.Types.ObjectId, required: [true, "Email is required"] , index: true,
-      ref:'User' },
-    store: {  type: Schema.Types.ObjectId,
+    user_id: {
+      type: Schema.Types.ObjectId,
+      required: [true, "Email is required"],
+      index: true,
+      ref: "User",
+    },
+    store: {
+      type: Schema.Types.ObjectId,
       required: [true, "Store is required"],
       index: true,
-      ref:'Store'  },
-    category: {type: Schema.Types.ObjectId,index: true,
-      ref:'Category' , required: [true, "Category is required"] },
+      ref: "Store",
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      index: true,
+      ref: "Category",
+      required: [true, "Category is required"],
+    },
     description: { type: String, required: [true, "Description is required"] },
-    img_array: { type: [String], required: [true, "Images are required"] },
+    product_img: { 
+      type: String,
+      required: [true, "Product image is required"],
+    },
 
     product_tags: {
       type: [String],
@@ -124,12 +135,10 @@ const CampaignSchema = new Schema<ICampaign>(
           value: { is_active: boolean; image: string; end_time: string }[]
         ) {
           return value.every(
-            (item) =>
-              !item.is_active || (!!item.image && !!item.end_time)
+            (item) => !item.is_active || (!!item.image && !!item.end_time)
           );
         },
-        message:
-          "Image and end_time are required when flash_sale is active",
+        message: "Image and end_time are required when flash_sale is active",
       },
     },
 
@@ -183,7 +192,6 @@ const CampaignSchema = new Schema<ICampaign>(
   },
   { timestamps: true }
 );
-
 
 const CampaignModel =
   mongoose.models.Campaign ||

@@ -322,12 +322,11 @@ const ProductList = () => {
                 <tr className="bg-white hover:bg-gray-100" key={i}>
                   <td className="px-6 py-4 flex items-center gap-4">
                     <img
-                      src={product.img_array[0]}
+                      src={product.product_img}
                       alt={product.title}
                       className="w-10 h-10 rounded-md"
                     />
                     <a
-                      
                       className="text-gray-800 text-sm hover:text-blue-400 line-clamp-2"
                     >
                       {product.title}

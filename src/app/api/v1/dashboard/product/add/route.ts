@@ -1,5 +1,4 @@
 import { generateSlug } from "@/helpers/client/client_function";
-import { upload_image } from "@/helpers/server/upload_image";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 import dbConnect from "@/lib/dbConnect";
@@ -52,7 +51,7 @@ export async function POST(req: Request) {
       "store",
       "category",
       "description",
-      "img_array",
+      "product_img",
       "t_and_c",
       "meta_title",
       "meta_description",
@@ -79,7 +78,7 @@ export async function POST(req: Request) {
       store,
       category,
       description,
-      img_array,
+      product_img,
       t_and_c,
       meta_title,
       meta_description,
@@ -160,7 +159,7 @@ export async function POST(req: Request) {
     let calculated_cashback_ = 0;
     let offer_price_ = actualPriceNum;
 
-    if (getStroe.cashback_type === "FIX") {
+    if (getStroe.cashback_type === "FLAT_AMOUNT") {
       calculated_cashback_ = cashbackNum;
     } else if (getStroe.cashback_type === "PERCENTAGE") {
       calculated_cashback_ = (actualPriceNum * cashbackNum) / 100;
@@ -179,7 +178,7 @@ export async function POST(req: Request) {
       store,
       category,
       description,
-      img_array,
+      product_img,
       product_tags,
       long_poster,
       main_banner,

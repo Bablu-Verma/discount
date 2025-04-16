@@ -1,7 +1,11 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
 
-const ORDER_STATUSES = ["Redirected", "Order", "Completed", "Cancelled"] as const;
+const ORDER_STATUSES = [
+  "Redirected",
+  "Order",
+  "Completed",
+  "Cancelled",
+] as const;
 const PAYMENT_STATUSES = ["Pending", "Confirmed", "Failed"] as const;
 
 interface IHistory {
@@ -13,11 +17,12 @@ interface IHistory {
 export interface IOrder extends Document {
   user_id: mongoose.Types.ObjectId;
   store_id: mongoose.Types.ObjectId;
-  price: number;
-  offer_price: number;
+  redirect_url: string;
+  order_create:Date;
+  order_value?: number | null;
   cashback_rate: number;
-  calculated_cashback: number;
-  calculation_mode: "PERCENTAGE" | "FIX";
+  cashback?: number | null;
+  cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
   transaction_id: string;
   order_status: (typeof ORDER_STATUSES)[number];
   payment_status: (typeof PAYMENT_STATUSES)[number] | null;
@@ -35,6 +40,13 @@ const OrderSchema = new Schema<IOrder>(
       ref: "User",
       index: true,
     },
+    order_create:{
+      type:Date,
+      default: Date.now
+    },
+    redirect_url: {
+      type: String,
+    },
     store_id: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -44,15 +56,14 @@ const OrderSchema = new Schema<IOrder>(
     transaction_id: {
       type: String,
       unique: true,
-      default: uuidv4,
       required: true,
     },
-    order_value: { type: Number, required: true },
-    cashback: { type: Number, required: true },
-    cashback_rate: { type: Number, required: true }, 
-    calculation_mode: {
+    order_value: { type: Number, default: null, required: false },
+    cashback: { type: Number, default: null, required: false },
+    cashback_rate: { type: Number, required: true },
+    cashback_type: {
       type: String,
-      enum: ["PERCENTAGE", "FIX"],
+      enum: ["PERCENTAGE", "FLAT_AMOUNT"],
       required: true,
     },
     order_status: {

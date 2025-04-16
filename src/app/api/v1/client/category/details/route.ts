@@ -16,7 +16,6 @@ export async function POST(req: Request) {
     const requestData = await req.json();
     const {
       slug,
-      status, 
     } = requestData;
 
     if (!slug) {
@@ -46,7 +45,7 @@ export async function POST(req: Request) {
     }
 
 
-    const relatedProducts = await CampaignModel.find({ category: category_details._id }).select('-user_id -description  -product_tags -long_poster -main_banner -premium_product -flash_sale -t_and_c -meta_title -meta_keywords -meta_description -meta_robots -canonical_url -structured_data -og_image -og_title -og_description -product_status -createdAt -updatedAt')
+    const relatedProducts = await CampaignModel.find({ category: category_details._id }).select('-user_id -description  -product_tags -long_poster -main_banner -premium_product -flash_sale -t_and_c -meta_title -meta_keywords -meta_description -meta_robots -canonical_url -structured_data -og_image -og_title -og_description -product_status createdAt updatedAt')
     .populate("store", "name cashback_type cashback_rate store_link store_img")
     .populate("category", "name slug")
     .limit(10)

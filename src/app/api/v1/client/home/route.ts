@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
     const blog = await BlogModel.find({ status: "ACTIVE" }).limit(10).select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords').lean();
     const category = await CategoryModel.find({ status: "ACTIVE" }).select('-status -description').lean();
-    const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20).select('-description -store_link -cashback_type -store_status').lean();
+    const store = await StoreModel.find({ store_status: "ACTIVE" }).limit(20).select('-description -store_link -store_status').lean();
     const coupon = await CouponModel.find({ status: "ACTIVE" }).select('-description -expiry_date -status').limit(10).populate('store', 'name cashback_type cashback_rate store_link store_img').populate('category', 'name').lean();
     const main_banner = await CampaignModel.find({
       product_status: "ACTIVE",
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
           end_time: { $gte: currentDate.toISOString() },
         },
       },
-    }).select('store category flash_sale product_slug slug_type title  createAt updateAt _id').populate("store", "name cashback_type cashback_rate store_link store_img")
+    }).select('store category flash_sale product_slug slug_type title  createdAt updatedAt _id').populate("store", "name cashback_type cashback_rate store_link store_img")
       .populate("category", "name slug").lean();
 
     const best_product = await CampaignModel.find({

@@ -35,8 +35,6 @@ export async function POST(req: Request) {
     // Fetch data
     const category_details = await BlogCategoryModel.findOne(query).select('-status').lean();
 
-
-
     if (!category_details) {
       return new NextResponse(
         JSON.stringify({

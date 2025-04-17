@@ -45,6 +45,7 @@ const CashbackHistorySchema = new Schema<ICashbackHistory>({
     required: true,
     default: Date.now,
   },
+  upto_amount: { type: Number, default: null },
   end_date: {
     type: Date,
     default: null,
@@ -122,9 +123,9 @@ const StoreSchema = new Schema<IStore>(
       required: [true, "Add Cashback tracking "],
       trim: true,
     },
-    upto_amount:{
-     type:Number,
-     default:null
+    upto_amount: {
+      type: Number,
+      default: null,
     },
     click_count: {
       type: Number,

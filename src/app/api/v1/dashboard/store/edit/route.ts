@@ -69,7 +69,10 @@ export async function POST(req: Request) {
    
     const isCashbackTypeChanged = cashback_type && cashback_type !== store.cashback_type;
     const isCashbackRateChanged =cashback_rate !== undefined && cashback_rate.toString() !== store.cashback_rate.toString();
-    const isUptoAmountChanged =  upto_amount !== null && upto_amount.toString() !== store.upto_amount.toString();
+    const isUptoAmountChanged =
+    upto_amount !== undefined &&
+    (store.upto_amount === undefined ||
+      Number(upto_amount) !== Number(store.upto_amount));
 
 
     if (isCashbackTypeChanged || isCashbackRateChanged || isUptoAmountChanged) {
@@ -85,12 +88,12 @@ export async function POST(req: Request) {
         cashback_type: cashback_type || store.cashback_type,
         cashback_rate: cashback_rate?.toString() || store.cashback_rate.toString(),
         start_date: new Date(),
-        upto_amount:upto_amount
+         upto_amount: upto_amount !== undefined ? Number(upto_amount) : store.upto_amount ?? null,
       });
 
       if (isCashbackTypeChanged) store.cashback_type = cashback_type;
       if (isCashbackRateChanged) store.cashback_rate = cashback_rate.toString();
-      if (isUptoAmountChanged) store.upto_amount = upto_amount.toString();
+      if (isUptoAmountChanged) store.upto_amount = Number(upto_amount);
     }
 
 

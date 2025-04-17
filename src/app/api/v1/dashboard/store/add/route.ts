@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       cashback_type,
       cashback_rate,
       store_status,
-      upto_amount=null
+      upto_amount
     } = requestData;
 
     if (
@@ -66,6 +66,9 @@ export async function POST(req: Request) {
       );
     }
 
+    
+
+
     const parsedCashbackRate = Number(cashback_rate);
     if (isNaN(parsedCashbackRate)) {
       return new NextResponse(
@@ -76,6 +79,8 @@ export async function POST(req: Request) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+
 
     const trimmedName = name.trim();
     const trimmedSlug = generateSlug(trimmedName);
@@ -105,7 +110,7 @@ export async function POST(req: Request) {
     const newStore = new StoreModel({
       name: trimmedName,
       category,
-      upto_amount,
+      upto_amount: upto_amount !== undefined && upto_amount !== null ? Number(upto_amount) : null,
       description: description.trim(),
       slug: trimmedSlug,
       store_img,
@@ -121,7 +126,7 @@ export async function POST(req: Request) {
           cashback_type,
           cashback_rate: parsedCashbackRate,
           start_date: new Date(),
-          upto_amount
+          upto_amount: upto_amount !== undefined && upto_amount !== null ? Number(upto_amount) : null,
         },
       ],
     });

@@ -46,6 +46,7 @@ export async function POST(req: Request) {
       cashback_type,
       cashback_rate,
       store_status,
+      upto_amount=null
     } = requestData;
 
     if (
@@ -104,6 +105,7 @@ export async function POST(req: Request) {
     const newStore = new StoreModel({
       name: trimmedName,
       category,
+      upto_amount,
       description: description.trim(),
       slug: trimmedSlug,
       store_img,
@@ -119,6 +121,7 @@ export async function POST(req: Request) {
           cashback_type,
           cashback_rate: parsedCashbackRate,
           start_date: new Date(),
+          upto_amount
         },
       ],
     });

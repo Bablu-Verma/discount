@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       description,
       category,
       tc,
+      upto_amount,
       tracking,
       store_img,
       cashback_status,
@@ -65,19 +66,13 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("Existing cashback_type:", store.cashback_type);
-console.log("Incoming cashback_type:", cashback_type);
-console.log("Existing cashback_rate:", store.cashback_rate);
-console.log("Incoming cashback_rate:", cashback_rate);
-
    
     const isCashbackTypeChanged = cashback_type && cashback_type !== store.cashback_type;
-    const isCashbackRateChanged =
-  cashback_rate !== undefined &&
-  cashback_rate.toString() !== store.cashback_rate.toString();
+    const isCashbackRateChanged =cashback_rate !== undefined && cashback_rate.toString() !== store.cashback_rate.toString();
+    const isUptoAmountChanged =  upto_amount !== null && upto_amount.toString() !== store.upto_amount.toString();
 
 
-    if (isCashbackTypeChanged || isCashbackRateChanged) {
+    if (isCashbackTypeChanged || isCashbackRateChanged || isUptoAmountChanged) {
     
       if (store.cashback_history.length > 0) {
         const lastHistory = store.cashback_history[store.cashback_history.length - 1];
@@ -90,11 +85,12 @@ console.log("Incoming cashback_rate:", cashback_rate);
         cashback_type: cashback_type || store.cashback_type,
         cashback_rate: cashback_rate?.toString() || store.cashback_rate.toString(),
         start_date: new Date(),
+        upto_amount:upto_amount
       });
 
-  
       if (isCashbackTypeChanged) store.cashback_type = cashback_type;
-      if (isCashbackRateChanged) store.cashback_rate = cashback_rate.toString();;
+      if (isCashbackRateChanged) store.cashback_rate = cashback_rate.toString();
+      if (isUptoAmountChanged) store.upto_amount = upto_amount.toString();
     }
 
 

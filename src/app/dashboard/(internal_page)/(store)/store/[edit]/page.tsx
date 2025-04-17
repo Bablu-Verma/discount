@@ -29,6 +29,7 @@ const EditCategory: React.FC = () => {
      cashback_rate: "",
      store_status: "" ,
      category:'', 
+     upto_amount:'',
      tracking:''
    });
   const [editorContent, setEditorContent] = useState("");
@@ -67,7 +68,7 @@ const [editorContentTc, setEditorContentTc] = useState("");
         store_status: store_data.store_status || '',
         category: store_data.category || '',
         tracking: store_data.tracking || '',
-    
+        upto_amount:store_data.upto_amount || ''
       })
       setEditorContent(store_data.description)
       setEditorContentTc(store_data.tc)
@@ -108,6 +109,7 @@ const [editorContentTc, setEditorContentTc] = useState("");
           tc:editorContentTc,
           tracking:formData.tracking,
           category:formData.category,
+          upto_amount:formData.upto_amount
         },
         {
           headers: {
@@ -258,7 +260,7 @@ const [editorContentTc, setEditorContentTc] = useState("");
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-3 gap-5">
 
 <div>
   <label className="block text-sm font-medium text-gray-700 mb-2">Tracking time</label>
@@ -271,7 +273,17 @@ const [editorContentTc, setEditorContentTc] = useState("");
     className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
   />
 </div>
-
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">max purchase amount</label>
+  <input
+    type="text"
+    name="upto_amount"
+    value={formData.upto_amount}
+    onChange={handleInputChange}
+    placeholder="Enter max purchase amount"
+    className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 
 <div>
   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>

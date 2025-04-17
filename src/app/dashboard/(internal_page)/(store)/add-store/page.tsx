@@ -19,7 +19,8 @@ const AddStore = () => {
     cashback_rate: "",
     store_status: "ACTIVE" as "ACTIVE" | "INACTIVE",
     category: "",
-    tracking: ''
+    tracking: '',
+    upto_amount:'',
   });
 
   const [editorContent, setEditorContent] = useState("");
@@ -47,7 +48,7 @@ const AddStore = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, store_img, cashback_status, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
+    const { name, store_img, upto_amount, cashback_status, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
 
     if (!name.trim()) return toast.error("Please enter a store name.");
     if (!store_img.trim()) return toast.error("Please enter a store image link.");
@@ -78,6 +79,7 @@ const AddStore = () => {
           cashback_rate,
           store_status,
           tc:editorContentTc,
+          upto_amount,
           category,
           tracking
         },
@@ -214,8 +216,19 @@ const AddStore = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-3 gap-5">
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">max purchase Amount</label>
+              <input
+                type="text"
+                name="upto_amount"
+                value={formData.upto_amount}
+                onChange={handleInputChange}
+                placeholder="Enter max purchase Amount "
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Tracking time</label>
               <input

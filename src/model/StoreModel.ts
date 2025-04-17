@@ -8,6 +8,7 @@ export interface ICashbackHistory {
   cashback_rate: string;
   start_date: Date;
   end_date?: Date;
+  upto_amount?: number | null
 }
 
 export interface IStore extends Document {
@@ -26,6 +27,7 @@ export interface IStore extends Document {
   cashback_history: ICashbackHistory[];
   store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
   click_count?: number;
+  upto_amount?:number | null
 }
 
 const CashbackHistorySchema = new Schema<ICashbackHistory>({
@@ -119,6 +121,10 @@ const StoreSchema = new Schema<IStore>(
       type: String,
       required: [true, "Add Cashback tracking "],
       trim: true,
+    },
+    upto_amount:{
+     type:Number,
+     default:null
     },
     click_count: {
       type: Number,

@@ -94,17 +94,6 @@ const OrderSchema = new Schema<IOrder>(
   { timestamps: true }
 );
 
-// ✅ Auto-push initial order history on creation
-OrderSchema.pre("save", function (next) {
-  if (this.isNew) {
-    this.order_history.push({
-      status: this.order_status,
-      date: new Date(),
-      details: `Order created with status ${this.order_status}`,
-    });
-  }
-  next();
-});
 
 const OrderModel: Model<IOrder> =
   mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchema);

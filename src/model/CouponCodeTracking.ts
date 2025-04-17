@@ -6,8 +6,8 @@ export interface ICouponTracking extends Document {
   copied_at: Date;  
   user_id?: mongoose.Types.ObjectId;  
   store_id: mongoose.Types.ObjectId; 
-  ip_address: string;  
-  user_agent: string;  
+  ip_address?: string;  
+  user_agent?: string;  
 }
 
 const CouponTrackingSchema = new Schema<ICouponTracking>(
@@ -37,11 +37,11 @@ const CouponTrackingSchema = new Schema<ICouponTracking>(
     },
     ip_address: {
       type: String,
-      required: true,  
+      required: false,  
     },
     user_agent: {
       type: String,
-      required: true,  
+      required: false,  
     },
   },
   { timestamps: true }  

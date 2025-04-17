@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const savedTracking = await newCouponTracking.save();
 
     return NextResponse.json(
-      { success: true, message: "Coupon tracking saved successfully.", data: savedTracking },
+      { success: true, message: "Coupon tracking saved successfully." },
       { status: 201 }
     );
   } catch (error) {

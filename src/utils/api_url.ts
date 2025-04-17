@@ -30,6 +30,7 @@ export const wishlist_product_remove_ = main_url + '/client/wishlist/remover-pro
 export const wishlist__remove_ = main_url + '/client/wishlist/remove-wishlist'
 export const search_client_ = main_url + '/client/search'
 export const create_order_api = main_url + '/client/order/add'
+export const track_coupon_copy_api = main_url + '/client/coupon-code-track/add'
 
 
 

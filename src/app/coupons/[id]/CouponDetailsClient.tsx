@@ -1,6 +1,8 @@
 "use client";
 
 import { RootState } from "@/redux-store/redux_store";
+import { track_coupon_copy_api } from "@/utils/api_url";
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -14,11 +16,28 @@ const CouponDetailsClient = ({ page_data }) => {
   const token = useSelector((state: RootState) => state.user.token);
 
  
+  const send_code = async() => {
+     try {
+      const {data} = await axios.post(track_coupon_copy_api,
+        {
+          coupon_id:page_data._id
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+     } catch (error) {
+       console.log(error)
+     }
+}
+
 
 
   const handle_user_click = async () => {
     await navigator.clipboard.writeText(page_data.code);
     setShowCode(!showCode);
+    send_code()
   };
 
   const open_clint_web = (item:string)=>{

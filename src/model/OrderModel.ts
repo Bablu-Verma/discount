@@ -27,6 +27,7 @@ export interface IOrder extends Document {
   order_status: (typeof ORDER_STATUSES)[number];
   payment_status: (typeof PAYMENT_STATUSES)[number] | null;
   order_history: IHistory[];
+  upto_amount?: number | null;
   payment_history: IHistory[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -40,6 +41,10 @@ const OrderSchema = new Schema<IOrder>(
       ref: "User",
       index: true,
     },
+    upto_amount:{
+     type:Number || null,
+     default:null
+    }, 
     order_create:{
       type:Date,
       default: Date.now

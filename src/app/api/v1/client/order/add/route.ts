@@ -39,6 +39,7 @@ export async function POST(req: Request) {
     const create_order =  new OrderModel({
       user_id: user._id,
       store_id,
+      upto_amount:store_details.upto_amount,
       transaction_id: transactionId,
       redirect_url: `${store_details.store_link}?q=redirect+url&id=${transactionId}`,
       order_value: null,

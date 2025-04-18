@@ -4,6 +4,7 @@ import { authenticateAndValidateUser } from "@/lib/authenticate";
 import { v4 as uuidv4 } from "uuid";
 import OrderModel from "@/model/OrderModel";
 import StoreModel from "@/model/StoreModel";
+import { generateCustomUuid } from "@/helpers/server/uuidv4";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Store not Active." }, { status: 400 });
     }
 
-    const transactionId = uuidv4();
+    const transactionId = generateCustomUuid();
 
     const create_order =  new OrderModel({
       user_id: user._id,

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-import RecordModel from "@/model/CashbackOrderModel";
+import OrderModel from "@/model/OrderModel";
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // Fetch order details
-    const order = await RecordModel.findById(orderId)
+    const order = await OrderModel.findById(orderId)
       .populate({
         path: "user_id",
         select: "name email",

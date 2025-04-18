@@ -63,6 +63,7 @@ export const add_product = main_url + '/dashboard/product/add'
 export const product_edit_ = main_url + '/dashboard/product/edit'
 export const product_dashboard_list_ = main_url + '/dashboard/product/get-all'
 export const product_dashboard_details_ = main_url + '/dashboard/product/get-details'
+export const pinback_action_add_api = main_url + '/dashboard/pinback_action/add'
 
 
 

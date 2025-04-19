@@ -163,6 +163,13 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
+    {
+      id: 13,
+      name: "Report",
+      url: "/dashboard/add-report",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
+    },
   ];
 
   

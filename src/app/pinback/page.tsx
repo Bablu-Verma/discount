@@ -1,7 +1,8 @@
 "use client";
 
 import { generateSignature } from "@/helpers/server/uuidv4";
-import { pinback_action_add_api } from "@/utils/api_url";
+import { pinback_report_add_api } from "@/utils/api_url";
+
 import axios, { AxiosError } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -12,7 +13,7 @@ export default function Pinback() {
   const savepinbackdata = async (paramsObject) => {
     try {
       let { data } = await axios.post(
-        pinback_action_add_api,
+        pinback_report_add_api,
         {
           raw_data:paramsObject
         },

@@ -41,33 +41,46 @@ export async function POST(req: Request) {
       source,
       raw_data,
     });
-    await pinbackResponse.save();
+
+    try {
+      await pinbackResponse.save();
+    } catch (error: any) {
+      // Duplicate entry handle
+      if (error.code === 11000) {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            message: "Click id repated",
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      } else {
+        throw error;
+      }
+    }
 
     const findOrder = await OrderModel.findOne({
       transaction_id: click_id,
     }).select("-redirect_url");
 
     if (findOrder) {
+
       console.log("findOrder.upto_amount:", findOrder.upto_amount);
       console.log("Order amount:", amount);
 
-      let applicableAmount = amount;
+      let applicableAmount = 0;
 
       if (findOrder.upto_amount) {
-
-
-        // applicableAmount = findOrder.upto_amount > amount ? true : false;
-        if (amount >= findOrder.upto_amount) {
-          applicableAmount = findOrder.upto_amount;
-        } else {
+        if (findOrder.upto_amount >= amount ) {
           applicableAmount = amount;
+        } else {
+          applicableAmount = findOrder.upto_amount;
         }
+      } else {
+        applicableAmount = amount;
       }
 
       console.log("Applicable Amount for Cashback:", applicableAmount);
-
-
-      
 
       let finalCashback = 0;
 
@@ -77,7 +90,7 @@ export async function POST(req: Request) {
         finalCashback = findOrder.cashback_rate;
       }
 
-     
+
       findOrder.order_value = amount;
       findOrder.cashback = finalCashback;
 

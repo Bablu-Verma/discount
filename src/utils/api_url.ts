@@ -31,7 +31,7 @@ export const wishlist__remove_ = main_url + '/client/wishlist/remove-wishlist'
 export const search_client_ = main_url + '/client/search'
 export const create_order_api = main_url + '/client/order/add'
 export const track_coupon_copy_api = main_url + '/client/coupon-code-track/add'
-
+export const order_list_api = main_url + '/client/order/list'
 
 
 
@@ -63,7 +63,8 @@ export const add_product = main_url + '/dashboard/product/add'
 export const product_edit_ = main_url + '/dashboard/product/edit'
 export const product_dashboard_list_ = main_url + '/dashboard/product/get-all'
 export const product_dashboard_details_ = main_url + '/dashboard/product/get-details'
-export const pinback_action_add_api = main_url + '/dashboard/pinback_action/add'
+export const pinback_report_add_api = main_url + '/dashboard/report/pinback/add'
+export const offline_report_add_api = main_url + '/dashboard/report/offline/add'
 
 
 
@@ -95,6 +96,6 @@ export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 
 
 
-export const order_list_api = main_url + '/order/list'
+
 
 

@@ -15,7 +15,7 @@ click_id: string;
 
 const pinbackResponseSchema = new mongoose.Schema<PinbackResponse>(
   {
-    click_id: { type: String, required: true },
+    click_id: { type: String, required: true,  unique: true,},
     transaction_id: { type: String },
     status: { type: String },
     amount: { type: Number, required: true },

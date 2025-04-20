@@ -48,10 +48,7 @@ export default async function Home() {
   const token = await getServerToken();
   const page_data = await GetData(token);
 
-  console.log("Home", page_data);
-  
-
-  
+  // console.log("Home", page_data);s
 
   return (
     <>

@@ -7,8 +7,7 @@ export interface IWithdrawalRequest extends Document {
   status: "PENDING" | "APPROVED" | "REJECTED";
   requested_at: Date;
   processed_at: Date | null;
-  transaction_id:string,
-  order_id: mongoose.Types.ObjectId
+
 }
 
 const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(

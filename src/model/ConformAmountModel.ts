@@ -3,9 +3,10 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IConformAmount extends Document {
   _id: string;
   user_id: mongoose.Types.ObjectId;
-  amount: Number;
+  amount: Number | null;
   createdAt?: Date;
   updatedAt?: Date;
+  hold_amount:Number
 }
 
 const ConformAmountSchema = new Schema<IConformAmount>(
@@ -17,9 +18,13 @@ const ConformAmountSchema = new Schema<IConformAmount>(
       unique: true,
     },
     amount: {
-      type: 0,
+      type: Number,
       required: true,
     },
+    hold_amount: {
+      type: Number,
+      default:0
+    }
   },
   {
     timestamps: true,

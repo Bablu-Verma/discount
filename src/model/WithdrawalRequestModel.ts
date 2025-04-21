@@ -4,10 +4,10 @@ export interface IWithdrawalRequest extends Document {
   user_id: mongoose.Types.ObjectId;
   amount: number;
   upi_id: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "WITHDRAWAL_CREATE"|"PENDING" | "APPROVED" | "REJECTED";
   requested_at: Date;
   processed_at: Date | null;
-
+  otp?:number
 }
 
 const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
@@ -29,7 +29,7 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
     },
     status: {
       type: String,
-      enum: ["PENDING", "APPROVED", "REJECTED"],
+      enum: ["WITHDRAWAL_CREATE","PENDING", "APPROVED", "REJECTED"],
       default: "PENDING",
     },
     requested_at: {
@@ -40,6 +40,10 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
       type: Date,
       default: null,
     },
+    otp:{
+      type:Number,
+      select: false,
+    }
   },
   { timestamps: true }
 );

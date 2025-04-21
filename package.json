@@ -41,6 +41,7 @@
     "dompurify": "^3.2.3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "lottie-react": "^2.4.1",
     "mailtrap": "^3.4.0",
     "mongoose": "^8.8.2",
     "mongoose-sequence": "^6.0.1",

@@ -29,7 +29,6 @@ const WithdrawRequest: React.FC = () => {
 
   const token = useSelector((state: RootState) => state.user.token);
 
-  // Fetch Withdraw Request Data (bank list + withdrawable amount)
   const fetchWithdrawRequestData = async () => {
     try {
       const { data } = await axios.get(withdraw_request_data_api, {

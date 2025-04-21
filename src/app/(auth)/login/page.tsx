@@ -11,6 +11,9 @@ import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import Lottie from 'lottie-react';
+import login_lottie from '../../../lottie/login_lottie.json'
+
 
 interface IUserData {
   email: string;
@@ -117,19 +120,14 @@ const Login = () => {
       <TopHeader />
       <MainHeader />
       <main>
-        <div className="max-w-6xl m-auto min-h-screen sm:grid grid-cols-2 lg:grid-cols-3 gap-8 pb-10 md:pb-3">
-          <div className="col-span-1 lg:col-span-2">
-            <img
-              src="https://img.freepik.com/premium-vector/woman-red-jacket-holding-shopping-bag-with-quotsalequot-it-second-bag-her-other-hand_150234-136431.jpg"
-              className="w-full h-auto max-h-screen max-w-3xl"
-              alt="Woman holding shopping bags"
-            />
-          </div>
-          <div className="col-span-1 flex justify-center items-center">
-            <div className="w-full max-w-[400px] px-2">
+        <div className="max-w-6xl m-auto min-h-[80vh] flex justify-center items-center  pb-10 md:pb-3">
+          
+          <div className="col-span-1 items-center grid grid-cols-2">
+            <Lottie animationData={login_lottie} loop={false} />
+            <div className="col-span-1 max-w-[450px] px-2 ">
               <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Login your account</h2>
               <p className="text-sm font-normal mb-6">
-                Shop your favorite product
+                Shop Your Favorite Products With Maximum Discount
               </p>
 
               <div className="flex flex-col gap-4">

@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     }
 
     const hashPassword = await createHashPassword(password);
-    const expiry_time = createExpiryTime(0, 30); // 30 minutes
+    const expiry_time = createExpiryTime(0, 30); 
     const create_otp = generateOTP();
 
     const create_user = new UserModel({

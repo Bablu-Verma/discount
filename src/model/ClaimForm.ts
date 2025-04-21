@@ -6,7 +6,7 @@ const CLAIM_STATUSES = ["PENDING", "APPROVED", "REJECTED"] as const;
 // Define ClaimForm Interface
 interface IClaimForm extends Document {
   user_id: mongoose.Types.ObjectId;
-  order_id: Schema.Types.ObjectId;
+  store_id: Schema.Types.ObjectId;
   transaction_id:string;
   reason: string;
   supporting_documents: string[]; 
@@ -15,6 +15,9 @@ interface IClaimForm extends Document {
   partner_site_order_status: string;
   createdAt?: Date;
   updatedAt?: Date;
+  product_order_date:Date;
+  product_delever_date:Date;
+  order_value:Number
 }
 
 // Define ClaimForm Schema
@@ -26,13 +29,13 @@ const ClaimFormSchema = new Schema<IClaimForm>(
       required: true,
       index: true,
     },
-    order_id: {
+    store_id: {
       type: Schema.Types.ObjectId,
+      ref: "Store",
       required: true,
       index: true,
-      ref: "Record",
     },
-    transaction_id:{
+    transaction_id: {
       type: String,
       required: true,
       trim: true,
@@ -44,13 +47,18 @@ const ClaimFormSchema = new Schema<IClaimForm>(
     },
     supporting_documents: {
       type: [String],
+      required: true,
       validate: {
         validator: function (val: string[]) {
           return Array.isArray(val) && val.length > 0;
         },
         message: "At least one supporting document is required.",
       },
-      required: true,
+    },
+    status: {
+      type: String,
+      enum: CLAIM_STATUSES,
+      default: "PENDING",
     },
     partner_site_orderid: {
       type: String,
@@ -62,13 +70,22 @@ const ClaimFormSchema = new Schema<IClaimForm>(
       required: true,
       trim: true,
     },
-    status: {
-      type: String,
-      enum: CLAIM_STATUSES, // ✅ Correctly enforces allowed values
-      default: "PENDING",
+    product_order_date: {
+      type: Date,
+      required: true,
+    },
+    product_delever_date: {
+      type: Date,
+      required: true,
+    },
+    order_value: {
+      type: Number,
+      required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 // Export ClaimForm Model

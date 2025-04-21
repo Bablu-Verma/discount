@@ -3,7 +3,6 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 // Define Claim Statuses
 const CLAIM_STATUSES = ["PENDING", "APPROVED", "REJECTED"] as const;
 
-// Define ClaimForm Interface
 interface IClaimForm extends Document {
   user_id: mongoose.Types.ObjectId;
   store_id: Schema.Types.ObjectId;

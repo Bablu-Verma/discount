@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
-
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import ClaimFormModel from "@/model/ClaimForm";
-import RecordModel from "@/model/CashbackOrderModel";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    const { authenticated, user, message } = await authenticateAndValidateUser(
-      req
-    );
+    // Authenticate user
+    const { authenticated, user, message } = await authenticateAndValidateUser(req);
 
     if (!authenticated) {
       return new NextResponse(
@@ -23,58 +20,56 @@ export async function POST(req: Request) {
       );
     }
 
-    const {
-      transaction_id,
-      order_id,
-      reason,
-      supporting_documents,
-      partner_site_orderid,
-      partner_site_order_status,
-    } = await req.json();
+    // Parse FormData
+    const formData = await req.formData();
 
-    // Validate required fields
+    const store_id = formData.get("store_id")?.toString();
+    const transaction_id = formData.get("transaction_id")?.toString();
+    const reason = formData.get("reason")?.toString();
+    const partner_site_orderid = formData.get("partner_site_orderid")?.toString();
+    const partner_site_order_status = formData.get("partner_site_order_status")?.toString();
+    const product_order_date = formData.get("product_order_date") ? new Date(formData.get("product_order_date")!.toString()) : undefined;
+    const product_delever_date = formData.get("product_delever_date") ? new Date(formData.get("product_delever_date")!.toString()) : undefined;
+    const order_value = formData.get("order_value") ? Number(formData.get("order_value")) : undefined;
+
+    // supporting_documents (multi file upload handled as array)
+    const supporting_documents = formData.getAll("supporting_documents").map((file) => {
+      if (typeof file === "string") return file;
+      return file.name;
+    });
+
+    // Basic Validation
     if (
+      !store_id ||
       !transaction_id ||
-      !reason || !order_id ||
-      !supporting_documents ||
-      supporting_documents.length === 0
+      !reason ||
+      !supporting_documents.length ||
+      !partner_site_orderid ||
+      !partner_site_order_status ||
+      !product_order_date ||
+      !product_delever_date ||
+      !order_value
     ) {
       return NextResponse.json(
-        {
-          success: false,
-          message:
-            "All required fields must be provided, including supporting documents.",
-        },
+        { success: false, message: "All fields are required." },
         { status: 400 }
       );
     }
 
-
-    const existingRecord = await RecordModel.findOne({ transaction_id });
-
-    if (!existingRecord) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid transaction_id. No matching record found.",
-        },
-        { status: 404 }
-      );
-    }
-
-    // Create new claim form
+    // Create Claim
     const newClaim = new ClaimFormModel({
       user_id: user?._id,
-      transaction_id: transaction_id,
+      store_id,
+      transaction_id,
       reason,
-      order_id,
       supporting_documents,
       partner_site_orderid,
       partner_site_order_status,
-      status: "PENDING",
+      product_order_date,
+      product_delever_date,
+      order_value,
     });
 
-    // Save to DB
     await newClaim.save();
 
     return NextResponse.json(

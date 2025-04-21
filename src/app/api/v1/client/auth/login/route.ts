@@ -1,6 +1,8 @@
 import { generateJwtToken, verifyHashPassword } from "@/helpers/server/server_function";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/UserModel";
+import UserUPIModel from "@/model/UserUPIModel";
+import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
 import { NextRequest, NextResponse } from "next/server";
 
 interface IRequestBody {
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const check_match = await verifyHashPassword(password,findUser.password)
+    const check_match = await verifyHashPassword(password, findUser.password)
 
     if (!check_match) {
       return new NextResponse(
@@ -82,11 +84,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    if(findUser.user_status == 'REMOVED'){
+    if (findUser.user_status == 'REMOVED') {
       return new NextResponse(
         JSON.stringify({
           success: false,
-          message: "you are not va;i user, contact to support",
+          message: "you are not valid user, contact to support",
         }),
         {
           status: 400,
@@ -110,7 +112,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const userData = findUser.toObject();
 
-   
+
     delete userData.password;
     delete userData.accept_terms_conditions_privacy_policy;
     delete userData.email_verified;
@@ -121,18 +123,43 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     delete userData.subscribe_email;
     delete userData.__v
 
-  
+
+    const conformAmount = await UserUPIModel.findOne({ user_id: findUser._id }).select('-createdAt -updatedAt');
+    const withdrawalRequests = await WithdrawalRequestModel.find({ user_id: findUser._id }).select('-upi_id -requested_at -processed_at -createdAt -updatedAt');
+
+    const total_cb = conformAmount?.amount || 0;
+    const total_hold = conformAmount?.hold_amount || 0;
+
+    let withdrawal_pending = 0;
+    let total_withdrawal = 0;
+
+
+    withdrawalRequests.forEach((request) => {
+      if (request.status === "PENDING") {
+        withdrawal_pending += request.amount;
+      }
+      if (request.status === "APPROVED") {
+        total_withdrawal += request.amount;
+      }
+    });
+
 
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Login successful",
-        user:userData,
-        token:JwtToken
+        summary: {
+          total_cb: total_cb,
+          total_hold: total_hold,
+          withdrawal_pending: withdrawal_pending,
+          total_withdrawal: total_withdrawal
+        },
+        user: userData,
+        token: JwtToken
       }),
-      { 
-        status: 200 ,
+      {
+        status: 200,
         headers: {
           "Content-Type": "application/json",
         },

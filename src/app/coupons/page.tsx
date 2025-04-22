@@ -9,7 +9,11 @@ import { ICategory } from "@/model/CategoryModel";
 import { ICoupon } from "@/model/CouponModel";
 import { coupons_list_api } from "@/utils/api_url";
 
+import { ImHappy2 } from "react-icons/im";
+
+
 import axios, { AxiosError } from "axios";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 
@@ -44,15 +48,24 @@ export default async function Category() {
    const token = await getServerToken()
     const page_data = await GetData(token)
 
-
-    console.log(page_data)
-
   return (
     <>
 
     <MainHeader />
     <main>
-      <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-14 mb-16">
+      <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-8 mb-16">
+        <div className=""> 
+         <div className="flex justify-start gap-5">
+         <div className='relative overflow-hidden rounded-md flex justify-center items-center bg-primary  border-r-2 border-dashed border-white w-[300px] h-[200px]'>
+          <ImHappy2  className="text-7xl text-white -rotate-45" />
+          <span className='bg-highlight_color w-16 h-16 rounded-full absolute -left-10'></span>
+          </div>
+          <div className="w-full flex justify-start pl-10 items-center">
+          <h1 className="text-5xl capitalize text-primary"><span className="text-2xl">save:</span> up to 100% OFF</h1>
+          </div>
+             
+         </div>
+        </div>
          
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-6 lg:mt-10">
           {

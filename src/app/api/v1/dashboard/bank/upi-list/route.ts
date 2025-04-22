@@ -1,13 +1,8 @@
-import {
-  createExpiryTime,
-  createHashPassword,
-  generateJwtToken,
-  generateOTP,
-} from "@/helpers/server/server_function";
+
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 
 import dbConnect from "@/lib/dbConnect";
-import UserUPIModel from "@/model/UserUPIModel"; // Corrected model import
+import UserUPIModel from "@/model/UserUPIModel";
 
 import { NextResponse } from "next/server";
 

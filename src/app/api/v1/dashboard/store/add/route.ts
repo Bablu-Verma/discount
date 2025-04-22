@@ -46,7 +46,8 @@ export async function POST(req: Request) {
       cashback_type,
       cashback_rate,
       store_status,
-      upto_amount
+      upto_amount,
+      claim_form
     } = requestData;
 
     if (
@@ -114,6 +115,7 @@ export async function POST(req: Request) {
       description: description.trim(),
       slug: trimmedSlug,
       store_img,
+      claim_form,
       tc: tc.trim(),
       tracking: tracking.trim(),
       cashback_status,

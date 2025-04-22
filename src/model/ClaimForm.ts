@@ -19,7 +19,6 @@ interface IClaimForm extends Document {
   order_value:Number
 }
 
-// Define ClaimForm Schema
 const ClaimFormSchema = new Schema<IClaimForm>(
   {
     user_id: {

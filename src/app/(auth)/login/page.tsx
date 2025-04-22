@@ -11,9 +11,9 @@ import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import Lottie from 'lottie-react';
-import login_lottie from '../../../lottie/login_lottie.json'
 
+import Image from "next/image";
+import login_image from "../../../../public/login_image.svg"
 
 interface IUserData {
   email: string;
@@ -76,13 +76,9 @@ const Login = () => {
         password: "",
       });
 
-      // console.log("user login successfully:", data);
+   
       toast.success("Login success!");
-
-
       dispatch(login({ user: data.user, token: data.token }));
-
-
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
@@ -121,10 +117,9 @@ const Login = () => {
       <MainHeader />
       <main>
         <div className="max-w-6xl m-auto min-h-[80vh] flex justify-center items-center  pb-10 md:pb-3">
-          
           <div className="col-span-1 items-center grid grid-cols-2">
-            <Lottie animationData={login_lottie} loop={false} />
-            <div className="col-span-1 max-w-[450px] px-2 ">
+            <Image src={login_image} alt="login"  width={350} height={350} className=""/>
+            <div className="col-span-1 px-2 ">
               <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Login your account</h2>
               <p className="text-sm font-normal mb-6">
                 Shop Your Favorite Products With Maximum Discount
@@ -163,14 +158,14 @@ const Login = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex justify-between gap-2 my-10">
+              <div className="flex justify-between gap-3 lg:gap-4 my-10">
                 <button
                   onClick={SubmitData}
                   className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-1.5 min-w-36 lg:min-w-48 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
                 >
                   Submit
                 </button>
-                <Link href='/forgot_password' className="bg-white text-gray-800 text-sm lg:text-base font-normal duration-200 p-2 hover:text-blue-500">
+                <Link href='/forgot_password' className=" text-gray-800 text-sm  font-normal duration-200 p-2 hover:underline">
                   Forgot password?
                 </Link>
               </div>

@@ -6,10 +6,13 @@ import MainHeader from "@/components/header/MainHeader";
 import TopHeader from "@/components/header/TopHeader";
 import { resend_otp_api, user_verify_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import OtpInput from "react-otp-input";
+import verifyotp_image from '../../../../public/enter_otp.svg'
+
 
 interface UserRegisterInfo {
   email: string;
@@ -126,16 +129,12 @@ const UserVerify = () => {
       <TopHeader />
       <MainHeader />
       <main>
-        <div className="max-w-6xl mx-auto min-h-screen sm:grid grid-cols-2 lg:grid-cols-3 gap-8 pb-10 md:pb-3">
-          <div className="col-span-1 lg:col-span-2">
-            <img
-              src="https://img.freepik.com/premium-vector/woman-red-jacket-holding-shopping-bag-with-quotsalequot-it-second-bag-her-other-hand_150234-136431.jpg"
-              className="w-full h-auto max-h-screen"
-              alt="Woman holding shopping bags"
-            />
-          </div>
-          <div className="col-span-1 flex justify-center items-center">
-            <div className="w-full max-w-[400px] px-2">
+        <div className="max-w-6xl mx-auto min-h-screen flex justify-center items-center pb-10 md:pb-3">
+         
+        
+          <div className=" flex justify-center gap-10 items-center">
+          <Image src={verifyotp_image} alt="login"  width={350} height={350} className=""/>
+            <div className="">
               <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Verify Account</h2>
               <p className="text-sm font-normal mb-10 mt-2 text-gray-600">
                 <i className="fa-regular fa-envelope text-lg text-gray-600"></i>{" "}

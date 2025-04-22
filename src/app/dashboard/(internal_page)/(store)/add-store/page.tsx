@@ -21,6 +21,7 @@ const AddStore = () => {
     category: "",
     tracking: '',
     upto_amount:'',
+    claim_form: 'INACTIVE_CLAIM_FORM' as  'ACTIVE_CLAIM_FORM' | 'INACTIVE_CLAIM_FORM'
   });
 
   const [editorContent, setEditorContent] = useState("");
@@ -48,7 +49,7 @@ const AddStore = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, store_img, upto_amount, cashback_status, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
+    const { name, store_img, upto_amount, cashback_status, claim_form, store_link, cashback_type, cashback_rate, store_status,category,tracking } = formData;
 
     if (!name.trim()) return toast.error("Please enter a store name.");
     if (!store_img.trim()) return toast.error("Please enter a store image link.");
@@ -81,7 +82,8 @@ const AddStore = () => {
           tc:editorContentTc,
           upto_amount,
           category,
-          tracking
+          tracking,
+          claim_form
         },
         {
           headers: {
@@ -173,7 +175,7 @@ const AddStore = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-4 gap-5">
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Rate</label>
@@ -201,7 +203,20 @@ const AddStore = () => {
               </select>
             </div>
 
-            {/* Cashback Status */}
+           
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">claim_form</label>
+              <select
+                name="claim_form"
+                value={formData.claim_form}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="ACTIVE_CLAIM_FORM" >ACTIVE_CLAIM_FORM</option>
+                <option value="INACTIVE_CLAIM_FORM">INACTIVE_CLAIM_FORM</option>
+              </select>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Cashback Status</label>
               <select

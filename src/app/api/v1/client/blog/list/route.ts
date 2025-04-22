@@ -63,6 +63,16 @@ export async function POST(req: Request) {
     .limit(limit || 10)
     .lean();
 
+
+    const f_blog = await BlogModel.findOne()
+    .select('-desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule  -keywords')
+    .populate('writer_id', 'name email profile')
+    .populate('blog_category', 'name slug')
+    .sort({ createdAt: -1 }) 
+    .limit(1)
+    .lean();
+
+
     const totalBlogs = await BlogModel.countDocuments(filters);
 
     const blog_category = await BlogCategoryModel.find({status:'ACTIVE'}).select('-description -status ').lean()
@@ -73,6 +83,7 @@ export async function POST(req: Request) {
         message: "Blog posts fetched successfully.",
         data: {
           blogs, 
+          f_blog:f_blog,
           blog_type: blog_type,
           category:blog_category
 

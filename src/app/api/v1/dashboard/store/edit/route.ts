@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       description,
       category,
       tc,
+      claim_form,
       upto_amount,
       tracking,
       store_img,
@@ -105,6 +106,8 @@ export async function POST(req: Request) {
     if (category !== undefined && category !== "") store.category = category;
     if (tc !== undefined && tc !== "") store.tc = tc;
     if (tracking !== undefined && tracking !== "") store.tracking = tracking;
+    if (claim_form !== undefined && claim_form !=='') store.claim_form = claim_form;
+      
 
     await store.save();
 

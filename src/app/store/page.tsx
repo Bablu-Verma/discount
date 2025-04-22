@@ -9,6 +9,7 @@ import { IStore } from "@/model/StoreModel";
 import { list_store_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import StoreClient from "./store_client";
 
 export const GetData = async (token: string) => {
   try {
@@ -29,7 +30,7 @@ export const GetData = async (token: string) => {
   }
 };
 
-export default async function Category() {
+export default async function Stores() {
   const token = await getServerToken();
   const page_data = await GetData(token);
 
@@ -38,11 +39,8 @@ export default async function Category() {
       <MainHeader />
       <main>
         <div className="max-w-6xl px-2 m-auto mt-4 lg:mt-14 mb-16">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-8 mt-6 lg:mt-10">
-            {page_data.map((item: IStore) => (
-              <StoreCard item={item} />
-            ))}
-          </div>
+          <StoreClient page_data={page_data} />
+         
         </div>
         <BottomToTop />
       </main>

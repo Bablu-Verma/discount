@@ -10,8 +10,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import Lottie from "lottie-react";
-import register_lottie from '../../../lottie/register_lottie.json'
+import Image from "next/image";
+import sign_up_image from '../../../../public/sign_up_image.svg'
 
 
 interface IUserData {
@@ -146,18 +146,12 @@ const Signup = () => {
       <TopHeader />
       <MainHeader />
       <main className="">
-        <div className="max-w-6xl mx-auto min:h-screen  pb-10 lg:pb-2 sm:grid grid-cols-2 lg:grid-cols-3 gap-8  ">
-          <div className="col-span-1 lg:col-span-2">
-            {/* <img
-              src="https://img.freepik.com/premium-vector/woman-red-jacket-holding-shopping-bag-with-quotsalequot-it-second-bag-her-other-hand_150234-136431.jpg"
-              className="w-full h-auto max-h-screen"
-              alt=""
-            /> */}
-              <Lottie animationData={register_lottie} loop={false} />
-          </div>
-          <div className="col-span-1 flex justify-center items-center ">
-            <div className="w-full max-w-[400px] px-2">
-              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Create an account</h2>
+        <div className="max-w-6xl mx-auto min-h-screen flex justify-center items-center  pb-10   ">
+         
+        <div className=" flex gap-9 px-2">
+            <Image src={sign_up_image} alt="login"  width={350} height={350} className=""/>
+             <div>
+             <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Create an account</h2>
               <p className="text-sm font-normal mb-6">
               Just One Step Away From Saving Big!
               </p>
@@ -244,8 +238,8 @@ const Signup = () => {
                   Login
                 </Link>
               </p>
+             </div>
             </div>
-          </div>
         </div>
         <BottomToTop />
       </main>

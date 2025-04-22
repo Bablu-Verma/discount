@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import ClaimFormModel from "@/model/ClaimForm";
+import { upload_image } from "@/helpers/server/upload_image";
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // Authenticate user
+   
     const { authenticated, user, message } = await authenticateAndValidateUser(req);
 
     if (!authenticated) {
@@ -20,7 +21,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Parse FormData
     const formData = await req.formData();
 
     const store_id = formData.get("store_id")?.toString();
@@ -32,18 +32,13 @@ export async function POST(req: Request) {
     const product_delever_date = formData.get("product_delever_date") ? new Date(formData.get("product_delever_date")!.toString()) : undefined;
     const order_value = formData.get("order_value") ? Number(formData.get("order_value")) : undefined;
 
-    // supporting_documents (multi file upload handled as array)
-    const supporting_documents = formData.getAll("supporting_documents").map((file) => {
-      if (typeof file === "string") return file;
-      return file.name;
-    });
+   
+    let supporting_documents = formData.getAll("supporting_documents");
 
-    // Basic Validation
     if (
       !store_id ||
       !transaction_id ||
       !reason ||
-      !supporting_documents.length ||
       !partner_site_orderid ||
       !partner_site_order_status ||
       !product_order_date ||
@@ -56,13 +51,48 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!supporting_documents.length) {
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "At least one image is required.",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    let uploaded_urls: string[] = [];
+
+    for (const image_ of supporting_documents) {
+      if (image_ instanceof File) {
+        const { success, message, url } = await upload_image(
+          image_,
+          "claim_image_upload"
+        );
+  
+        if (success && url) {
+          uploaded_urls.push(url);
+        } else {
+          console.error("Image upload failed:", message);
+        }
+      } else {
+        console.error("Invalid image value. Expected a File.");
+      }
+    }
+
+
     // Create Claim
     const newClaim = new ClaimFormModel({
       user_id: user?._id,
       store_id,
       transaction_id,
       reason,
-      supporting_documents,
+      supporting_documents:uploaded_urls,
       partner_site_orderid,
       partner_site_order_status,
       product_order_date,
@@ -76,7 +106,7 @@ export async function POST(req: Request) {
       {
         success: true,
         message: "Claim submitted successfully.",
-        data: newClaim,
+       
       },
       { status: 201 }
     );

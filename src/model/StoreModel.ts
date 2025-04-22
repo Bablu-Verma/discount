@@ -27,7 +27,8 @@ export interface IStore extends Document {
   cashback_history: ICashbackHistory[];
   store_status: "ACTIVE" | "INACTIVE" | "REMOVED";
   click_count?: number;
-  upto_amount?:number | null
+  upto_amount?:number | null,
+  claim_form: 'ACTIVE_CLAIM_FORM' | 'INACTIVE_CLAIM_FORM'
 }
 
 const CashbackHistorySchema = new Schema<ICashbackHistory>({
@@ -131,6 +132,10 @@ const StoreSchema = new Schema<IStore>(
       type: Number,
       default: 0,
     },
+    claim_form:{
+     type:String,
+     default:'INACTIVE_CLAIM_FORM'
+    }
   },
   { timestamps: true }
 );

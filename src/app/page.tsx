@@ -57,7 +57,7 @@ export default async function Home() {
       <CallApiInHome />
 
       <Hero
-        home_category={page_data.data.category}
+        home_store={page_data.data.store}
         banner={page_data.data.main_banner}
       />
       <main>

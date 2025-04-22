@@ -20,7 +20,7 @@ export default  function StoreClient({page_data}) {
               openTab == "100_STORE" ? "bg-gray-600" : "bg-gray-300"
             } py-1.5 text-white capitalize text-center text-lg`}
           >
-            Up to 100% STORE
+            Cashback Only
           </button>
           <button
             type="button"
@@ -29,7 +29,7 @@ export default  function StoreClient({page_data}) {
               openTab == "ALL_STORE" ? "bg-gray-600" : "bg-gray-300"
             } py-1.5 text-white capitalize text-center text-lg`}
           >
-            ALL STORE
+            ALL 
           </button>
         </div>
         {openTab == "100_STORE" &&

@@ -25,8 +25,7 @@ const CampaignClient:React.FC<productProps> = ({product_}) => {
   const pfilter = useSelector((state: RootState) => state.pfilter);
 
 
-  // console.log("pfilter", pfilter);
-  // console.log("products", products);
+
 
   const isDefaultFilter = JSON.stringify(pfilter) === JSON.stringify(defaultFilterData);
 

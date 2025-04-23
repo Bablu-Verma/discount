@@ -2,45 +2,34 @@
 
 import React, { useEffect, useState } from "react";
 
-import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import {
-  category_list_api,
-  list_store_api,
-  order_list_api,
-  product_list_,
-} from "@/utils/api_url";
-import { ICategory } from "@/common_type";
-import { IRecord } from "@/model/CashbackOrderModel";
+import { list_store_dashboard_api, order_list_admin_api } from "@/utils/api_url";
+import { IOrder } from "@/model/OrderModel";
 
 const OrderList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [OrderList, setOrderList] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
-  const [productList, setProductList] = useState<
-    { title: string; _id: string }[]
-  >([]);
   const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
   const [filters, setFilters] = useState({
-    order_status: "", // [ "ALL","Redirected", "Order", "Completed", "Cancelled"]
-    payment_status: "", // ["ALL","Pending", "confirm", "Paid", "Failed"]
+    payment_status: "",
     user_id: "",
-    user_email: "",
-    product_id: "",
     store_id: "",
     transaction_id: "",
     startDate: "",
     endDate: "",
+    page: 1,
+    limit: 10,
   });
 
   const getOrders = async () => {
     try {
-      const { data } = await axios.post(order_list_api, filters, {
+      const { data } = await axios.post(order_list_admin_api, filters, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,21 +63,15 @@ const OrderList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [storeRes, productRes] = await Promise.all([
+        const [storeRes] = await Promise.all([
           axios.post(
-            list_store_api,
-            { store_status: "ACTIVE" },
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
-          axios.post(
-            product_list_,
-            {product_status:"ALL"},
+            list_store_dashboard_api,
+            {},
             { headers: { Authorization: `Bearer ${token}` } }
           ),
         ]);
 
         setStoreList(storeRes.data.data || []);
-        setProductList(productRes.data.data || []);
       } catch (error) {
         console.log(error);
       }
@@ -122,21 +105,6 @@ const OrderList = () => {
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
-        
-          <select
-            name="product_id"
-            value={filters.product_id}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm max-w-[250px] outline-none "
-          >
-            <option disabled>product_id</option>
-
-            {productList.map((product: { title: string; _id: string }) => (
-              <option key={product._id} value={product._id}>
-                {product.title}
-              </option>
-            ))}
-          </select>
 
           <select
             name="store_id"
@@ -153,6 +121,7 @@ const OrderList = () => {
             ))}
           </select>
 
+        
           <input
             type="text"
             name="user_id"
@@ -161,28 +130,8 @@ const OrderList = () => {
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
-          <input
-            type="text"
-            name="user_email"
-            placeholder="user_email"
-            value={filters.user_email}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          />
 
-          <select
-            name="order_status"
-            value={filters.order_status}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>order_status</option>
-            <option value="ALL">ALL</option>
-            <option value="Redirected">Redirected</option>
-            <option value="Order">Order</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
+          
           <select
             name="payment_status"
             value={filters.payment_status}
@@ -197,20 +146,7 @@ const OrderList = () => {
             <option value="Failed">Failed</option>
           </select>
 
-          <select
-            name="payment_status"
-            value={filters.payment_status}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>payment_status</option>
-            <option value="ALL">ALL</option>
-            <option value="Pending">Pending</option>
-            <option value="confirm">confirm</option>
-            <option value="Paid">Paid</option>
-            <option value="Failed">Failed</option>
-          </select>
-
+        
           <input
             type="date"
             name="startDate"
@@ -241,22 +177,23 @@ const OrderList = () => {
           <table className="min-w-full table-auto border-collapserounded-lg">
             <thead className="bg-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
-                transaction_id
+              <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  S.No.
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                calculated_cashback
-                </th>
-
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
-                payment_status
+                  transaction_id
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                order_status
+                  Order Value
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                user_id
+                cashback
                 </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  payment_status
+                </th>
+              
+               
 
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
                   Action
@@ -264,30 +201,17 @@ const OrderList = () => {
               </tr>
             </thead>
             <tbody>
-              {OrderList.map((item:IRecord, i) => (
+              {OrderList.map((item: IOrder, i) => (
                 <tr key={i} className="bg-white hover:bg-gray-100">
-                
-
-                  <td className="px-6 py-4  ">
-                    {item.transaction_id}
-                  </td>
-
+                   <td className="px-6 py-4  ">{i+1}</td>
+                  <td className="px-6 py-4  ">{item.transaction_id}</td>
                   <td className="px-6 py-4 text-gray-600">
-                    {item.calculated_cashback.toString()}
+                    {item.order_value}
                   </td>
+                  <td className="px-6 py-4">{item.cashback}</td>
+                  <td className="px-6 py-4">{item.payment_status}</td>
                   <td className="px-6 py-4">
-                    {item.payment_status}
-                  </td>
-                  <td className="px-6 py-4">
-                    {item.order_status}
-                  </td>
-                  <td className="px-6 py-4">
-                    {item.user_id.toString()}
-                  </td>
-                  <td className="px-6 py-4">
-                   <button className=""  >
-                      View details
-                   </button>
+                    <button className="">View details</button>
                   </td>
                 </tr>
               ))}

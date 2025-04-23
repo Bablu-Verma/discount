@@ -8,8 +8,13 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
+
+
+
     const { authenticated, user, message } = await authenticateAndValidateUser(req);
 
+
+   
     if (!authenticated) {
       return new NextResponse(
         JSON.stringify({
@@ -39,7 +44,7 @@ export async function POST(req: Request) {
         success: true,
         message: "Withdrawal request details retrieved successfully.",
         data: {
-          amountDetails: amountDetails || null,
+          amountDetails: amountDetails ? amountDetails.amount : null,
           upiDetails: upiDetails || [],
         },
       }),

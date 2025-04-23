@@ -32,7 +32,14 @@ export const search_client_ = main_url + '/client/search'
 export const create_order_api = main_url + '/client/order/add'
 export const track_coupon_copy_api = main_url + '/client/coupon-code-track/add'
 export const order_list_api = main_url + '/client/order/list'
-
+export const edit_user_address_api = main_url + '/client/user-address/edit'
+export const user_profile_api = main_url + '/client/user/profile'
+export const withdraw_request_data_api = main_url + '/client/withdraw/request-data'
+export const withdraw_verify_api = main_url + '/client/withdraw/verify'
+export const withdraw_request_api = main_url + '/client/withdraw/request'
+export const withdraw_resend_otp_api = main_url + '/client/withdraw/resend-otp'
+export const claim_form_add_api = main_url + '/client/claim-form/add'
+export const create_share_link_api = main_url + '/client/order/create_share_link'
 
 
 
@@ -65,32 +72,31 @@ export const product_dashboard_list_ = main_url + '/dashboard/product/get-all'
 export const product_dashboard_details_ = main_url + '/dashboard/product/get-details'
 export const pinback_report_add_api = main_url + '/dashboard/report/pinback/add'
 export const offline_report_add_api = main_url + '/dashboard/report/offline/add'
-
-
-
-export const edit_user_address_api = main_url + '/user-address/edit'
-export const user_profile_api = main_url + '/user/profile'
-
-
-
-
-
-
-
-
-
 export const all_users = main_url + '/dashboard/user/list'
 export const users_details_admin = main_url + '/dashboard/user/user-details'
 export const users_detail_edit_by_admin = main_url + '/dashboard/user/edit'
-export const contact_us_list_api = main_url + '/contactus/list'
-export const contact_us_update_api = main_url + '/contactus/edit'
-
-
-
-
-
-
+export const contact_us_list_api = main_url + '/dashboard/contactus/list'
+export const contact_us_update_api = main_url + '/dashboard/contactus/edit'
 export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
+export const order_list_admin_api = main_url + '/dashboard/order/list'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

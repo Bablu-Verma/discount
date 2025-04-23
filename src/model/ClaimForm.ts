@@ -15,7 +15,7 @@ interface IClaimForm extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   product_order_date:Date;
-  product_delever_date:Date;
+  product_delever_date?: Date | null;
   order_value:Number
 }
 
@@ -74,7 +74,8 @@ const ClaimFormSchema = new Schema<IClaimForm>(
     },
     product_delever_date: {
       type: Date,
-      required: true,
+      required: false,
+      default: null,
     },
     order_value: {
       type: Number,

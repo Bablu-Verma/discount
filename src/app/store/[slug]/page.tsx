@@ -16,6 +16,7 @@ import { Store_tc, StoreDesc } from "./store_desc_tc";
 import Link from "next/link";
 import StoreClientTab from "./store_client_tab";
 import tracking_image from '../../../../public/track.webp'
+import UserStoreAction from "./user_store_action";
 
 
 
@@ -55,6 +56,9 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
 
   const page_data = await GetData(token, slug);
 
+
+  console.log(page_data)
+
   const { store, related_product, related_coupons, related_stores, top_stores } = page_data;
 
   // console.log(page_data);
@@ -93,7 +97,7 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
 
                 <StoreDesc html_={store.description || ""} />
                 <div className="sm:flex gap-5  mt-6">
-                  <a className="border-[1px] text-base rounded px-6 py-2 text-white inline-block" href={store.store_link}>Shop & Earn</a>
+                    <UserStoreAction  store_id={store._id} />
                   <p className="hidden sm:inline-block text-xl text-center font-medium text-light pt-1 ">
                     {store.cashback_type == "FLAT_AMOUNT" && <>Up to ₹{store.cashback_rate}.00</>}
                     {store.cashback_type == "PERCENTAGE" && <>Up to {store.cashback_rate}%</>} Off
@@ -102,6 +106,8 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
 
               </div>
             </div>
+            
+           
             <Store_tc store_tc={store.tc} />
           </div>
         </section>
@@ -123,6 +129,9 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
         </section>
         <section className="max-w-6xl px-2.5 my-12 mx-auto flex   flex-col-reverse sm:grid lg:gap-16 sm:gap-5 min-h-60 grid-cols-4">
           <div className="col-span-1 mt-12 sm:mt-0 ">
+            {
+              store.claim_form == 'ACTIVE_CLAIM_FORM' &&  <Link className="w-full rounded-full flex justify-center items-center border-[1px] border-primary py-2 text-lg  mb-10 text-primary hover:text-gray-600 hover:border-gray-600 ease-in-out duration-200" href={`/claim-form/${store._id}`}><span>Claim Form</span></Link>
+            }
             <div className="p-3 border-[1px] rounded shadow-sm border-gray-300 mb-10 ">
               <h3 className="text-center text-xl font-medium mb-3">Top Store</h3>
               {

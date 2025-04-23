@@ -29,7 +29,8 @@ export async function POST(req: Request) {
     const partner_site_orderid = formData.get("partner_site_orderid")?.toString();
     const partner_site_order_status = formData.get("partner_site_order_status")?.toString();
     const product_order_date = formData.get("product_order_date") ? new Date(formData.get("product_order_date")!.toString()) : undefined;
-    const product_delever_date = formData.get("product_delever_date") ? new Date(formData.get("product_delever_date")!.toString()) : undefined;
+    const product_delever_date_raw = formData.get("product_delever_date")?.toString();
+    const product_delever_date = product_delever_date_raw ? new Date(product_delever_date_raw) : null;
     const order_value = formData.get("order_value") ? Number(formData.get("order_value")) : undefined;
 
    
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
       !partner_site_orderid ||
       !partner_site_order_status ||
       !product_order_date ||
-      !product_delever_date ||
+      
       !order_value
     ) {
       return NextResponse.json(
@@ -96,7 +97,7 @@ export async function POST(req: Request) {
       partner_site_orderid,
       partner_site_order_status,
       product_order_date,
-      product_delever_date,
+      product_delever_date:product_delever_date ?? null,
       order_value,
     });
 

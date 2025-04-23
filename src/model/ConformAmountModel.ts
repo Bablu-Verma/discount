@@ -31,8 +31,8 @@ const ConformAmountSchema = new Schema<IConformAmount>(
   }
 );
 
-const UserUPIModel =
-  mongoose.models.UserUPI ||
+const ConformAmountModel =
+  mongoose.models.ConformAmount ||
   mongoose.model<IConformAmount>("ConformAmount", ConformAmountSchema);
 
-export default UserUPIModel;
+export default ConformAmountModel;

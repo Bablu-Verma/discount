@@ -1,23 +1,21 @@
 "use client";
 
 import { RootState } from "@/redux-store/redux_store";
-import { withdraw_request_data_api, withdraw_request_api, withdraw_verify_api } from "@/utils/api_url";
+import { withdraw_request_data_api, withdraw_request_api,withdraw_resend_otp_api, withdraw_verify_api } from "@/utils/api_url";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-interface Bank {
-  _id: string;
-  bank_name: string;
-  account_number: string;
-  ifsc_code: string;
+interface IBank {
+  upi_link_bank_name: string;
+  upi_id: string;
 }
 
 const WithdrawRequest: React.FC = () => {
   const [amount, setAmount] = useState("");
   const [selectedBankId, setSelectedBankId] = useState("");
-  const [bankList, setBankList] = useState<Bank[]>([]);
+  const [bankList, setBankList] = useState<IBank[]>([]);
   const [withdrawableAmount, setWithdrawableAmount] = useState(0);
   const [documentId, setDocumentId] = useState('');
   const [otp, setOtp] = useState("");
@@ -31,11 +29,14 @@ const WithdrawRequest: React.FC = () => {
 
   const fetchWithdrawRequestData = async () => {
     try {
-      const { data } = await axios.get(withdraw_request_data_api, {
-        headers: { "Authorization": `Bearer ${token}` },
+      const { data } = await axios.post(withdraw_request_data_api, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setBankList(data.banks);
-      setWithdrawableAmount(data.withdrawableAmount);
+    console.log(data.data)
+      setBankList(data.data.upiDetails);
+      setWithdrawableAmount(data.amountDetails);
     } catch (error) {
       toast.error("Failed to fetch withdraw data");
     }
@@ -44,6 +45,9 @@ const WithdrawRequest: React.FC = () => {
   useEffect(() => {
     fetchWithdrawRequestData();
   }, []);
+
+
+  console.log('bankList',bankList)
 
   const sendOtp = async () => {
     if (!selectedBankId) {
@@ -115,11 +119,11 @@ const WithdrawRequest: React.FC = () => {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h3 className="text-2xl font-semibold mb-4 text-primary">Withdraw Request</h3>
+      <h3 className="text-2xl font-semibold mb-4 text-primary">Withdraw </h3>
       
-      <div className="p-3 bg-gray-100 rounded mb-4">
+      <div className=" rounded my-7 flex justify-between items-center">
         <p className="text-sm text-gray-700">Available Withdrawable Amount:</p>
-        <p className="text-xl font-bold text-green-600">₹{withdrawableAmount}</p>
+        <p className="text-xl font-bold text-green-600">₹{withdrawableAmount ? withdrawableAmount :0}</p>
       </div>
 
       <div>
@@ -129,21 +133,21 @@ const WithdrawRequest: React.FC = () => {
           className="w-full p-2 border rounded mb-3"
         >
           <option value="">Select Bank</option>
-          {bankList.map((bank) => (
-            <option key={bank._id} value={bank._id}>
-              {bank.bank_name} ({bank.account_number})
+          {bankList && bankList.length > 0 &&  bankList.map((bank, i) => (
+            <option key={i} value={bank.upi_id}>
+              {bank.upi_id} ({bank.upi_link_bank_name})
             </option>
           ))}
         </select>
 
         <input
           type="number"
-          placeholder="Enter Amount (Min ₹100)"
+          placeholder="Enter Amount "
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
+          className="w-full p-2 border rounded mb-1"
         />
-
+        <span className="text-[12px] text-gray-600 inline-flex mb-5">Widthdraw Min ₹100</span>
         <button
           type="button"
           onClick={sendOtp}

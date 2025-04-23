@@ -20,12 +20,6 @@ const Campaign_user_event: React.FC<campaign__event_props> = ({
   const [opentc, setOpentc] = useState<boolean>(false);
 
 
-
-
-
-
- 
-
   return (
     <>
        <button

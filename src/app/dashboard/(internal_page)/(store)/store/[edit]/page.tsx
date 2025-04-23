@@ -71,7 +71,7 @@ const EditCategory: React.FC = () => {
         category: store_data.category || "",
         tracking: store_data.tracking || "",
         upto_amount: store_data.upto_amount || "",
-        claim_form: store_data.upto_amount || ""
+        claim_form: store_data.claim_form || ""
       });
       setEditorContent(store_data.description);
       setEditorContentTc(store_data.tc);

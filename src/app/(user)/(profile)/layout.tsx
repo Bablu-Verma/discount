@@ -99,7 +99,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               </h2>
               <Link
                 href="/profile-edit"
-                onClick={handleLinkClick} // Close menu when link is clicked
+                onClick={handleLinkClick} 
                 className={`text-sm ${
                   pathname == "/profile-edit" ? "text-primary" : "text-gray-500"
                 } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
@@ -108,7 +108,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
               <Link
                 href="/address"
-                onClick={handleLinkClick} // Close menu when link is clicked
+                onClick={handleLinkClick} 
                 className={`text-sm ${
                   pathname == "/address" ? "text-primary" : "text-gray-500"
                 } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
@@ -117,31 +117,38 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
               <Link
                 href="/order-list"
-                onClick={handleLinkClick} // Close menu when link is clicked
+                onClick={handleLinkClick} 
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                 All Order
               </Link>
               <Link
                 href="/addupi"
-                onClick={handleLinkClick} // Close menu when link is clicked
+                onClick={handleLinkClick} 
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                Add UPI
               </Link>
               <Link
                 href="/wishlist"
-                onClick={handleLinkClick} // Close menu when link is clicked
+                onClick={handleLinkClick} 
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
                 Wishlist
+              </Link>
+              <Link
+                href="/withdraw/request"
+                onClick={handleLinkClick} 
+                className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
+              >
+                Withdraw
               </Link>
               {(user_data.role === "admin" ||
                 user_data.role === "data_editor" ||
                 user_data.role === "blog_editor") && (
                 <Link
                   href="/dashboard"
-                  onClick={handleLinkClick} // Close menu when link is clicked
+                  onClick={handleLinkClick} 
                   className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
                 >
                   Dashboard

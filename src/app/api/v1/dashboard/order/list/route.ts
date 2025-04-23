@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-import RecordModel from "@/model/CashbackOrderModel";
+import OrderModel from "@/model/OrderModel";
+
+
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -33,10 +35,9 @@ export async function POST(req: Request) {
     }
 
     const {
-      order_status ,
       payment_status ,
       user_id,
-      product_id,
+      store_id,
       transaction_id,
       startDate,
       endDate,
@@ -49,28 +50,24 @@ export async function POST(req: Request) {
 
     const query: any = {};
 
-    // ✅ Only add fields if they are non-empty
-    if (order_status && order_status !== "ALL") {
-      query.order_status = order_status;
-    }
+
     
     if (payment_status && payment_status !== "ALL") {
       query.payment_status = payment_status;
+    }
+    if (store_id) {
+      query.store_id = store_id;
     }
     
     if (user_id) {
       query.user_id = user_id;
     }
     
-    if (product_id) {
-      query.product_id = product_id;
-    }
-    
     if (transaction_id) {
       query.transaction_id = transaction_id;
     }
     
-    // ✅ Filter by date range only if both startDate & endDate are provided
+    
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
@@ -81,28 +78,22 @@ export async function POST(req: Request) {
     }
 
     // ✅ Fetch orders with pagination
-    const orders = await RecordModel.find(query)
+    const orders = await OrderModel.find(query)
     .populate({
       path: "user_id",
       select: "name email",
-      populate: [
-        {
-          path: "product_id",
-          select: "title store",
-          populate: {
-            path: "store",
-            select: "name slug",
-          },
-        },
-      ],
+    })
+    .populate({
+      path: "user_id",
+      select: "name email",
     })
     .lean()
-      .sort({ createdAt: -1 }) // Latest orders first
+      .sort({ createdAt: -1 }) 
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
     // ✅ Count total matching records
-    const totalOrders = await RecordModel.countDocuments(query);
+    const totalOrders = await OrderModel.countDocuments(query);
 
     return new NextResponse(
       JSON.stringify({

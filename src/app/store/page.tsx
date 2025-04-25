@@ -1,11 +1,8 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import StoreCard from "@/components/small_card/StoreCard";
 import store_image from '../../../public/storeimage.png'
 import { getServerToken } from "@/helpers/server/server_function";
-
-import { IStore } from "@/model/StoreModel";
 import { list_store_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -40,9 +37,7 @@ export default async function Stores() {
       <MainHeader />
       <main>
         <div className="max-w-6xl px-2 m-auto mt-4 lg:mt-5 mb-16">
-          <Image src={store_image} className="w-full" sizes="100vw" width={300} height={200} alt="store image" />
           <StoreClient page_data={page_data} />
-         
         </div>
         <BottomToTop />
       </main>

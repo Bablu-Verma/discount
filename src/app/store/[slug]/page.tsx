@@ -1,7 +1,6 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
 import Image from "next/image";
 import React from "react";
 import { MainHeading } from "@/components/Heading";
@@ -65,7 +64,6 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
 
   return (
     <>
-      <TopHeader />
       <MainHeader />
       <main className="">
         <section className="w-full bg-primary px-2 mx-auto ">

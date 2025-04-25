@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import React from "react";
 import Image from "next/image";
 import axios from "axios";
@@ -37,7 +37,7 @@ const AllBlog = async () => {
 
   return (
     <>
-      <TopHeader />
+    
       <MainHeader />
       <main className="pt-3">
         {/* <div className="max-w-6xl mx-auto  mb-16">

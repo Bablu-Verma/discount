@@ -17,7 +17,7 @@ const Flash: React.FC<IfleasProp> = ({ flashSale }) => {
 
   return (
     <div className="max-w-6xl mx-auto pt-2 mb-4 relative">
-      <div className="absolute right-4 top-[-28%] hidden sm:inline-block">
+      {/* <div className="absolute right-4 top-[-28%] hidden sm:inline-block">
         <button
           className="m-2 text-gray-700 opacity-80 hover:opacity-100"
           onClick={() => swiperRef.current?.slidePrev()}
@@ -30,7 +30,7 @@ const Flash: React.FC<IfleasProp> = ({ flashSale }) => {
         >
           <i className="fa-solid fa-arrow-right text-base md:text-xl"></i>
         </button>
-      </div>
+      </div> */}
       <Swiper
         spaceBetween={20}
         slidesPerView={1}

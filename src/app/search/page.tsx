@@ -5,7 +5,6 @@ import axios, { AxiosError } from "axios"; // Import Axios
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
 import toast from "react-hot-toast";
 import { search_client_ } from "@/utils/api_url";
 import { useSelector } from "react-redux";
@@ -83,7 +82,6 @@ export default function SearchPage() {
 
   return (
     <>
-      <TopHeader />
       <MainHeader />
       <main className="max-w-6xl  mx-auto relative min-h-screen">
         <div className="flex items-center justify-center py-4 lg:py-10">

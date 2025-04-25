@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import { getServerToken } from "@/helpers/server/server_function";
 import { blog_details } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
@@ -66,7 +66,7 @@ console.log("page_data",page_data)
 
   return (
     <>
-      <TopHeader />
+    
       <MainHeader />
       <main className="">
         <section className="max-w-6xl mx-auto  mt-6 sm:mt-14 mb-16 p-2 xl:p-0">

@@ -9,6 +9,7 @@ import { IBCategory } from "@/model/BlogCategoryModel";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { MainHeading } from "@/components/Heading";
 
 
 
@@ -56,13 +57,14 @@ const ClientBlog: React.FC<CBProps> = ({ blog, category }) => {
         </div>
       </div>
       <div className=" ">
-        <h3 className="text-xl font-medium mb-6 mt-2 text-secondary capitalize">
-          Latest Blog
-        </h3>
-        <div className="grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+        <MainHeading title="Latest Blog" link={null} />
+        <div className="grid grid-rows-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-6 md:gap-6">
           {blog?.map((item: IBlog, i) => (
             <BlogCard item={item} key={i} />
           ))}
+        </div>
+        <div className="flex justify-center items-center pt-10 ">
+          <button className="text-sm py-2 px-8 transition-all duration-300 ease-in-out rounded-full border-2 border-primary text-white bg-primary ">More Blogs</button>
         </div>
       </div>
       {menu && (

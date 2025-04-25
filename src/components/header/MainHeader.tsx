@@ -72,19 +72,7 @@ const MainHeader = () => {
               Home
             </Link>
           </li>
-          <li className="mx-1 relative">
-            <span className="absolute bottom-4 right-[-4px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
-              Offer
-            </span>
-            <Link
-              href="/campaign"
-              className={`${
-                pathname == "/campaign" ? "text-primary" : "text-gray-700"
-              } font-medium duration-200 px-2 hover:text-gray-900`}
-            >
-              Campaign
-            </Link>
-          </li>
+          
           <li className="mx-1">
             <Link
               className={`${

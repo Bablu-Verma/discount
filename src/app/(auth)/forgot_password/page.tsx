@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -78,7 +78,7 @@ const ForgotPassword = () => {
 
   return (
     <>
-      <TopHeader />
+     
       <MainHeader />
       <main>
         <div className="max-w-[1400px] m-auto min-h-screen flex justify-center items-center  pb-10 md:pb-3">

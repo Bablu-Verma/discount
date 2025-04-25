@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 
 import { RootState } from "@/redux-store/redux_store";
 import { claim_form_add_api } from "@/utils/api_url";
@@ -144,7 +144,7 @@ export default function ClaimForm() {
 
   return (
     <>
-      <TopHeader />
+    
       <MainHeader />
       <main>
         <div className="max-w-2xl mx-auto p-8 bg-white my-10 rounded-lg">

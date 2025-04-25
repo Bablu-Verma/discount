@@ -1,14 +1,12 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
 import Loader_ from "@/components/Loader_";
 import Link from "next/link";
 
 export default function RedirectPartnerSite() {
   return (
     <>
-      <TopHeader />
       <MainHeader />
       <main className="">
         <section className="max-w-[1400px] mx-auto mt-14 mb-16">

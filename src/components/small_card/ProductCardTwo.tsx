@@ -39,12 +39,14 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
     return () => clearInterval(countdownInterval);
   }, [card_data?.flash_sale]);
 
+  console.log(card_data)
+
   return (
     <Link
       href={
         card_data.slug_type === "INTERNAL"
           ? `/campaign/${card_data?.product_slug}`
-          : card_data.redirect_url
+          : card_data?.store?.store_link
       }
       className="shadow max-h-[230px] mx-2 block overflow-hidden rounded-lg relative duration-200 border-[1px] cursor-pointer border-transparent hover:border-pink-300"
     >
@@ -59,8 +61,6 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
         <span>Limited time offer</span> |{" "}
         <span>{remainingTime === "EXPIRED" ? "Expired" : remainingTime}</span>
       </div>
-
-      {/* Product Image */}
       <Image
         src={card_data?.flash_sale?.[0]?.image || "/fallback.jpg"}
         className="w-full h-[170px] object-cover"

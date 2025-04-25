@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, { useRef, useState } from "react";
+
 
 import CategorieCard from "../small_card/CategorieCard";
 import { ICategory } from "@/model/CategoryModel";
+import { IoMdClose } from "react-icons/io";
+import { MainHeading } from "../Heading";
 
 
 interface CategoryProps {
@@ -12,49 +14,39 @@ interface CategoryProps {
 }
 
 const HomeCategories: React.FC<CategoryProps> = ({category}) => {
+  const [opendrawer, setOpendrawer] = useState(false)
 
-
-  const swiperRef = useRef<any>(null);
 
   return (
     <>
-      <div className="max-w-6xl mx-auto pt-2 mb-4 relative">
-        <div className="absolute right-4 top-[-30%] hidden sm:inline-block">
-          <button className="m-2 text-gray-700 opacity-80 hover:opacity-100" onClick={() => swiperRef.current?.slidePrev()}>
-            <i className="fa-solid fa-arrow-left text-base md:text-xl"></i>
-          </button>
-          <button className="m-2 text-gray-700 opacity-80 hover:opacity-100"  onClick={() => swiperRef.current?.slideNext()}>
-            <i className="fa-solid fa-arrow-right text-base md:text-xl"></i>
-          </button>
-        </div>
-        <Swiper
-          spaceBetween={12}
-          slidesPerView={2.2}
-          breakpoints={{
-            520: {
-              slidesPerView: 3.2,
-             
-            },
-            768: {
-              slidesPerView: 4.1,
-            
-            },
-            1024: {
-              slidesPerView: 5.1,
-              
-            },
-          }}
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-          onSlideChange={() => console.log("slide change")}
-          className="home_flash_"
-        >
-          {category.map((item, i) => (
-            <SwiperSlide key={i} className="my-1">
-              <CategorieCard item={item}/>
-            </SwiperSlide>
+      <div className="max-w-6xl mx-auto pt-2 mb-4">
+        <button onClick={()=> setOpendrawer(true)}  className="text-primary  py-2 px-5 sm:px-8 rounded-sm capitalize font-medium text-sm hover:shadow-sm duration-200 absolute top-7 right-0 z-20">
+          View All
+        </button>
+       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+         {category.slice(0,5).map((item, i) => (
+             <CategorieCard item={item}/>
           ))}
-        </Swiper>
+       </div>
       </div>
+
+
+      {
+        opendrawer && <div style={{background:'rgba(0,0,0,0.3)'}} className="fixed z-30 top-0 left-0 right-0 bottom-0 flex justify-center items-center ">
+        <div className="bg-gray-300 p-4 relative rounded-lg shadow-md min-h-[500px] w-full max-w-6xl">
+          <button title="close" className='absolute -top-9 right-1 bg-slate-300 p-1  rounded-full' onClick={()=>setOpendrawer(false)}><IoMdClose className="text-lg text-primary" /></button>
+
+            <MainHeading title="Browse category" link={null} />
+          <div className="pt-4 flex justify-start items-center gap-4">
+            {category &&
+              category.length > 0 &&
+              category.map((item, i) => (
+                <CategorieCard item={item}/>
+              ))}
+          </div>
+        </div>
+      </div>
+      }
      
     </>
   );

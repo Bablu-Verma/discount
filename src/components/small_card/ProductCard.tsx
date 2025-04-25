@@ -17,9 +17,9 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
       href={
         card_data.slug_type === "INTERNAL"
           ? `/campaign/${card_data?.product_slug}`
-          : ''
+          : card_data?.store?.store_link
       }
-      className="shadow-box_shadow_color hover:shadow-box_shadow_hover hover:translate-y-[-6px] bg-white overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:border-gray-100 hover:border-[1px] group"
+      className="shadow-box_shadow_color hover:shadow-box_shadow_hover hover:translate-y-[-6px] bg-white overflow-hidden rounded-lg relative duration-200 border-[1px] border-transparent hover:border-gray-100 hover:border-[1px]  group"
     >
       {card_data?.product_tags && card_data.product_tags.includes("new") ? (
         <span className="absolute top-2 left-2 bg-green-600 py-[1px] px-5 text-[12px] rounded-md shadow-md text-white font-medium z-10 select-none"> 

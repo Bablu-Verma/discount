@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import { login } from "@/redux-store/slice/userSlice";
 import { login_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
@@ -113,7 +113,6 @@ const Login = () => {
 
   return (
     <>
-      <TopHeader />
       <MainHeader />
       <main>
         <div className="max-w-6xl m-auto min-h-[80vh] flex justify-center items-center  pb-10 md:pb-3">

@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import Image from "next/image";
 import Link from "next/link";
 import error from '../../public/error.svg'
@@ -9,7 +9,7 @@ import error from '../../public/error.svg'
 export default function NotFound() {
   return (
     <>
-      <TopHeader />
+     
       <MainHeader />
       <main className="">
         <section className="max-w-[1400px] mx-auto mt-14 mb-16">

@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import React, { ReactNode, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
@@ -58,7 +58,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <>
-      <TopHeader />
+    
       <MainHeader />
       <main className="max-w-6xl relative mx-auto pt-8 lg:pt-14 pb-16">
         <section>

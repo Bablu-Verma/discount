@@ -1,28 +1,27 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
 import CategorieCard from "@/components/small_card/CategorieCard";
 import CouponcodeCard from "@/components/small_card/CouponcodeCard";
 import { getServerToken } from "@/helpers/server/server_function";
 import { ICategory } from "@/model/CategoryModel";
 import { ICoupon } from "@/model/CouponModel";
 import { coupons_list_api } from "@/utils/api_url";
-
-import { ImHappy2 } from "react-icons/im";
+import { RiCoupon3Fill } from "react-icons/ri";
 
 
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { FaStore } from "react-icons/fa";
 
 
-export const GetData = async (token:string) => {
+export const GetData = async (token: string) => {
   try {
     let { data } = await axios.post(
       coupons_list_api,
       {
-        status:"ACTIVE"
+        status: "ACTIVE"
       },
       {
         headers: {
@@ -31,10 +30,10 @@ export const GetData = async (token:string) => {
         },
       }
     );
- 
+
     return data.data;
   } catch (error) {
-    if (error instanceof AxiosError) { 
+    if (error instanceof AxiosError) {
       console.error("Error registering user", error.response?.data.message);
       toast.error(error.response?.data.message);
     } else {
@@ -45,39 +44,36 @@ export const GetData = async (token:string) => {
 
 export default async function Category() {
 
-   const token = await getServerToken()
-    const page_data = await GetData(token)
+  const token = await getServerToken()
+  const page_data = await GetData(token)
 
   return (
     <>
 
-    <MainHeader />
-    <main>
-      <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-8 mb-16">
-        <div className=""> 
-         <div className="flex justify-start gap-5">
-         <div className='relative overflow-hidden rounded-md flex justify-center items-center bg-primary  border-r-2 border-dashed border-white w-[300px] h-[200px]'>
-          <ImHappy2  className="text-7xl text-white -rotate-45" />
-          <span className='bg-highlight_color w-16 h-16 rounded-full absolute -left-10'></span>
+      <MainHeader />
+      <main>
+        <div className="max-w-6xl  px-2 m-auto mt-4 lg:mt-8 mb-16">
+          <div className="flex justify-center items-center h-[200px]">
+            <h1 className="text-5xl uppercase text-secondary flex gap-3 font-medium">Best <span className="text-primary ">Coupons </span> <RiCoupon3Fill className="text-primary" /></h1>
           </div>
-          <div className="w-full flex justify-start pl-10 items-center">
-          <h1 className="text-5xl capitalize text-primary"><span className="text-2xl">save:</span> up to 100% OFF</h1>
+
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-6 lg:mt-10">
+            {
+              page_data.map((item: ICoupon) => (
+                <CouponcodeCard item={item} />
+              ))
+            }
           </div>
-             
-         </div>
+
+
+          <div className="flex justify-center items-center pt-10 ">
+          <button className="text-sm py-2 px-8 transition-all duration-300 ease-in-out rounded-full border-2 border-primary text-white bg-primary ">More Coupon</button>
         </div>
-         
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-6 lg:mt-10">
-          {
-            page_data.map((item:ICoupon) => (
-              <CouponcodeCard item={item}/>
-            ))
-          }
         </div>
-      </div>
-      <BottomToTop />
-    </main>
-    <Footer />
+        <BottomToTop />
+      </main>
+      <Footer />
     </>
   );
 }

@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import { resend_otp_api, user_verify_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
@@ -126,7 +126,7 @@ const UserVerify = () => {
 
   return (
     <>
-      <TopHeader />
+     
       <MainHeader />
       <main>
         <div className="max-w-6xl mx-auto min-h-screen flex justify-center items-center pb-10 md:pb-3">

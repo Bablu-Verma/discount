@@ -1,7 +1,6 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
 import Image from "next/image";
 import React from "react";
 
@@ -62,7 +61,6 @@ const CampaignDetail = async ({ params }: DetailsProps) => {
 
   return (
     <>
-      <TopHeader />
       <MainHeader />
       <main className="">
         <section className="max-w-6xl mx-auto mt-6 sm:mt-14 mb-16 p-2 xl:p-0">

@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import CategorieCard from "@/components/small_card/CategorieCard";
 import { getServerToken } from "@/helpers/server/server_function";
 import { ICategory } from "@/model/CategoryModel";
@@ -40,7 +40,7 @@ export default async function Category() {
 
   return (
     <>
-    <TopHeader />
+  
     <MainHeader />
     <main>
       <div className="max-w-[1400px] px-2 m-auto mt-4 lg:mt-14 mb-16">

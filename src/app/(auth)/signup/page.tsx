@@ -3,7 +3,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 import { register_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
@@ -143,7 +143,7 @@ const Signup = () => {
 
   return (
     <>
-      <TopHeader />
+  
       <MainHeader />
       <main className="">
         <div className="max-w-6xl mx-auto min-h-screen flex justify-center items-center  pb-10   ">

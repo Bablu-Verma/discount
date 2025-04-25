@@ -1,7 +1,7 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-import TopHeader from "@/components/header/TopHeader";
+
 
 import { getServerToken } from "@/helpers/server/server_function";
 import { wishlist_list_get_ } from "@/utils/api_url";
@@ -45,7 +45,7 @@ const Wishlist = async () => {
 
   return (
     <>
-      <TopHeader />
+
       <MainHeader />
       <main className="min-h-screen">
         <div className="max-w-6xl  mx-auto px-4 flex mt-7 md:mt-10 justify-end items-end mb-4 relative">

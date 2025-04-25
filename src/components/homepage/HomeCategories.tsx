@@ -37,7 +37,7 @@ const HomeCategories: React.FC<CategoryProps> = ({category}) => {
           <button title="close" className='absolute -top-9 right-1 bg-slate-300 p-1  rounded-full' onClick={()=>setOpendrawer(false)}><IoMdClose className="text-lg text-primary" /></button>
 
             <MainHeading title="Browse category" link={null} />
-          <div className="pt-4 flex justify-start items-center gap-4">
+          <div className="pt-4 flex justify-start items-center flex-wrap gap-4">
             {category &&
               category.length > 0 &&
               category.map((item, i) => (

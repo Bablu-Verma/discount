@@ -1,6 +1,7 @@
 "use client";
 
 import { RootState } from "@/redux-store/redux_store";
+import { clearSummary } from "@/redux-store/slice/cashbackSummary";
 import { logout } from "@/redux-store/slice/userSlice";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,6 +35,7 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
   const _logOut = () => {
     setTimeout(() => {
       dispatch(logout());
+      dispatch(clearSummary());
       window.location.href = "/login";
     }, 1000);
   };

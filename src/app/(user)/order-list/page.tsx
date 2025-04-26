@@ -17,15 +17,20 @@ export default function OrderListPage() {
   const [orderList, setOrderList] = useState<any[]>([]);
   const [sheet, setSheet] = useState({ show: false, details: {} as any });
   const token = useSelector((state: RootState) => state.user.token);
-  const user_data = useSelector((state: RootState) => state.user.user);
+  // const user_data = useSelector((state: RootState) => state.user.user);
   const [showOrderHistory, setShowOrderHistory] = useState(true);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [page, setPage] = useState(1)
+  const [activeTab, setActiveTab] = useState('')
+
+
+
 
   const get_order = async () => {
     try {
       const { data } = await axios.post(
         order_list_api,
-        { page: 1 },
+        { page: page, activetab: activeTab },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,12 +52,43 @@ export default function OrderListPage() {
     get_order();
   }, []);
 
+  const tab = [
+    {
+      id: 1,
+      name: 'Pending',
+      click: 'Pending'
+    },
+    {
+      id: 2,
+      name: 'Confirmed',
+      click: 'Confirmed'
+    },
+    {
+      id: 3,
+      name: 'Failed',
+      click: 'Failed'
+    }
+  ]
+
   return (
     <>
       <MainHeader />
       <main>
         <div className="max-w-6xl mx-auto px-4 mt-7 md:mt-10 mb-10">
           <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+
+          <div className=" flex justify-start items-center gap-4 mb-6">
+            <span className="text-sm text-secondary">Payment Status:</span>    {
+              tab.map((item, i) => {
+                return (
+                  <button className={`text-sm py-1 px-6 transition-all duration-300 ease-in-out rounded-full border-2 border-primary ${activeTab === item.click ? "text-white bg-primary" : "text-primary bg-white"
+                    }`} key={i} onClick={() => {
+                      setActiveTab(item.click)
+                    }}>{item.name}</button>
+                )
+              })
+            }
+          </div>
 
           {orderList.length === 0 ? (
             <div className="text-center py-10 text-gray-500">No orders found.</div>
@@ -81,7 +117,7 @@ export default function OrderListPage() {
                       <td className="px-4 py-3">{formatDate(item.createdAt)}</td>
                       <td className="px-4 py-3">
                         <button
-                          className="text-primary hover:underline text-sm"
+                          className="text-primary text-nowrap hover:underline text-sm"
                           onClick={() => setSheet({ show: true, details: item })}
                         >
                           View Details
@@ -93,6 +129,14 @@ export default function OrderListPage() {
               </table>
             </div>
           )}
+        </div>
+        <div className="flex justify-center items-center py-10">
+          <button
+            onClick={() => setPage((prev) => prev + 1)}
+            className="text-sm py-2 px-8 transition-all duration-300 ease-in-out rounded-full border-2 border-primary hover:border-white text-white bg-primary"
+          >
+            More Order
+          </button>
         </div>
         <BottomToTop />
       </main>
@@ -133,8 +177,6 @@ export default function OrderListPage() {
               />
               <DetailRow label="Order Status" value={sheet.details.order_status} />
               <DetailRow label="Payment Status" value={sheet.details.payment_status ?? "-"} />
-
-
 
               {sheet.details.order_history && sheet.details.order_history.length > 0 && (
                 <div className="mt-10">

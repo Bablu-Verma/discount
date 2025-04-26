@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 
 import Image from "next/image";
 import login_image from "../../../../public/login_image.svg"
+import { setSummary } from "@/redux-store/slice/cashbackSummary";
 
 interface IUserData {
   email: string;
@@ -78,7 +79,12 @@ const Login = () => {
 
    
       toast.success("Login success!");
+
+ console.log(data)
+
       dispatch(login({ user: data.user, token: data.token }));
+      dispatch(setSummary({ summary: data.summary }));
+      
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
@@ -106,9 +112,6 @@ const Login = () => {
   const passwordToggle = (): void => {
     setShowPassword(!showPassword);
   };
-
-
-
 
 
   return (

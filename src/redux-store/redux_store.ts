@@ -3,14 +3,15 @@
 import userSlice from './slice/userSlice'
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
-import editorReducer from './slice/editorSlice'
+
 
 import wishlistReduce from './slice/wishlistSlice'
+import CashbackSummarySlice from './slice/cashbackSummary'
 
 const store_ = configureStore({
   reducer: {
     user: userSlice,
-    editor: editorReducer,
+    cashbackSummary:CashbackSummarySlice,
     wishlist: wishlistReduce,
   },
 });

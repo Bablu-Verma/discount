@@ -8,6 +8,18 @@ import { RootState } from "@/redux-store/redux_store";
 import Image from "next/image";
 import { IUser } from "@/common_type";
 import logo from "../../../public/logo_.png";
+import { GiTwoCoins } from "react-icons/gi";
+
+
+
+
+
+
+
+
+
+
+
 const MainHeader = () => {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(true);
@@ -18,7 +30,7 @@ const MainHeader = () => {
     (state: RootState) => state.user.user
   ) as IUser | null;
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
-
+  const summary = useSelector((state: RootState) => state.cashbackSummary.summary)
   const userlogin = token_ ? true : false;
 
   const showtoggle = () => {
@@ -47,11 +59,12 @@ const MainHeader = () => {
     };
   }, [lastScrollY]);
 
+
+
   return (
     <nav
-      className={`border-b-2 border-gray-200 z-50 bg-white sticky top-0 transition-transform duration-500 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      }`}
+      className={`border-b-2 border-gray-200 z-50 bg-white sticky top-0 transition-transform duration-500 ${isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
     >
       <div className="max-w-6xl m-auto py-1 flex justify-between items-center max-lg:px-4">
         <Link href="/">
@@ -64,20 +77,18 @@ const MainHeader = () => {
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">
             <Link
-              className={`${
-                pathname == "/" ? "text-primary" : "text-gray-700"
-              } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${pathname == "/" ? "text-primary" : "text-gray-700"
+                } font-medium duration-200 px-2 hover:text-gray-900`}
               href="/"
             >
               Home
             </Link>
           </li>
-          
+
           <li className="mx-1">
             <Link
-              className={`${
-                pathname == "/store" ? "text-primary" : "text-gray-700"
-              } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${pathname == "/store" ? "text-primary" : "text-gray-700"
+                } font-medium duration-200 px-2 hover:text-gray-900`}
               href="/store"
             >
               Store
@@ -87,9 +98,8 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="/coupons"
-              className={`${
-                pathname == "/coupons" ? "text-primary" : "text-gray-700"
-              } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${pathname == "/coupons" ? "text-primary" : "text-gray-700"
+                } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Coupons
             </Link>
@@ -97,9 +107,8 @@ const MainHeader = () => {
           <li className="mx-1">
             <Link
               href="/blog"
-              className={`${
-                pathname == "/blog" ? "text-primary" : "text-gray-700"
-              } font-medium duration-200 px-2 hover:text-gray-900`}
+              className={`${pathname == "/blog" ? "text-primary" : "text-gray-700"
+                } font-medium duration-200 px-2 hover:text-gray-900`}
             >
               Blog
             </Link>
@@ -143,8 +152,15 @@ const MainHeader = () => {
 
           {userlogin ? (
             <>
+
+              <div className="py-[2px] pl-3 pr-4 rounded-full border-[1px] border-primary flex justify-center gap-3 ml-3 items-center">
+                <GiTwoCoins style={{ color: '#FFD700' }} className="text-2xl" />
+                <span className="text-lg text-primary   font-medium">₹{summary?.total_cb ?? 0}</span>
+              </div>
+
+
               <Link
-                href="/profile-edit"
+                href="/profile"
                 className={` font-medium duration-200 mx-2 lg:ml-5 shadow cursor-pointer hover:opacity-80`}
               >
                 <Image

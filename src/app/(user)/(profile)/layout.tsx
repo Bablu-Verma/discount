@@ -13,6 +13,7 @@ import { logout } from "@/redux-store/slice/userSlice";
 import { usePathname } from "next/navigation";
 import Loader_ from "@/components/Loader_";
 import { FaChevronDown, FaTimes } from "react-icons/fa"; // Importing icons for toggle and close
+import { clearSummary } from "@/redux-store/slice/cashbackSummary";
 
 interface LayoutProps {
   children: ReactNode;
@@ -36,6 +37,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
   const logOut_user = () => {
     setTimeout(() => {
       dispatch(logout());
+      dispatch(clearSummary());
       window.location.href = "/login";
     }, 1000);
   };
@@ -98,7 +100,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 </button>
               </h2>
               <Link
-                href="/profile-edit"
+                href="/profile"
                 onClick={handleLinkClick} 
                 className={`text-sm ${
                   pathname == "/profile-edit" ? "text-primary" : "text-gray-500"
@@ -107,6 +109,15 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 Profile
               </Link>
               <Link
+                href="/edit"
+                onClick={handleLinkClick} 
+                className={`text-sm ${
+                  pathname == "/profile-edit" ? "text-primary" : "text-gray-500"
+                } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
+              >
+                  Edit 
+              </Link>
+              {/* <Link
                 href="/address"
                 onClick={handleLinkClick} 
                 className={`text-sm ${
@@ -114,7 +125,7 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 } hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block`}
               >
                 Address
-              </Link>
+              </Link> */}
               <Link
                 href="/order-list"
                 onClick={handleLinkClick} 

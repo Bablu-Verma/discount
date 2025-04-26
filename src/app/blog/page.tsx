@@ -33,31 +33,21 @@ const AllBlog = async () => {
 
   const { blogs, blog_type, f_blog, category } = fetchBlogData;
 
-  console.log(f_blog);
+  // console.log(f_blog);
 
   return (
     <>
     
       <MainHeader />
       <main className="pt-3">
-        {/* <div className="max-w-6xl mx-auto  mb-16">
-          <Image
-            sizes="100vw"
-            priority
-            src={blogbanner}
-            alt="blog"
-            height={200}
-            width={500}
-            className="h-40 object-cover lg:h-auto w-full"
-          />
-        </div> */}
+   
         <section className="max-w-6xl mx-auto  mb-5 p-2 xl:p-0">
           <div className="grid grid-cols-2 gap-4 border-b-[1px] pb-14 border-b-gray-200">
             <div className="pt-20 pr-5">
               <small className="text-primary uppercase text-base mb-3">
                 FEATURED
               </small>
-              <h3 className="text-3xl leading-4 line font-medium mb-6 mt-2 text-secondary capitalize">{f_blog.title}</h3>
+              <h3 className="text-3xl line font-medium mb-6 mt-2 text-secondary capitalize">{f_blog.title}</h3>
               <div
                 className="text-base line-clamp-6 text-gray-700  "
                 dangerouslySetInnerHTML={{ __html: f_blog.short_desc || "" }}

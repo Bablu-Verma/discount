@@ -78,7 +78,7 @@ export default async function Home() {
         </div>
 
         <div className="">
-        <Deals  best_product={page_data.data.best_product}/>
+        <Deals  best_product={page_data.data.offer_deal}/>
         
         </div>
         <div className="max-w-6xl mx-auto mt-14">

@@ -39,7 +39,7 @@ const ProductCardTwo: React.FC<CardProp> = ({ card_data }) => {
     return () => clearInterval(countdownInterval);
   }, [card_data?.flash_sale]);
 
-  console.log(card_data)
+  // console.log(card_data)
 
   return (
     <Link

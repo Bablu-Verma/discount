@@ -14,6 +14,7 @@ import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { FaStore } from "react-icons/fa";
+import CouponClient from "./Coupon_Client";
 
 
 export const GetData = async (token: string) => {
@@ -21,7 +22,7 @@ export const GetData = async (token: string) => {
     let { data } = await axios.post(
       coupons_list_api,
       {
-        status: "ACTIVE"
+       
       },
       {
         headers: {
@@ -47,6 +48,7 @@ export default async function Category() {
   const token = await getServerToken()
   const page_data = await GetData(token)
 
+
   return (
     <>
 
@@ -56,20 +58,7 @@ export default async function Category() {
           <div className="flex justify-center items-center h-[200px]">
             <h1 className="text-5xl uppercase text-secondary flex gap-3 font-medium">Best <span className="text-primary ">Coupons </span> <RiCoupon3Fill className="text-primary" /></h1>
           </div>
-
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-6 lg:mt-10">
-            {
-              page_data.map((item: ICoupon) => (
-                <CouponcodeCard item={item} />
-              ))
-            }
-          </div>
-
-
-          <div className="flex justify-center items-center pt-10 ">
-          <button className="text-sm py-2 px-8 transition-all duration-300 ease-in-out rounded-full border-2 border-primary text-white bg-primary ">More Coupon</button>
-        </div>
+        <CouponClient coupons={page_data} />
         </div>
         <BottomToTop />
       </main>

@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IBCategory {
+   _id: mongoose.Schema.Types.ObjectId, 
   name: string;
   description: string;
   slug: string;

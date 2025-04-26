@@ -54,13 +54,8 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
   const slug = awaitslug.slug;
 
   const page_data = await GetData(token, slug);
-
-
-  console.log(page_data)
-
+  
   const { store, related_product, related_coupons, related_stores, top_stores } = page_data;
-
-  // console.log(page_data);
 
   return (
     <>
@@ -152,7 +147,7 @@ const StoreDetail = async ({ params }: IStoreDetailsProps) => {
             </div>
           </div>
           <div className="col-span-3 ">
-            <StoreClientTab relatedProducts={related_product} relatedCoupons={related_coupons} />
+            <StoreClientTab slug={slug} relatedProducts={related_product} relatedCoupons={related_coupons} />
           </div>
         </section>
         <BottomToTop />

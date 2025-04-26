@@ -10,65 +10,34 @@ export async function POST(req: Request) {
     const requestData = await req.json();
     const {
       page = 1,
-      limit = 10,
-      status ,
-      category,
-      store,
-      startDate,
-      endDate,
-      code,
     } = requestData;
+
+    const limit = 2
 
     const query: any = {};
 
-  
+
     query.status ='ACTIVE'
 
-    // ✅ Filter by category
-    if (category) {
-      query.category = category;
-    }
-
-    // ✅ Filter by store
-    if (store) {
-      query.store = store;
-    }
-
-    // ✅ Filter by code (Partial search)
-    if (code) {
-      query.code = { $regex: code, $options: "i" };
-    }
 
 
     // ✅ Pagination
     const pageNumber = Math.max(1, parseInt(page, 10));
-    const pageSize = Math.max(1, parseInt(limit, 10));
-    const skip = (pageNumber - 1) * pageSize;
+    const skip = (pageNumber - 1) * limit;
 
     // ✅ Fetch data with filtering, pagination & sorting (Latest first)
     const coupons = await CouponModel.find(query).select('-description -expiry_date -status')
       .populate("store", "name cashback_type cashback_rate store_link store_img") 
-      .populate("category", "name slug") 
       .sort({ createdAt: -1 }) 
       .skip(skip)
-      .limit(pageSize)
+      .limit(limit)
       .lean();
-
-    // ✅ Get total count for pagination
-    const totalCoupons = await CouponModel.countDocuments(query);
-    const totalPages = Math.ceil(totalCoupons / pageSize);
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Coupons fetched successfully.",
         data: coupons,
-        pagination: {
-          currentPage: pageNumber,
-          totalPages,
-          totalCoupons,
-          limit: pageSize,
-        },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

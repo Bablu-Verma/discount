@@ -54,6 +54,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
 
   const {category_details, relatedProducts , relatedCoupons, relatedStore} =  page_data 
 
+
   return (
     <>
       <MainHeader />
@@ -78,7 +79,7 @@ const CategoryDetail = async ({params}: CategoryDetailsProps) => {
             <div className="pt-4 text-sm"  dangerouslySetInnerHTML={{ __html: category_details.description || ''}}>
             </div>
           </div>
-          <CategoryClientTab relatedProducts={relatedProducts} relatedStore={relatedStore} relatedCoupons={relatedCoupons}/>
+          <CategoryClientTab slug={slug} relatedProducts={relatedProducts} relatedStore={relatedStore} relatedCoupons={relatedCoupons}/>
         
         </section>
         

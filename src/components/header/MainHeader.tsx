@@ -9,6 +9,7 @@ import Image from "next/image";
 import { IUser } from "@/common_type";
 import logo from "../../../public/logo_.png";
 import { GiTwoCoins } from "react-icons/gi";
+import SearchAnimation from "../SearchAnimation";
 
 
 
@@ -42,7 +43,7 @@ const MainHeader = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down
+
         setIsVisible(false);
       } else {
         // Scrolling up
@@ -68,11 +69,12 @@ const MainHeader = () => {
     >
       <div className="max-w-6xl m-auto py-1 flex justify-between items-center max-lg:px-4">
         <Link href="/">
-          <Image
+          {/* <Image
             src={logo}
             className="w-[125px] lg:w-[140px] h-auto"
             alt="logo"
-          />
+          /> */}
+          <h1 className="text-secondary py-2 text-3xl font-semibold tracking-wider">Bachat<span className="text-primary">Jar</span></h1>
         </Link>
         <ul className="hidden lg:flex justify-center select-none">
           <li className="mx-1">
@@ -121,14 +123,7 @@ const MainHeader = () => {
               href="/search"
               className=" relative mr-7 hidden lg:block md:min-w-[350px] min-w-[200px] w-[25%] rounded-sm overflow-hidden cursor-pointer"
             >
-              <input
-                type="text"
-                id="search"
-                name="search"
-                readOnly
-                placeholder="What are you looking for"
-                className="w-full bg-gray-200 py-1.5 px-3 pr-6 outline-none border-gray-200  text-sm font-normal text-gray-950 border-2"
-              />
+             <SearchAnimation />
               <button
                 disabled
                 type="button"
@@ -153,15 +148,15 @@ const MainHeader = () => {
           {userlogin ? (
             <>
 
-              <div className="py-[2px] pl-3 pr-4 rounded-full border-[1px] border-primary flex justify-center gap-3 ml-3 items-center">
-                <GiTwoCoins style={{ color: '#FFD700' }} className="text-2xl" />
-                <span className="text-lg text-primary   font-medium">₹{summary?.total_cb ?? 0}</span>
+              <div className="py-.5 lg:py-[2px] pl-2 pr-3 sm:pl-3 sm:pr-4 rounded-full border-[1px] border-primary flex justify-center gap-3 ml-1 sm:ml-3 items-center">
+                <GiTwoCoins style={{ color: '#FFD700' }} className="text-lg sm:text-2xl" />
+                <span className="text-base sm:text-lg text-primary font-medium">₹{summary?.total_cb ?? 0}</span>
               </div>
 
 
               <Link
                 href="/profile"
-                className={` font-medium duration-200 mx-2 lg:ml-5 shadow cursor-pointer hover:opacity-80`}
+                className={` font-medium rounded-full duration-200 mx-2 lg:ml-5 shadow cursor-pointer hover:opacity-80`}
               >
                 <Image
                   src={
@@ -171,7 +166,7 @@ const MainHeader = () => {
                   alt={user?.email || "User profile"}
                   height={100}
                   width={100}
-                  className="w-6 lg:w-9 h-6 lg:h-9 rounded-full"
+                  className="w-8 h-8 lg:w-9  lg:h-9 rounded-full"
                 />
               </Link>
             </>
@@ -209,14 +204,8 @@ const MainHeader = () => {
                   href="/search"
                   className="relative mb-7 lg:hidden inline-block w-full rounded-sm overflow-hidden"
                 >
-                  <input
-                    type="text"
-                    id="search"
-                    name="search"
-                    readOnly
-                    placeholder="What are you looking for"
-                    className="w-full bg-gray-200 py-1.5 px-3 pr-6 outline-none border-gray-200 text-sm font-normal text-gray-950 border-2"
-                  />
+                
+                   <SearchAnimation />
                   <button
                     type="button"
                     disabled
@@ -226,28 +215,21 @@ const MainHeader = () => {
                   </button>
                 </Link>
               )}
+
+             
               <div>
                 <h2 className="text-lg pl-2 mb-2 text-secondary font-medium">
-                  <span className="pr-4">Link</span>{" "}
+                  <span className="pr-4">Redirect</span>{" "}
                   <i className="fa-solid fa-caret-down"></i>
                 </h2>
                 <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
-                    {userlogin ? (
-                      <Link
-                        href="/profile-edit"
-                        className="text-gray-700 font-normal pl-2  block"
-                      >
-                        Profile
-                      </Link>
-                    ) : (
-                      <Link
+                    {!userlogin && <Link
                         href="/login"
                         className="text-gray-700 font-normal pl-2  block"
                       >
-                        Login
-                      </Link>
-                    )}
+                        Login / Register
+                      </Link> }
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
@@ -257,55 +239,60 @@ const MainHeader = () => {
                       Home
                     </Link>
                   </li>
-                  <li className="mx-1 my-1 relative hover:pl-2 duration-150">
-                    {/* <span className="absolute bottom-3 left-[90px] text-[8px] py-[1px] px-[4px] text-white rounded bg-primary">
-                    New
-                  </span> */}
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
+                      href="/store"
                     >
-                      Campaign
+                      Store
                     </Link>
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
+                      href="/coupons"
                     >
-                      Contact
+                      Coupons
                     </Link>
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
+                      href="/about-su"
                     >
-                      About
+                      About Us
+                    </Link>
+                  </li>
+                  <li className="mx-1 my-1 hover:pl-2 duration-150">
+                    <Link
+                      className="text-gray-700 font-normal pl-2  block"
+                      href="/blog"
+                    >
+                      blog
                     </Link>
                   </li>
                 </ul>
               </div>
               <div className="mt-6">
                 <h2 className="text-lg pl-2 mb-2 text-secondary font-medium">
-                  <span className="pr-4">Category</span>{" "}
+                  <span className="pr-4">Help & Support</span>{" "}
                   <i className="fa-solid fa-caret-down"></i>
                 </h2>
                 <ul className="select-none border-[1px] border-gray-200 rounded-lg p-2">
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
                       className="text-gray-700 font-normal pl-2  block"
-                      href="#"
+                      href="/contact-us"
                     >
-                      Incurance
+                      Contact Us
                     </Link>
                   </li>
                   <li className="mx-1 my-1 hover:pl-2 duration-150">
                     <Link
-                      href="#"
                       className="text-gray-700 font-normal pl-2  block"
+                      href="/faq"
                     >
-                      Health
+                      FAQ
                     </Link>
                   </li>
                 </ul>

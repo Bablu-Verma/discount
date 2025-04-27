@@ -58,7 +58,7 @@ const StoreClient :React.FC<SProps> = ({ page_data }) => {
     <>
       <div className="mt-4">
         {page_data.length > 0 && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
             {storeclient.map((item, i) => {
               return <StoreCard item={item} key={i} />;
             })}

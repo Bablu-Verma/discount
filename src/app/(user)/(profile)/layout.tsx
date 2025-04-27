@@ -70,22 +70,22 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
               <span className="text-primary capitalize">
                 {user_data?.name || "Guest"}
               </span>
-              {/* Toggle Icon */}
+            
               <button
                 onClick={toggleMenu}
-                className="ml-2 text-xl text-primary lg:hidden" // Icon visible only on mobile
+                className=" text-sm flex gap-1 justify-between items-center  text-primary md:hidden ml-10" 
               >
                 <FaChevronDown
-                  className={`transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} // Rotate icon on toggle
-                />
+                  className={`transition-transform text-base ${isOpen ? "rotate-180" : "rotate-0"}`} 
+                /> <span>Menu</span>
               </button>
             </h4>
           </div>
 
-          <div className="my-2 lg:my-12 px-2 flex gap-[2%] justify-between ">
+          <div className="my-2 lg:my-12 px-2 flex relative gap-[2%] justify-between ">
             <div
-              className={`max-lg:absolute z-50 top-0 bottom-0 left-0 md:block w-2/3 lg:w-[18%] capitalize p-4 pl-6 rounded-lg bg-white ${isOpen ? "block" : "hidden"} transition-all duration-300 ease-in-out transform ${isOpen ? "translate-x-0" : "-translate-x-full"}`} 
-              style={{ backgroundColor: isOpen ? '#f7f7f7' : 'transparent' }} // Background color change
+              className={`absolute  md:relative top-0 left-0 bottom-0 p-4 ${isOpen && 'min-w-[300px] ' }  ${isOpen ? 'translate-x-0' : ' -translate-x-full md:translate-x-0'  }  z-20 bg-white md:bg-transparent`} 
+              
             >
               <h2 className="text-xl font-semibold mb-2 text-dark flex justify-between items-center">
                 <span>
@@ -94,7 +94,8 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 {/* Close Icon */}
                 <button
                   onClick={toggleMenu}
-                  className="text-xl text-dark"
+
+                  className="text-xl md:hidden text-dark"
                 >
                   <FaTimes />
                 </button>
@@ -165,10 +166,9 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                   Dashboard
                 </Link>
               )}
-
               <button
                 onClick={logOut_user}
-                className="text-sm text-red-600 font-medium hover:pl-1 cursor-pointer border-t-2  duration-200 my-1 mt-5 py-1 block"
+                className="text-sm text-red-600  font-medium hover:pl-1 cursor-pointer duration-200 my-1 mt-5 py-1 block"
               >
                 <i className="fa-solid fa-right-from-bracket"></i> Logout
               </button>

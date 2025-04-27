@@ -88,7 +88,7 @@ export default async function Home() {
           <MainHeading title="Cashback store" link='/store' />
           <div className="max-w-6xl relative  m-auto  mb-12">
            
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 mt-3 lg:mt-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 lg:gap-5 mt-3 lg:mt-5">
               {page_data.data.store.map((item: IStore, i: number) => (
                 <StoreCard item={item} key={i} />
               ))}
@@ -112,7 +112,7 @@ export default async function Home() {
           <MainHeading title="New Coupon" link='/coupons'/>
           <div className="max-w-6xl relative px-2 m-auto mt-2 lg:mt-8 mb-16">
          
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mt-2 lg:mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-5 mt-2 lg:mt-6">
               {page_data.data.coupon.map((item: ICoupon, i: number) => (
                 <CouponcodeCard item={item} key={i} />
               ))}
@@ -120,7 +120,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="max-w-6xl m-auto py-3 lg:px-2 rounded-xl relative bg-[#f5c4d0]">
+        <div className="max-w-6xl m-auto py-3 lg:px-2 lg:rounded-xl relative bg-[#f5c4d0]">
           <MainHeading title="Browse by category" link={null} />
           <HomeCategories category={page_data.data.category} />
         </div>

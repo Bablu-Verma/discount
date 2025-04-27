@@ -23,9 +23,6 @@ export default function OrderListPage() {
   const [page, setPage] = useState(1)
   const [activeTab, setActiveTab] = useState('')
 
-
-
-
   const get_order = async () => {
     try {
       const { data } = await axios.post(
@@ -37,8 +34,8 @@ export default function OrderListPage() {
           },
         }
       );
-      console.log(data.data)
-      setOrderList(data.data);
+      // console.log(data.data)
+      setOrderList([...orderList, ...data.data]);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message || "An error occurred");
@@ -50,7 +47,7 @@ export default function OrderListPage() {
 
   useEffect(() => {
     get_order();
-  }, []);
+  }, [page]);
 
   const tab = [
     {
@@ -78,12 +75,14 @@ export default function OrderListPage() {
           <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
           <div className=" flex justify-start items-center gap-4 mb-6">
-            <span className="text-sm text-secondary">Payment Status:</span>    {
+            <span className="text-sm text-nowrap text-secondary">Payment Status:</span>    {
               tab.map((item, i) => {
                 return (
-                  <button className={`text-sm py-1 px-6 transition-all duration-300 ease-in-out rounded-full border-2 border-primary ${activeTab === item.click ? "text-white bg-primary" : "text-primary bg-white"
+                  <button className={`text-sm py-1 px-4 sm:px-6 transition-all duration-300 ease-in-out rounded-full border-2 ${activeTab === item.click ? "text-primary border-primary" : "text-secondary border-secondary"
                     }`} key={i} onClick={() => {
                       setActiveTab(item.click)
+                      setPage(1)
+                      setOrderList([])
                     }}>{item.name}</button>
                 )
               })
@@ -93,40 +92,26 @@ export default function OrderListPage() {
           {orderList.length === 0 ? (
             <div className="text-center py-10 text-gray-500">No orders found.</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-sm">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">S.No.</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Order ID</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Store</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Cashback</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Order Date</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orderList.map((item, i) => (
-                    <tr key={i} className="border-t">
-                      <td className="px-4 py-3">{i + 1}</td>
-                      <td className="px-4 py-3">{item.transaction_id}</td>
-                      <td className="px-4 py-3">{item.store_id?.name || "-"}</td>
-                      <td className="px-4 py-3">{item.order_status}</td>
-                      <td className="px-4 py-3">{item.cashback ?? 0}</td>
-                      <td className="px-4 py-3">{formatDate(item.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <button
-                          className="text-primary text-nowrap hover:underline text-sm"
-                          onClick={() => setSheet({ show: true, details: item })}
-                        >
-                          View Details
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className=" bg-white p-4 rounded-lg md:p-8">
+              {orderList.map((item, i) => (
+                <div key={i} className="px-4 py-2 shadow-sm md:px-5 md:py-3 border-[1px] border-primary rounded-3xl mb-5" >
+                  <p className="text-secondary"><span className='capitalize font-medium'>id: </span>{item.transaction_id}</p>
+
+
+                  <div className="flex justify-between pt-2 items-start">
+                    <div>
+                      <h3 className="text-primary text-lg capitalize">{item.store_id?.name || "-"}</h3>
+                      <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.order_status}</h3>
+                      <button type="button" title="Click to Details"  className="text-sm text-blue-400 hover:underline" onClick={() => setSheet({ show: true, details: item })} >More Details</button>
+                    </div>
+                    <div className='text-right'>
+                      <p className="text-base text-secondary">Amount:</p>
+                      <h4 className="text-xl font-medium text-secondary ">₹{item.cashback ?? 0}</h4>
+                      <p className="text-sm text-secondary">{formatDate(item.createdAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

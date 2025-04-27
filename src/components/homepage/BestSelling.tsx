@@ -16,27 +16,14 @@ const swiperRef = useRef<any>(null);
 // console.log("Home data log", best_product);
 
   return (
-    <div className="max-w-6xl mx-auto pt-2 mb-4 relative">
-    {/* <div className="absolute right-4 top-[-28%] hidden sm:inline-block">
-      <button
-        className="m-2 text-gray-700 opacity-80 hover:opacity-100"
-        onClick={() => swiperRef.current?.slidePrev()}
-      >
-        <i className="fa-solid fa-arrow-left text-base md:text-xl"></i>
-      </button>
-      <button
-        className="m-2 text-gray-700 opacity-80 hover:opacity-100"
-        onClick={() => swiperRef.current?.slideNext()}
-      >
-        <i className="fa-solid fa-arrow-right text-base md:text-xl"></i>
-      </button>
-    </div> */}
+    <div className="max-w-6xl mx-auto pt-2 mb-4 px-2 relative">
+    
     <Swiper
-      spaceBetween={20}
-      slidesPerView={1}
+      spaceBetween={10}
+      slidesPerView={1.1}
       breakpoints={{
         520: {
-          slidesPerView: 1.2,
+          slidesPerView: 1.4,
         },
         768: {
           slidesPerView: 2.5,

@@ -16,20 +16,24 @@ export async function POST(req: Request) {
       });
     }
 
-    const { page = 1 } = await req.json();  
+    // ✅ Get parameters from request
+    const { page = 1, activetab = null } = await req.json();
 
-    const limit = 20; 
-    const skip = (Number(page) - 1) * limit; 
+    const limit = 5;
+    const skip = (Number(page) - 1) * limit;
 
- 
-    const orders = await OrderModel.find({ user_id: user._id })
-      .populate('store_id',"name store_img" )
+    const filter: any = { user_id: user._id };
+    if (activetab) {
+      filter.payment_status = activetab; 
+    }
+
+    const orders = await OrderModel.find(filter)
+      .populate('store_id', "name store_img")
       .select('-redirect_url')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
-
 
     return new NextResponse(
       JSON.stringify({

@@ -30,7 +30,7 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
           Hot
         </span>
       ) : null}
-      <div className=" overflow-hidden relative p-3 flex justify-center items-center">
+      <div className=" overflow-hidden relative p-1 pb-3 sm:pb-0 sm:p-3 flex justify-center items-center">
         <Image
           src={card_data?.product_img}
           className="w-full  h-[150px] rounded-t-md"
@@ -61,20 +61,20 @@ const ProductCard: React.FC<CardProp> = ({ card_data }) => {
         </h4>
         <div className="flex items-center justify-between mt-1">
           <span>
-            <strong className="text-primary text-xl mr-3 mb-1">
+            <strong className="text-primary text-lg mr-2 sm:text-xl sm:mr-3 mb-1">
               ₹{card_data?.offer_price.toString()}/-
             </strong>
-            <small className="text-red-500 text-sm py-.5 px-2 border-[1px] border-red-500 ">
+            <small className="text-red-500 text-[14px] sm:text-sm py-.5 px-2 border-[1px] border-red-500 ">
               ₹{card_data?.calculated_cashback.toString()} Off
             </small>
             <br />
-            <span className="text-gray-600 font-medium line-through">
+            <span className="text-gray-600 text-base font-medium line-through">
               ₹{card_data?.actual_price.toString()}
             </span>
           </span>
           <div className="flex justify-between mt-4 mb-1 items-center ">
             <button
-              className="select-none rounded-md text-[#2491ef] font-medium py-1 text-sm duration-200 ease-in-out
+              className="select-none rounded-md text-[#2491ef] font-medium py-1 text-sm duration-200 text-nowrap ease-in-out
            "
             >
               GRAB NOW

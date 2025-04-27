@@ -17,36 +17,23 @@ const Flash: React.FC<IfleasProp> = ({ flashSale }) => {
 
   return (
     <div className="max-w-6xl mx-auto pt-2 mb-4 relative">
-      {/* <div className="absolute right-4 top-[-28%] hidden sm:inline-block">
-        <button
-          className="m-2 text-gray-700 opacity-80 hover:opacity-100"
-          onClick={() => swiperRef.current?.slidePrev()}
-        >
-          <i className="fa-solid fa-arrow-left text-base md:text-xl"></i>
-        </button>
-        <button
-          className="m-2 text-gray-700 opacity-80 hover:opacity-100"
-          onClick={() => swiperRef.current?.slideNext()}
-        >
-          <i className="fa-solid fa-arrow-right text-base md:text-xl"></i>
-        </button>
-      </div> */}
+    
       <Swiper
-        spaceBetween={20}
-        slidesPerView={1}
+        spaceBetween={14}
+        slidesPerView={1.1}
         breakpoints={{
           520: {
-            slidesPerView: 1,
+            slidesPerView: 1.3,
           },
           768: {
-            slidesPerView: 2,
+            slidesPerView: 1.9,
           },
           1024: {
-            slidesPerView: 2,
+            slidesPerView: 2.1,
           },
         }}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
-        onSlideChange={() => console.log("slide change")}
+        // onSlideChange={() => console.log("slide change")}
         className="home_flash_"
       >
         {flashSale.length > 0 &&

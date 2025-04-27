@@ -17,13 +17,12 @@ interface IWCProps {
 
 const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
   const token = useSelector((state: RootState) => state.user.token);
-  // const [itemList, setItemList] = useState(item_);
   const dispatch = useDispatch();
-  const wishlist = useSelector((state:RootState) => state.wishlist.items);
+  const wishlist = useSelector((state: RootState) => state.wishlist.items);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(addItem(item_));
-  },[])
+  }, [])
 
 
 
@@ -40,10 +39,10 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
         }
       );
 
-      
+
       dispatch(removeItem(id));
       // toast.success("Product removed successfully!");
-      console.log('data', data)
+      // console.log('data', data)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error Product remove ", error.response?.data.message);
@@ -57,48 +56,44 @@ const Wishlist_client: React.FC<IWCProps> = ({ item_ }) => {
 
   return (
     <>
-      {wishlist.map((item, i) => {
-        return (
-          <div
-            key={i}
-            className="grid grid-cols-8 w-full mt-3 py-2 text-base font-normal mb-2 hover:bg-gray-200 rounded-md  items-center px-4 "
-          >
-            <span className="text-sm text-secondary">{i + 1}.</span>
-            <div
-             
-              className="col-span-3 flex items-center pr-3"
-            >
-              <Image
-                src={item.product_img}
-                className="h-12 w-12 aspect-auto "
-                width={20}
-                sizes="100vw"
-                height={20}
-                alt={item.title}
-              />
-              <span className="mx-3 line-clamp-1 text-secondary  text-base">{item.title}</span>
-              </div>
-            <Link href={`/store/${item.store.slug}`} className="col-span-2 text-base capitalize line-clamp-1">{item.store.name}</Link>
-            <span className="text-base font-medium capitalize text-green-500 line-clamp-1">Up to ₹{item.calculated_cashback.toString()}</span>
-        
-              <span>
-              <Link
-              href={`/campaign/${item.product_slug}`}
-              className="text-primary mr-10 hover:text-blue-500 text-sm hover:underline"
-            >
-              More Info
-            </Link>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {wishlist.map((item, i) => (
+          <div key={i} className="bg-white border-[1px] rounded overflow-hidden border-gray-300 ">
+            <div className='relative '>
               <button
-                className="p-1 rounded-md text-red-300 hover:text-red-700 inline"
+                className="text-red-400 absolute right-2 top-2 p-1 hover:text-red-700"
                 title="Remove this item"
                 onClick={() => remover_data(item._id ?? 0)}
               >
-                <i className="fa-solid fa-trash text-base"></i>
+                <i className="fa-solid fa-trash text-lg"></i>
               </button>
-              </span>
+              <Image
+                src={item.product_img}
+                className="h-28 w-full"
+                width={100}
+                height={100}
+                sizes="100vw"
+                alt={item.title}
+              />
+            </div>
+            <div className="p-3">
+              <div className="flex justify-end pt-1">
+              <Link href={`/store/${item.store.slug}`} className="text-sm inline-block text-gray-600 capitalize  ">
+                {item.store.name}
+              </Link>
+              </div>
+              <p className="text-[#16171a] font-normal text-sm my-1 mb-5 capitalize line-clamp-3">{item.title}</p>
+              <div className="flex items-center  justify-between gap-4 ">
+                <h3 className="text-green-700 text-lg font-medium">Up to ₹{item.calculated_cashback.toString()}</h3>
+                <Link
+                  href={`/campaign/${item.product_slug}`}
+                  className="text-primary text-nowrap text-base hover:underline"
+                > Grab Now</Link>
+              </div>
+            </div>
           </div>
-        );
-      })}
+        ))}
+      </div>
       {wishlist.length === 0 && (
         <div className="text-center py-12">
           <p className="text-base text-gray-600 mb-3">No products in your wishlist.</p>

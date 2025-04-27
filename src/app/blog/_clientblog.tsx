@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import { get_All_blogs } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 interface CBProps {
   blog: IBlog[];
@@ -75,36 +76,58 @@ const ClientBlog: React.FC<CBProps> = ({ blog, category }) => {
   return (
     <>
       {/* Category Selector */}
-      <div className="px-2.5 py-8 flex justify-start items-center gap-8">
-        {category.map((item, i) => (
-          <div key={i}>
-            <button
-              onClick={() => handleCategoryClick(item._id)}
-              className="rounded-full border-4 border-primary duration-200 ease-in-out hover:border-gray-400 cursor-pointer"
-            >
-              <Image
-                alt=""
-                sizes="100vw"
-                className="w-20 h-20 rounded-full"
-                src={item.imges[0]}
-                width={20}
-                height={20}
-              />
-            </button>
-            <h4 className="text-center text-lg text-secondary capitalize">
-              {item.name}
-            </h4>
-          </div>
-        ))}
-        <div>
-          <button
-            onClick={() => setMenu(true)}
-            className="rounded-full border-4 w-20 h-20 flex justify-center items-center duration-200 ease-in-out border-gray-400 cursor-pointer"
+      <div className="px-2.5 py-8 ">
+        {
+          category && category.length > 0 && <Swiper
+            spaceBetween={14}
+            slidesPerView={4}
+            breakpoints={{
+              768: {
+                slidesPerView: 5,
+              },
+             
+            }}
           >
-            <HiDotsHorizontal className="text-gray-600 text-4xl" />
-          </button>
-          <h4 className="text-center text-lg text-secondary capitalize">See all</h4>
-        </div>
+            {category.slice(0, 5).map((item, i) => (
+              <SwiperSlide key={i}>
+                <div key={i} className="flex flex-col items-center justify-center">
+                  <button
+                    onClick={() => handleCategoryClick(item._id)}
+                    className="rounded-full border-4 border-primary duration-200 ease-in-out hover:border-gray-400 cursor-pointer"
+                  >
+                    <Image
+                      alt=""
+                      sizes="100vw"
+                      className="w-16 h-16 md:w-20 md:h-20 rounded-full"
+                      src={item.imges[0]}
+                      width={20}
+                      height={20}
+                    />
+                  </button>
+                  <h4 className="text-center text-base md:text-lg text-secondary capitalize">
+                    {item.name}
+                  </h4>
+                </div>
+              </SwiperSlide>
+            ))}
+            <SwiperSlide>
+              <div className="flex flex-col items-center justify-center">
+                <button
+                  onClick={() => setMenu(true)}
+                  className="rounded-full border-4 w-16 h-16 md:w-20 md:h-20 flex justify-center items-center duration-200 ease-in-out border-gray-400 cursor-pointer"
+                >
+                  <HiDotsHorizontal className="text-gray-600 text-3xl md:text-4xl" />
+                </button>
+                <h4 className="text-center text-lg text-secondary capitalize">See all</h4>
+              </div>
+            </SwiperSlide>
+          </Swiper>
+        }
+
+
+
+
+
       </div>
 
       {/* Blog List */}
@@ -127,21 +150,20 @@ const ClientBlog: React.FC<CBProps> = ({ blog, category }) => {
         </div>
       </div>
 
-      {/* Modal for All Categories */}
       {menu && (
         <div
           style={{ background: "rgba(0,0,0,0.3)" }}
           className="fixed z-[10] top-0 left-0 right-0 bottom-0 flex justify-center items-center"
         >
-          <div className="bg-white relative rounded-lg shadow-md min-h-[500px] w-full max-w-6xl">
+          <div className="bg-white mx-2 relative overflow-y-auto rounded-lg shadow-md min-h-[500px] max-h-[80vh] w-full max-w-6xl">
             <button
               title="close"
-              className="absolute -top-9 right-1 bg-slate-100 p-1 rounded-full"
+              className="absolute top-5 right-2 bg-slate-100 p-1 rounded-full"
               onClick={() => setMenu(false)}
             >
               <IoMdClose className="text-lg text-primary" />
             </button>
-            <div className="p-8 flex justify-start items-center gap-8 flex-wrap">
+            <div className="p-6 sm:p-8 pt-12 flex justify-start items-center gap-4 md:gap-8 flex-wrap">
               {category.map((item, i) => (
                 <div key={i}>
                   <button

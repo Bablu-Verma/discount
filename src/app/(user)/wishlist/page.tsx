@@ -24,8 +24,8 @@ export const GetData = async (token: string) => {
         },
       }
     );
-   return data.data;
-    
+    return data.data;
+
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error get wishlist", error.response?.data.message);
@@ -49,21 +49,12 @@ const Wishlist = async () => {
       <MainHeader />
       <main className="min-h-screen">
         <div className="max-w-6xl  mx-auto px-4 flex mt-7 md:mt-10 justify-end items-end mb-4 relative">
-         
-         <Wishlist_remove id={page_data?.wishlist_id} />
+
+          <Wishlist_remove id={page_data?.wishlist_id} />
         </div>
-        <div className="overflow-auto">
-        <div className="max-w-6xl min-w-[800px] mx-auto p-4   mb-4 gap-3 border-[1px] rounded-3xl mt-20 border-gray-500 ">
-          <div className="grid grid-cols-8 w-full pt-3 pb-5 text-xl font-semibold mb-4  rounded-md select-none px-4 shadow-sm border-b-[1px] border-b-gray-200">
-            <h3 className="text-base text-secondary">S No.</h3>
-            <h3 className="col-span-3 text-base text-secondary">Product Name</h3>
-            <h3 className="text-base text-secondary col-span-2">Brand</h3>
-            <h3 className="text-base text-secondary">Offer</h3>
-            <h3 className="text-base text-secondary">Action</h3>
+        <div className="max-w-6xl mx-auto px-2 ">
+          <Wishlist_client item_={wishlist_products} />
           </div>
-          <Wishlist_client item_={wishlist_products}/>
-        </div>
-        </div>
         <BottomToTop />
       </main>
       <Footer />

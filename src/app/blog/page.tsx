@@ -42,7 +42,7 @@ const AllBlog = async () => {
       <main className="pt-3">
    
         <section className="max-w-6xl mx-auto  mb-5 p-2 xl:p-0">
-          <div className="grid grid-cols-2 gap-4 border-b-[1px] pb-14 border-b-gray-200">
+          <div className="flex flex-col-reverse  lg:grid grid-cols-2 gap-4 border-b-[1px] pb-14 border-b-gray-200">
             <div className="pt-20 pr-5">
               <small className="text-primary uppercase text-base mb-3">
                 FEATURED
@@ -52,7 +52,7 @@ const AllBlog = async () => {
                 className="text-base line-clamp-6 text-gray-700  "
                 dangerouslySetInnerHTML={{ __html: f_blog.short_desc || "" }}
               ></div>
-              <div className=" mt-14">
+              <div className=" mt-14 ">
               <Link className="text-sm bg-primary rounded-sm text-light px-5 py-2" href={`/blog/${f_blog?.slug}`} >Read More</Link>
               </div>
               

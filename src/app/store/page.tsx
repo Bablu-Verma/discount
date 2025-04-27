@@ -38,8 +38,8 @@ export default async function Stores() {
       <MainHeader />
       <main>
         <div className="max-w-6xl px-2 m-auto mt-4 lg:mt-5 mb-16">
-        <div className="flex justify-center items-center h-[200px]">
-          <h1 className="text-5xl uppercase text-secondary flex gap-3 font-medium">CashBack <span className="text-primary ">Store </span> <FaStore className="text-primary" /></h1>
+        <div className="flex justify-center items-center h-[130px] sm:h-[200px]">
+          <h1 className=" text-3xl md:text-5xl uppercase text-secondary flex gap-3 font-medium">CashBack <span className="text-primary ">Store </span> <FaStore className="text-primary" /></h1>
         </div>
           <StoreClient page_data={page_data} />
         </div>

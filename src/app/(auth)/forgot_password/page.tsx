@@ -9,8 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import forgatepassword_image from '../../../../public/forgatepassword.svg'
-
+import forgatepassword_image from "../../../../public/forgatepassword.svg";
 
 interface IUserData {
   email: string;
@@ -40,7 +39,7 @@ const ForgotPassword = () => {
   const call_db = async () => {
     try {
       const { data } = await axios.post(
-        '',
+        "",
         {
           email: userData.email,
         },
@@ -78,13 +77,18 @@ const ForgotPassword = () => {
 
   return (
     <>
-     
       <MainHeader />
       <main>
         <div className="max-w-[1400px] m-auto min-h-screen flex justify-center items-center  pb-10 md:pb-3">
-          <div className="flex justify-center items-center gap-6">
-          <Image src={forgatepassword_image} alt="login"  width={350} height={350} className=""/>
-          <div className="w-full max-w-[400px] px-2">
+          <div className="md:flex justify-center items-center gap-6">
+            <Image
+              src={forgatepassword_image}
+              alt="login"
+              width={350}
+              height={350}
+              className=""
+            />
+            <div className="w-full max-w-[400px] px-2">
               <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">
                 Forgot your Password
               </h2>
@@ -112,7 +116,7 @@ const ForgotPassword = () => {
                 </button>
               </div>
               <p className="text-sm font-thin text-center">
-                Back you? 
+                Back you?
                 <Link
                   href="/login"
                   className="text-blue-400 ml-3 font-normal hover:underline"
@@ -122,7 +126,6 @@ const ForgotPassword = () => {
               </p>
             </div>
           </div>
-        
         </div>
         <BottomToTop />
       </main>

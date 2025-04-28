@@ -13,7 +13,7 @@ interface CategoryCard {
 const CategorieCard: React.FC<CategoryCard> = ({ item }) => {
 
   return (
-    <Link href={`category/${item.slug}`} className="hover:shadow rounded-xl relative bg-white duration-200 w-[150px] sm:w-[160px]  lg:w-[200px]  sm:h-[160px] flex flex-col p-4">
+    <Link href={`category/${item.slug}`} className="hover:shadow rounded-xl relative bg-white duration-200  flex-1 min-w-[130px] lg:w-[200px] sm:h-[160px] flex flex-col p-4">
        <RandomColor />
       <div className="w-full flex flex-col mt-4 justify-between items-center">
         <Image src={item.imges[0]} alt={item.name} width={120} height={70} className="mb-4 h-[70px] rounded" />

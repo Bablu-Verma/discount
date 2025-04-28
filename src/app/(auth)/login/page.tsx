@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
 import Image from "next/image";
-import login_image from "../../../../public/login_image.svg"
+import login_image from "../../../../public/login_image.svg";
 import { setSummary } from "@/redux-store/slice/cashbackSummary";
 
 interface IUserData {
@@ -28,7 +28,7 @@ const Login = () => {
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const SubmitData = (): void => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,7 +58,6 @@ const Login = () => {
 
   const call_db = async () => {
     try {
-
       const { data } = await axios.post(
         login_api,
         {
@@ -77,18 +76,16 @@ const Login = () => {
         password: "",
       });
 
-   
       toast.success("Login success!");
 
- console.log(data)
+      console.log(data);
 
       dispatch(login({ user: data.user, token: data.token }));
       dispatch(setSummary({ summary: data.summary }));
-      
+
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
-
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error login user", error.response?.data.message);
@@ -113,16 +110,23 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-
   return (
     <>
       <MainHeader />
       <main>
         <div className="max-w-6xl m-auto min-h-[80vh] flex justify-center items-center  pb-10 md:pb-3">
-          <div className="col-span-1 items-center grid grid-cols-2">
-            <Image src={login_image} alt="login"  width={350} height={350} className=""/>
+          <div className="col-span-1 items-center md:grid grid-cols-2">
+            <Image
+              src={login_image}
+              alt="login"
+              width={350}
+              height={350}
+              className=""
+            />
             <div className="col-span-1 px-2 ">
-              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Login your account</h2>
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">
+                Login your account
+              </h2>
               <p className="text-sm font-normal mb-6">
                 Shop Your Favorite Products With Maximum Discount
               </p>
@@ -167,7 +171,10 @@ const Login = () => {
                 >
                   Submit
                 </button>
-                <Link href='/forgot_password' className=" text-gray-800 text-sm  font-normal duration-200 p-2 hover:underline">
+                <Link
+                  href="/forgot_password"
+                  className=" text-gray-800 text-sm  font-normal duration-200 p-2 hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>

@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { IoClose } from "react-icons/io5";
+import { FaStoreAlt } from "react-icons/fa";
+import { IoMdTime } from "react-icons/io";
 
 
 export default function OrderListPage() {
@@ -102,7 +104,7 @@ export default function OrderListPage() {
                     <div>
                       <h3 className="text-primary text-lg capitalize">{item.store_id?.name || "-"}</h3>
                       <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.order_status}</h3>
-                      <button type="button" title="Click to Details"  className="text-sm text-blue-400 hover:underline" onClick={() => setSheet({ show: true, details: item })} >More Details</button>
+                      <button type="button" title="Click to Details" className="text-sm text-blue-400 hover:underline" onClick={() => setSheet({ show: true, details: item })} >More Details</button>
                     </div>
                     <div className='text-right'>
                       <p className="text-base text-secondary">Amount:</p>
@@ -133,103 +135,110 @@ export default function OrderListPage() {
           <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl relative p-6 animate-slideUp">
             {/* Close Button */}
             <button
-              className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full p-2"
+              className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full p-1"
               onClick={() => setSheet({ show: false, details: {} })}
             >
-              <IoClose className="text-2xl text-gray-600 hover:text-black" />
+              <IoClose className="text-xl text-gray-600 hover:text-black" />
             </button>
 
             {/* Title */}
-            <h2 className="text-2xl font-semibold text-primary mb-6 text-center">Order Details</h2>
+            <h2 className="text-lg font-semibold text-secondary mb-6 text-left">Order Details</h2>
 
-            {/* Divider */}
-            <div className="border-b mb-6"></div>
+            <div className="border-[1px] border-dashed border-secondary p-4 rounded-lg">
+              <h4 className="text-black  text-base"><span className="font-medium text-secondary inline-block mr-2 text-sm">Id:</span> {sheet.details.transaction_id}</h4>
+              <div className="flex mt-3 justify-between items-start">
+                <div>
+                  <h1 className="flex gap-2 mb-1 text-lg capitalize text-primary items-center"><FaStoreAlt className="text-secondary" /> {sheet.details.store_id?.name} </h1>
+                  <h2><span className="text-sm mr-3 mb-1 inline-block">Order Status</span><span className="text-secondary underline">{sheet.details.order_status ? sheet.details.order_status : '-'}</span></h2>
+                  <h2><span className="text-sm mr-3 mb-1 inline-block">Payment Status</span><span className="text-secondary">{sheet.details.payment_status ? sheet.details.payment_status : '-'}</span></h2>
+                  <h2><span className="text-sm mr-3 inline-block">Cashback Rate</span><span className="text-lg text-secondary">{`${sheet.details.cashback_type === 'PERCENTAGE' ? `${sheet.details.cashback_rate}%` : `₹${sheet.details.cashback_rate}`}`}</span></h2>
+                </div>
+                <div className="text-right">
+                  <p className="mb-1"><span className="block text-base text-secondary">Cashback Amount:</span> <span className="text-secondary text-lg font-medium">{sheet.details.cashback ? `₹ ${sheet.details.cashback}` : " ₹0"}</span></p>
+                  <p className="text-sm text-secondary"><span className="mr-3">Order Value: </span><span className="text-lg ">{sheet.details.order_value ? `₹ ${sheet.details.order_value}` : "₹0"}</span></p>
+                  <p className="text-sm flex text-secondary items-center gap-2 mt-4"><IoMdTime className="text-base" /> <span>{formatDate(sheet.details.createdAt)}</span></p>
+                </div>
+              </div>
+            </div>
 
-            {/* Details */}
+
             <div className="space-y-5">
-              <DetailRow label="Store" value={sheet.details.store_id?.name || "-"} />
-              <DetailRow label="Order Date" value={formatDate(sheet.details.createdAt)} />
-              <DetailRow label="Transaction ID" value={sheet.details.transaction_id} />
-              <DetailRow
-                label="Order Value"
-                value={sheet.details.order_value ? `₹ ${sheet.details.order_value}` : "-"}
-              />
-              <DetailRow label="Cashback Rate" value={`${sheet.details.cashback_rate}%`} />
-              <DetailRow label="Cashback Type" value={sheet.details.cashback_type} />
-              <DetailRow
-                label="Cashback Amount"
-                value={sheet.details.cashback ? `₹ ${sheet.details.cashback}` : "-"}
-              />
-              <DetailRow label="Order Status" value={sheet.details.order_status} />
-              <DetailRow label="Payment Status" value={sheet.details.payment_status ?? "-"} />
 
-              {sheet.details.order_history && sheet.details.order_history.length > 0 && (
-                <div className="mt-10">
-                  <div
-                    className="flex justify-between items-center cursor-pointer bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200"
-                    onClick={() => setShowOrderHistory(!showOrderHistory)}
+              <div className="flex mt-5 gap-4 ">
+
+                {sheet.details.order_history && sheet.details.order_history.length > 0 && (
+                  <button
+                    type="button"
+                    className="text-sm cursor-pointer  text-blue-800 underline  font-normal"
+                    onClick={() =>
+                    {
+                      setShowOrderHistory(true)
+                      setShowPaymentHistory(false)
+                    }
+                    }
                   >
-                    <h3 className="text-base text-secondary font-medium">Order History</h3>
-                    <span className="text-gray-500">{showOrderHistory ? "▲" : "▼"}</span>
-                  </div>
+                    Order History
+                  </button>
+                )}
 
-                  {showOrderHistory && (
-                    <div className="overflow-x-auto mt-4">
-                      <table className="min-w-full text-sm border">
-                        <thead className="bg-gray-100">
-                          <tr>
-                            <th className="text-left p-3 border-b">Details</th>
-                            <th className="text-left p-3 border-b">Date</th>
-                            <th className="text-left p-3 border-b">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sheet.details.order_history.map((history, idx) => (
-                            <tr key={idx} className="hover:bg-gray-50">
-                              <td className="p-3 border-b">{history.details || "-"}</td>
-                              <td className="p-3 border-b">{formatDate(history.date)}</td>
-                              <td className="p-3 border-b">{history.status}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
+                  <button
+                    type="button"
+                    className="text-sm cursor-pointer  text-blue-800  font-normal"
+                    onClick={() => {
+                      setShowOrderHistory(false)
+                      setShowPaymentHistory(true)
+                    }}
+                  >
+                    Payment History
+                  </button>
+
+                )}
+              </div>
+
+              {showOrderHistory && (
+                <div className="overflow-x-auto mt-4">
+                  <table className="min-w-full text-sm border">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="text-left p-3 border-b">Details</th>
+                        <th className="text-left p-3 border-b">Date</th>
+                        <th className="text-left p-3 border-b">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sheet.details.order_history.map((history, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <td className="p-3 border-b">{history.details || "-"}</td>
+                          <td className="p-3 border-b">{formatDate(history.date)}</td>
+                          <td className="p-3 border-b">{history.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
 
-              {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
-                <div className="mt-10">
-                  <div
-                    className="flex justify-between items-center cursor-pointer bg-green-100 px-3 py-2 rounded-lg hover:bg-green-200"
-                    onClick={() => setShowPaymentHistory(!showPaymentHistory)}
-                  >
-                    <h3 className="text-secondary text-base font-medium">Payment History</h3>
-                    <span className="text-gray-600">{showPaymentHistory ? "▲" : "▼"}</span>
-                  </div>
-
-                  {showPaymentHistory && (
-                    <div className="overflow-x-auto mt-4">
-                      <table className="min-w-full text-sm border">
-                        <thead className="bg-green-100">
-                          <tr>
-                            <th className="text-left p-3 border-b">Details</th>
-                            <th className="text-left p-3 border-b">Date</th>
-                            <th className="text-left p-3 border-b">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sheet.details.payment_history.map((payment, idx) => (
-                            <tr key={idx} className="hover:bg-green-50">
-                              <td className="p-3 border-b">{payment.details || "-"}</td>
-                              <td className="p-3 border-b">{formatDate(payment.date)}</td>
-                              <td className="p-3 border-b">{payment.status}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+              {showPaymentHistory && (
+                <div className="overflow-x-auto mt-4">
+                  <table className="min-w-full text-sm border">
+                    <thead className="bg-green-100">
+                      <tr>
+                        <th className="text-left p-3 border-b">Details</th>
+                        <th className="text-left p-3 border-b">Date</th>
+                        <th className="text-left p-3 border-b">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sheet.details.payment_history.map((payment, idx) => (
+                        <tr key={idx} className="hover:bg-green-50">
+                          <td className="p-3 border-b">{payment.details || "-"}</td>
+                          <td className="p-3 border-b">{formatDate(payment.date)}</td>
+                          <td className="p-3 border-b">{payment.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
 

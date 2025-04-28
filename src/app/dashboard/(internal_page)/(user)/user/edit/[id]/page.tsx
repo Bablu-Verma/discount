@@ -6,6 +6,7 @@ import {
   edit_profile_api,
   users_detail_edit_by_admin,
   users_details_admin,
+  users_edit_details_admin,
 } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
@@ -43,7 +44,7 @@ const ProfileEdit = () => {
   const getuserdetail = async () => {
     try {
       const { data } = await axios.post(
-        users_details_admin,
+        users_edit_details_admin,
         { email: urlslug },
         {
           headers: {
@@ -54,16 +55,16 @@ const ProfileEdit = () => {
       );
 
 
-      // console.log(data.data.details)
+      // console.log(data.data)
       setFormData({
-        name: data.data.details.name,
-        phone: data.data.details.phone,
-        profileImage: data.data.details.profile || "",
-        dob: data.data.details.dob,
-        gender: data.data.details.gender,
-        subscribe_email:  data.data.details.subscribe_email,
-        user_status: data.data.details.user_status,
-        role: data.data.details.role,
+        name: data.data.name,
+        phone: data.data.phone,
+        profileImage: data.data.profile || "",
+        dob: data.data.dob,
+        gender: data.data.gender,
+        subscribe_email:  data.data.subscribe_email,
+        user_status: data.data.user_status,
+        role: data.data.role,
       })
 
 
@@ -100,13 +101,13 @@ const ProfileEdit = () => {
         {
           email:user?.email,
           name: formData.name,
-        phone: formData.phone,
-        profileImage: formData.profileImage,
-        dob: formData.dob,
-        gender: formData.gender,
-        subscribe_email:  formData.subscribe_email,
-        user_status: formData.user_status,
-        role: formData.role,
+          phone: formData.phone,
+          profileImage: formData.profileImage,
+          dob: formData.dob,
+          gender: formData.gender,
+          subscribe_email:  formData.subscribe_email,
+          user_status: formData.user_status,
+          role: formData.role,
         },
         {
           headers: {

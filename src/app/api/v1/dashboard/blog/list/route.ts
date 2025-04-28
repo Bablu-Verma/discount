@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     const requestData = await req.json();
- const {status,sortBy, search,writer_id,endDate,startDate,page = 1, limit = 10}  = requestData
+ const {status,sortBy, search,endDate,startDate,page = 1, limit = 3}  = requestData
     const filters: any = {};
     const sortOptions: any = { createdAt: -1 };
   
@@ -48,13 +48,8 @@ export async function POST(req: Request) {
     if (search) {
       filters.$or = [
         { title: { $regex: search, $options: "i" } },
-        { slug: search },
+        { slug: { $regex: search, $options: "i" } },
       ];
-    }
-  
-    // Filtering by writer email
-    if (writer_id) {
-      filters.writer_id = writer_id;
     }
   
     // Filtering by date range

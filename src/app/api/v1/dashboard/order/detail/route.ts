@@ -40,20 +40,8 @@ export async function POST(req: Request) {
 
     // Fetch order details
     const order = await OrderModel.findById(orderId)
-      .populate({
-        path: "user_id",
-        select: "name email",
-        populate: [
-          {
-            path: "product_id",
-            select: "title store",
-            populate: {
-              path: "store",
-              select: "name slug",
-            },
-          },
-        ],
-      })
+      .populate('user_id', 'name email')
+      .populate('store_id', 'name slug')
       .lean()
       .exec();
       

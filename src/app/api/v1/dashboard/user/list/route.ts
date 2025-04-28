@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
     const {
       page = 1,
-      limit = 10,
+      limit = 2,
       search,
       role,
       status,
@@ -53,38 +53,38 @@ export async function POST(req: Request) {
     
     if (search) {
       query.$or = [
-        { name: { $regex: search, $options: "i" } }, // Case-insensitive name search
-        { email: { $regex: search, $options: "i" } }, // Case-insensitive email search
+        { name: { $regex: search, $options: "i" } }, 
+        { email: { $regex: search, $options: "i" } },
       ];
     }
 
-    // Filter by Gender (if provided)
+   
     if (gender) {
       query.gender = gender;
     }
 
-    // Filter by Date Range (if provided)
+   
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) {
-        query.createdAt.$gte = new Date(startDate); // Greater than or equal to startDate
+        query.createdAt.$gte = new Date(startDate); 
       }
       if (endDate) {
-        query.createdAt.$lte = new Date(endDate); // Less than or equal to endDate
+        query.createdAt.$lte = new Date(endDate); 
       }
     }
 
-    // Pagination Setup
+    
     const pageNumber = parseInt(page);
     const pageSize = parseInt(limit);
     const skip = (pageNumber - 1) * pageSize;
 
-    // Fetch Users with Filters, Pagination & Sorting (Newest First)
+  
     const users = await UserModel.find(query)
-      .sort({ createdAt: -1 }) // Sort by newest users
+      .sort({ createdAt: -1 }) 
       .skip(skip)
       .limit(pageSize)
-      .select("-password"); // Exclude password field
+      .select("-password"); 
 
     // Total Users Count (for pagination)
     const totalUsers = await UserModel.countDocuments(query);
@@ -96,7 +96,6 @@ export async function POST(req: Request) {
         data: users,
         pagination: {
           totalUsers,
-          currentPage: pageNumber,
           totalPages: Math.ceil(totalUsers / pageSize),
         },
       },

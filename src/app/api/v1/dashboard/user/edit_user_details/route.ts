@@ -6,7 +6,6 @@ import UserUPIModel from "@/model/UserUPIModel";
 import ClaimFormModel from "@/model/ClaimForm";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
 import OrderModel from "@/model/OrderModel";
-import ConformAmountModel from "@/model/ConformAmountModel";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -21,6 +20,8 @@ export async function POST(req: Request) {
         { status: 401 }
       );
     }
+
+// console.log( authenticated, usertype, message)
 
     if (usertype !== "admin") {
       return NextResponse.json(
@@ -49,21 +50,10 @@ export async function POST(req: Request) {
       userDetails.password = undefined;
       userDetails.verify_code = undefined;
     }
-    const user_order = await OrderModel.find({user_id:userDetails._id}).populate('store_id', 'name slug');
-    const user_upi = await UserUPIModel.find({user_id:userDetails._id});
-    const user_claim_form = await ClaimFormModel.find({user_id:userDetails._id});
-    const user_withdrawal_request = await WithdrawalRequestModel.find({user_id:userDetails._id});
-    const conform_amount = await ConformAmountModel.findOne({user_id:userDetails._id})
+   
 
     return NextResponse.json(
-      { success: true, message: "User details retrieved successfully", data: {
-        details:userDetails,
-        order:user_order,
-        user_upi,
-        user_claim_form,
-        user_withdrawal_request,
-        conform_amount
-      } },
+      { success: true, message: "User details retrieved successfully", data:userDetails },
       { status: 200 }
     );
     

@@ -10,21 +10,20 @@ import { RootState } from "@/redux-store/redux_store";
 import { blog_category_dashboard_list_api, category_list_api, coupons_list_api, coupons_list_dashboard_api, list_store_api, list_store_dashboard_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 import { ICoupon } from "@/model/CouponModel";
+import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 
 const CategoryList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [couponsList, setCouponsList] = useState([]);
  const [showFilter, setShowFilter] = useState(false);
- const [categoryList, setCategoryList] = useState<
-    { name: string; slug: string }[]
-  >([]);
-  const [storeList, setStoreList] = useState<{ name: string; slug: string }[]>(
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalpage, setTotalPage] = useState(1)
+  const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
 
   const [filters, setFilters] = useState({
     status:"ACTIVE" , // "ACTIVE" | "INACTIVE" | "REMOVED" | "ALL"
-    category:"",
     store:"",
     startDate:"",
     endDate:"",
@@ -34,7 +33,7 @@ const CategoryList = () => {
   const getCoupons = async () => {
     try {
       const { data } = await axios.post(
-        coupons_list_dashboard_api, filters,
+        coupons_list_dashboard_api, {...filters, page:currentPage},
         {
           headers: {
            
@@ -42,6 +41,7 @@ const CategoryList = () => {
           },
         }
       );
+      setTotalPage(data.pagination.totalPages)
       setCouponsList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -55,26 +55,22 @@ const CategoryList = () => {
 
   useEffect(() => {
     getCoupons();
-  }, []);
+  }, [currentPage]);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [storeRes, categoryRes] = await Promise.all([
+        const [storeRes] = await Promise.all([
           axios.post(
             list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
-          axios.post(
-            blog_category_dashboard_list_api,
-            { status: "ACTIVE" },
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
+         
         ]);
         setStoreList(storeRes.data.data || []);
-        setCategoryList(categoryRes.data.data || []);
+      
       } catch (error) {
         console.log(error);
       }
@@ -136,22 +132,7 @@ const CategoryList = () => {
             <option value="REMOVED">REMOVED</option>
           </select>
 
-          <select
-            name="category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>Category</option>
-
-            {categoryList.map((item, i) => {
-              return (
-                <option key={i} value={item.slug}>
-                  {item.name}
-                </option>
-              );
-            })}
-          </select>
+         
           <select
             name="store"
             value={filters.store}
@@ -162,7 +143,7 @@ const CategoryList = () => {
 
             {storeList.map((item, i) => {
               return (
-                <option key={i} value={item.slug}>
+                <option key={i} value={item._id}>
                   {item.name}
                 </option>
               );
@@ -255,6 +236,11 @@ const CategoryList = () => {
             </tbody>
           </table>
         </div>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalpage}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );

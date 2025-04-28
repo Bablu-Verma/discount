@@ -67,7 +67,6 @@ export async function POST(req: Request) {
     // ✅ Pagination
     const skip = (page - 1) * limit;
 
-    // ✅ Fetch data with pagination
     const contactUsRecords = await ContactUsModel.find(query)
       .skip(skip)
       .limit(limit)

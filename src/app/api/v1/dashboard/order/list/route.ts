@@ -3,13 +3,11 @@ import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import OrderModel from "@/model/OrderModel";
 
-
-
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // ✅ Authenticate user
+    
     const { authenticated, usertype, message } = await authenticateAndValidateUser(req);
 
     if (!authenticated) {
@@ -35,64 +33,56 @@ export async function POST(req: Request) {
     }
 
     const {
-      payment_status ,
+      payment_status,
       user_id,
       store_id,
       transaction_id,
       startDate,
       endDate,
       page = 1,
-      limit = 10,
+      limit = 5,
     } = await req.json();
-
-    const pageNumber = Math.max(1, parseInt(page, 10));
-    const pageSize = Math.max(1, parseInt(limit, 10));
 
     const query: any = {};
 
+    const pageNumber = Number(page) || 1;
+const limitNumber = Number(limit) || 5;
 
-    
     if (payment_status && payment_status !== "ALL") {
       query.payment_status = payment_status;
     }
     if (store_id) {
       query.store_id = store_id;
     }
-    
+
     if (user_id) {
       query.user_id = user_id;
     }
-    
+
     if (transaction_id) {
       query.transaction_id = transaction_id;
     }
-    
-    
+
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-    
+
       if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
         query.createdAt = { $gte: start, $lte: end };
       }
     }
-
-    // ✅ Fetch orders with pagination
+   
     const orders = await OrderModel.find(query)
-    .populate({
-      path: "user_id",
-      select: "name email",
-    })
-    .populate({
-      path: "user_id",
-      select: "name email",
-    })
-    .lean()
-      .sort({ createdAt: -1 }) 
-      .skip((pageNumber - 1) * pageSize)
-      .limit(pageSize);
+      .populate({
+        path: "user_id",
+        select: "name email",
+      })
+      // .populate({path:"store_id", select:"name slug"})
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber)
+      .lean()
 
-    // ✅ Count total matching records
     const totalOrders = await OrderModel.countDocuments(query);
 
     return new NextResponse(
@@ -101,9 +91,7 @@ export async function POST(req: Request) {
         message: "Orders fetched successfully.",
         data: orders,
         pagination: {
-          currentPage: pageNumber,
-          totalPages: Math.ceil(totalOrders / pageSize),
-          totalOrders,
+          totalPages: Math.ceil(totalOrders / limitNumber),
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

@@ -10,29 +10,32 @@ import { RootState } from "@/redux-store/redux_store";
 import { list_store_dashboard_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 import { IStore } from "@/model/StoreModel";
+import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 
 const CategoryList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [storeList, setStoreList] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalpage, setTotalPage] = useState(1)
   const [filters, setFilters] = useState({
     search:"",
-      cashback_status:"",  // "ACTIVE_CASHBACK", "INACTIVE_CASHBACK"
-      cashback_type:"", // "PERCENTAGE", "FLAT_AMOUNT"
+      cashback_status:"", 
+      cashback_type:"",
       store_id:"",
-      store_status:"ACTIVE",  // "ALL", "ACTIVE", "INACTIVE", "REMOVED"
+      store_status:"ACTIVE", 
       startDate:"",
       endDate:""
   });
 
   const getStores = async () => {
     try {
-      const { data } = await axios.post(list_store_dashboard_api, filters, {
+      const { data } = await axios.post(list_store_dashboard_api, {...filters, page:currentPage}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      setTotalPage(data.pagination.totalPages)
       setStoreList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -46,7 +49,7 @@ const CategoryList = () => {
 
   useEffect(() => {
     getStores();
-  }, []);
+  }, [currentPage]);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -212,6 +215,12 @@ const CategoryList = () => {
             </tbody>
           </table>
         </div>
+
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalpage}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );

@@ -17,10 +17,7 @@ import { IBlog } from "@/model/BlogModal";
 const BlogList = () => {
   const [blog_list, setBlogList] = useState([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = 10;
-  const [blogcategoryList, setBlogCategoryList] = useState<
-    { name: string; _id: string }[]
-  >([]);
+  const [totalpage, setTotalPage] = useState(1)
 
   const token = useSelector((state: RootState) => state.user.token);
   const [showFilter, setShowFilter] = useState(false);
@@ -29,10 +26,8 @@ const BlogList = () => {
   const [filters, setFilters] = useState({
     search: "",
     status: "", // "ACTIVE", "INACTIVE", "REMOVED" , 'ALL'
-    writer_email: "",
     startDate: "",
     endDate: "",
-    category: "",
     sortBy: "views", // views, createdAt
   });
 
@@ -50,7 +45,7 @@ const BlogList = () => {
   // ✅ Fetch Products
   const get_blog = async () => {
     try {
-      const { data } = await axios.post(get_All_dashboard_blogs, filters, {
+      const { data } = await axios.post(get_All_dashboard_blogs, {...filters, page:currentPage}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,6 +53,7 @@ const BlogList = () => {
 
       setBlogList(data.data);
       // console.log(data.data)
+      setTotalPage(data.pagination.totalPages)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -71,28 +67,8 @@ const BlogList = () => {
 
   useEffect(() => {
     get_blog();
-  }, []);
+  }, [currentPage]);
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoryRes] = await Promise.all([
-          axios.post(
-            blog_category_dashboard_list_api,
-            { status: "ACTIVE" },
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
-        ]);
-        setBlogCategoryList(categoryRes.data.data || []);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (showFilter) {
-      fetchData();
-    }
-  }, [token, showFilter]);
 
   return (
     <>
@@ -118,31 +94,7 @@ const BlogList = () => {
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
-          <input
-            type="text"
-            name="writer_email"
-            placeholder="writer_email"
-            value={filters.writer_email}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none"
-          />
-          <select
-            name="category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>Category</option>
-
-            {blogcategoryList.map((item, i) => {
-              return (
-                <option key={i} value={item._id}>
-                  {item.name}
-                </option>
-              );
-            })}
-          </select>
-
+       
           <select
             name="status"
             value={filters.status}
@@ -252,7 +204,7 @@ const BlogList = () => {
 
         <PaginationControls
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={totalpage}
           onPageChange={setCurrentPage}
         />
       </div>

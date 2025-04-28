@@ -35,9 +35,8 @@ export async function POST(req: Request) {
     const requestData = await req.json();
     const {
       page = 1,
-      limit = 10,
+      limit = 5,
       status ,
-      category,
       store,
       startDate,
       endDate,
@@ -48,10 +47,6 @@ export async function POST(req: Request) {
 
     if (status && status !== "ALL") {
       query.status = status; 
-    }
-
-    if (category) {
-      query.category = category;
     }
 
     if (store) {
@@ -96,10 +91,10 @@ export async function POST(req: Request) {
         message: "Coupons fetched successfully.",
         data: coupons,
         pagination: {
-          currentPage: pageNumber,
+         
           totalPages,
-          totalCoupons,
-          limit: pageSize,
+         
+        
         },
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

@@ -74,11 +74,14 @@ export const pinback_report_add_api = main_url + '/dashboard/report/pinback/add'
 export const offline_report_add_api = main_url + '/dashboard/report/offline/add'
 export const all_users = main_url + '/dashboard/user/list'
 export const users_details_admin = main_url + '/dashboard/user/user-details'
+export const users_edit_details_admin = main_url + '/dashboard/user/edit_user_details'
 export const users_detail_edit_by_admin = main_url + '/dashboard/user/edit'
 export const contact_us_list_api = main_url + '/dashboard/contactus/list'
 export const contact_us_update_api = main_url + '/dashboard/contactus/edit'
 export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 export const order_list_admin_api = main_url + '/dashboard/order/list'
+export const order_edit_admin_api = main_url + '/dashboard/order/edit'
+export const order_detals_admin_api = main_url + '/dashboard/order/detail'
 
 
 

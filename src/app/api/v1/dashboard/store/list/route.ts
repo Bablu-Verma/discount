@@ -43,7 +43,7 @@ export async function POST(req: Request) {
    
     const {
       page = 1,
-      limit = 10,
+      limit = 5,
       search,
       cashback_status,
       cashback_type,
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Pagination Setup
+   
     const pageNumber = parseInt(page);
     const pageSize = parseInt(limit);
     const skip = (pageNumber - 1) * pageSize;
@@ -114,8 +114,6 @@ export async function POST(req: Request) {
         message: "Store list fetched successfully.",
         data: stores,
         pagination:{
-        totalStores,
-        currentPage: pageNumber,
         totalPages: Math.ceil(totalStores / pageSize),
        }
       }),

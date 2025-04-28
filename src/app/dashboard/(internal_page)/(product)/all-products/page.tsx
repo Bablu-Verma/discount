@@ -13,10 +13,8 @@ import { ICampaign } from "@/model/CampaignModel";
 const ProductList = () => {
   const [produt_list, setProdutList] = useState<ICampaign[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = 10;
-  const [categoryList, setCategoryList] = useState<
-    { name: string; _id: string }[]
-  >([]);
+  const [totalpage, setTotalPage] = useState(1)
+
   const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
     []
   );
@@ -26,30 +24,22 @@ const ProductList = () => {
   // ✅ Filters state (All filters included)
   const [filters, setFilters] = useState({
     title: "",
-    calculation_mode: "",
-    user_email: "",
     store: "",
-    product_id: "",
-    category: "",
-    product_tags: [] as string[], // ["new", "hot", "best", "fast selling"]
     long_poster: null as boolean | null,
     main_banner: null as boolean | null,
     premium_product: null as boolean | null,
     flash_sale: null as boolean | null,
-    slug_type: "INTERNAL",
     product_status: "ACTIVE",
     startDate: "",
     endDate: "",
   });
-
-  // ✅ Handle filter change
+ 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFilters((prev) => {
       const updatedFilters = { ...prev, [name]: value };
-      // console.log("Updated Filters:", updatedFilters); // Debugging
       return updatedFilters;
     });
   };
@@ -57,30 +47,22 @@ const ProductList = () => {
   const handleBooleanFilter = (name: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
       ...prev,
-      [name]: value === "true" ? true : value === "false" ? false : null,
+      [name]: value === "" ? null : value === "true",
     }));
   };
 
-  // ✅ Handle product_tags selection
-  const handleTagChange = (tag: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      product_tags: prev.product_tags.includes(tag)
-        ? prev.product_tags.filter((t) => t !== tag)
-        : [...prev.product_tags, tag],
-    }));
-  };
 
   // ✅ Fetch Products
   const get_product = async () => {
-  
+
     try {
-      const { data } = await axios.post(product_dashboard_list_, filters, {
+      const { data } = await axios.post(product_dashboard_list_, {...filters, page:currentPage}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      setTotalPage(data.pagination.totalPages)
+       console.log("data",data)
       setProdutList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -95,26 +77,22 @@ const ProductList = () => {
 
   useEffect(() => {
     get_product();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [storeRes, categoryRes] = await Promise.all([
+        const [storeRes] = await Promise.all([
           axios.post(
             list_store_dashboard_api,
             { store_status: "ACTIVE" },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
-          axios.post(
-            category_list_dashboard_api,
-            { status: "ACTIVE" },
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
+
         ]);
 
         setStoreList(storeRes.data.data || []);
-        setCategoryList(categoryRes.data.data || []);
+
       } catch (error) {
         console.log(error);
       }
@@ -143,142 +121,103 @@ const ProductList = () => {
 
       {showFilter && (
         <div className="flex mt-3 flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
-          <input
-            type="text"
-            name="title"
-            placeholder="Product Title"
-            value={filters.title}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          />
-          <input
-            type="text"
-            name="product_id"
-            placeholder="product_id"
-            value={filters.product_id}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none"
-          />
-          <select
-            name="category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>Category</option>
+          <div>
+            <span>Search</span>
+            <input
+              type="text"
+              name="title"
+              placeholder="Product Title"
+              value={filters.title}
+              onChange={handleFilterChange}
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            />
+          </div>
 
-            {categoryList.map((item, i) => {
-              return (
-                <option key={i} value={item._id}>
-                  {item.name}
-                </option>
-              );
-            })}
-          </select>
-          <select
-            name="store"
-            value={filters.store}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>Store</option>
 
-            {storeList.map((item, i) => {
-              return (
-                <option key={i} value={item._id}>
-                  {item.name}
-                </option>
-              );
-            })}
-          </select>
-          <select
-            name="slug_type"
-            value={filters.slug_type}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>slug_type</option>
+          <div>
+            <span>Store</span>
+            <select
+              name="store"
+              value={filters.store}
+              onChange={handleFilterChange}
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            >
+              <option disabled>Store</option>
 
-            <option value="INTERNAL">INTERNAL</option>
-            <option value="EXTERNAL">EXTERNAL</option>
-          </select>
-          <select
-            name="product_status"
-            value={filters.product_status}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>Product status</option>
-            <option value="ALL">All</option>
-            <option value="ACTIVE">Active</option>
-            <option value="PAUSE">Paused</option>
-            <option value="DELETE">Deleted</option>
-          </select>
+              {storeList.map((item, i) => {
+                return (
+                  <option key={i} value={item._id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
 
-          <select
-            name="calculation_mode"
-            value={filters.calculation_mode}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option value="">Calculation Mode</option>
-            <option value="PERCENTAGE">Percentage</option>
-            <option value="FIX">Fixed</option>
-          </select>
+          <div>
+            <span>Product status</span>
+            <select
+              name="product_status"
+              value={filters.product_status}
+              onChange={handleFilterChange}
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            >
+              <option disabled>Product status</option>
+              <option value="ALL">All</option>
+              <option value="ACTIVE">Active</option>
+              <option value="PAUSE">Paused</option>
+              <option value="DELETE">Deleted</option>
+            </select>
+          </div>
 
-          <input
-            type="date"
-            name="startDate"
-            value={filters.startDate}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          />
 
-          <input
-            type="date"
-            name="endDate"
-            value={filters.endDate}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          />
+          <div>
+            <span>Start Date</span>
+            <input
+              type="date"
+              name="startDate"
+              value={filters.startDate}
+              onChange={handleFilterChange}
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            />
+          </div>
 
-          {/* ✅ Product Tags */}
-          <div className="flex gap-2">
-            {["new", "hot", "best", "fast selling"].map((tag) => (
-              <button
-                key={tag}
-                className={`px-3  border rounded-md ${
-                  filters.product_tags.includes(tag)
-                    ? "bg-yellow-500 text-white"
-                    : "bg-white text-black"
-                }`}
-                onClick={() => handleTagChange(tag)}
-              >
-                {tag}
-              </button>
-            ))}
+
+          <div>
+            <span>End Date</span>
+            <input
+              type="date"
+              name="endDate"
+              value={filters.endDate}
+              onChange={handleFilterChange}
+              className="border p-2 rounded-md h-9 text-sm outline-none "
+            />
+
           </div>
 
           {/* ✅ Boolean Filters */}
           {["long_poster", "main_banner", "premium_product", "flash_sale"].map(
-            (filter) => (
-              <select
-                key={filter}
-                onChange={(e) =>
-                  handleBooleanFilter(
-                    filter as keyof typeof filters,
-                    e.target.value
-                  )
-                }
-                className="border p-2 rounded-md h-9 text-sm outline-none "
-              >
-                <option value="">Select {filter.replace("_", " ")}</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            )
-          )}
-
+  (filter) => (
+    <div key={filter}>
+      <span>{filter}</span>
+      <select
+        value={
+          filters[filter as keyof typeof filters] === null
+            ? ""
+            : String(filters[filter as keyof typeof filters])
+        }
+        onChange={(e) =>
+          handleBooleanFilter(filter as keyof typeof filters, e.target.value)
+        }
+        className="border p-2 rounded-md h-9 text-sm outline-none "
+      >
+        <option value="">Select</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+  )
+)}
           <button
             onClick={get_product}
             className="border p-2 rounded-md h-9 text-sm outline-none text-white bg-primary"
@@ -340,24 +279,22 @@ const ProductList = () => {
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <span
-                      className={`px-2 py-1 text-sm text-white rounded-md ${
-                        product.product_status === "ACTIVE"
+                      className={`px-2 py-1 text-sm text-white rounded-md ${product.product_status === "ACTIVE"
                           ? "bg-green-500"
                           : product.product_status === "PAUSE"
-                          ? "bg-yellow-400"
-                          : "bg-red-400"
-                      }`}
+                            ? "bg-yellow-400"
+                            : "bg-red-400"
+                        }`}
                     >
                       {product.product_status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <span
-                      className={`px-2 py-1 text-sm rounded-md ${
-                        product.main_banner?.[0]?.is_active
+                      className={`px-2 py-1 text-sm rounded-md ${product.main_banner?.[0]?.is_active
                           ? "bg-yellow-300"
                           : "bg-gray-300"
-                      }`}
+                        }`}
                     >
                       {product.main_banner?.[0]?.is_active ? "Yes" : "No"}
                     </span>
@@ -381,7 +318,7 @@ const ProductList = () => {
 
         <PaginationControls
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={totalpage}
           onPageChange={setCurrentPage}
         />
       </div>

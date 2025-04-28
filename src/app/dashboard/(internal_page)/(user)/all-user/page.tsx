@@ -7,16 +7,20 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { all_users, category_list_api, list_store_api } from "@/utils/api_url";
-import { ICategory } from "@/common_type";
-import { IStore } from "@/model/StoreModel";
+import { all_users } from "@/utils/api_url";
+
 import { IUser } from "@/model/UserModel";
+import PaginationControls from "@/app/dashboard/_components/PaginationControls";
+
 
 const UserList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [users, setUsers] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalpage, setTotalPage] = useState(1)
 
+  
   const [filters, setFilters] = useState({
     search:"",
     role:"",
@@ -28,12 +32,13 @@ const UserList = () => {
 
   const getUsers = async () => {
     try {
-      const { data } = await axios.post(all_users, filters, {
+      const { data } = await axios.post(all_users, {...filters, page:currentPage}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setUsers(data.data);
+      setTotalPage(data.pagination.totalPages)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -46,7 +51,7 @@ const UserList = () => {
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [currentPage]);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -205,6 +210,13 @@ const UserList = () => {
             </tbody>
           </table>
         </div>
+
+
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalpage}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );

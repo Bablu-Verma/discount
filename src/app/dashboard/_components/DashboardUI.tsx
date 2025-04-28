@@ -139,8 +139,8 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
     },
     {
       id: 10,
-      name: "Order List",
-      url: "/dashboard/all-order",
+      name: "Order",
+      url: "/dashboard/order",
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },

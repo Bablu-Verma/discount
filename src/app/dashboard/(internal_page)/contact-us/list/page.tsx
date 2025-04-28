@@ -12,11 +12,13 @@ import { contact_us_list_api } from "@/utils/api_url";
 import { IContactUs } from "@/model/ContactUsModel";
 import { formatDate } from "@/helpers/client/client_function";
 import Editcontausus from "../ContactUsDetails";
+import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 
 const ContactUsList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [userList, setUserList] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalpage, setTotalPage] = useState(1)
   const [showFilter, setShowFilter] = useState(false);
   const [openSheet, setOpenSheet] = useState({
     show: false,
@@ -46,7 +48,7 @@ const ContactUsList = () => {
     try {
       const { data } = await axios.post(
         contact_us_list_api,
-        { filters },
+        { ...filters, page:currentPage },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,6 +56,7 @@ const ContactUsList = () => {
         }
       );
       setUserList(data.data);
+      setTotalPage(data.pagination.totalPages)
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("Error ", error.response?.data.message);
@@ -66,7 +69,7 @@ const ContactUsList = () => {
 
   useEffect(() => {
     getList();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div className="relative">
@@ -225,7 +228,7 @@ const ContactUsList = () => {
                         })
                       }
                     >
-                      Viedetails
+                      View details
                     </button>
                   </td>
                 </tr>
@@ -234,6 +237,12 @@ const ContactUsList = () => {
           </table>
         </div>
       </div>
+      
+      <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalpage}
+          onPageChange={setCurrentPage}
+        />
     </div>
   );
 };

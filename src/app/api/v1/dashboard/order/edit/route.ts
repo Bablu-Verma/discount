@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
-import RecordModel from "@/model/CashbackOrderModel";
+import OrderModel from "@/model/OrderModel";
+
 
 export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // ✅ Authenticate user
+  
     const { authenticated, user, message, usertype } = await authenticateAndValidateUser(req);
     if (!authenticated) {
       return new NextResponse(JSON.stringify({ success: false, message }), {
@@ -23,7 +24,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Extract data from request body
     const { record_id, order_status, order_details, payment_status, payment_details } = await req.json();
 
     if (!record_id) {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ Find the record
-    const record = await RecordModel.findById(record_id);
+    const record = await OrderModel.findById(record_id);
     if (!record) {
       return new NextResponse(JSON.stringify({ success: false, message: "Record not found." }), {
         status: 404,

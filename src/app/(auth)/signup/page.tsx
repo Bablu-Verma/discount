@@ -11,8 +11,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import sign_up_image from '../../../../public/sign_up_image.svg'
-
+import sign_up_image from "../../../../public/sign_up_image.svg";
 
 interface IUserData {
   email: string;
@@ -33,7 +32,6 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const SubmitData = (): void => {
-
     if (!userData.name) {
       toast.error("Name is required");
       return;
@@ -81,7 +79,7 @@ const Signup = () => {
       toast.error("Agree to site Terms & Conditions, Privacy Policy");
       return;
     }
-     register_user()
+    register_user();
   };
 
   const textChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -96,64 +94,75 @@ const Signup = () => {
     setShowPassword(!showPassword);
   };
 
-
   const register_user = async () => {
     try {
-      const {data} = await axios.post(register_api,
+      const { data } = await axios.post(
+        register_api,
         {
           name: userData.name,
           email: userData.email,
           password: userData.password,
-          accept_terms_conditions_privacy_policy: userData.site_policy_conditions,
+          accept_terms_conditions_privacy_policy:
+            userData.site_policy_conditions,
         },
         {
           headers: {
             "Content-Type": "application/json",
           },
-        })
-        
-        toast.success(data.message);
-        setUserData({
-          email: "",
-          password: "",
-          name: "",
-          site_policy_conditions: false,
-        })
-
-        const UserRegisterInfo = {
-             token:data.token,
-             email:data.user.email,
-             name:data.user.name,
-             role:data.user.role
         }
+      );
 
-        sessionStorage.setItem("UserRegisterInfo", JSON.stringify(UserRegisterInfo));
-        setTimeout(()=>{
-          router.push('/user-verify')
-        },500)
+      toast.success(data.message);
+      setUserData({
+        email: "",
+        password: "",
+        name: "",
+        site_policy_conditions: false,
+      });
+
+      const UserRegisterInfo = {
+        token: data.token,
+        email: data.user.email,
+        name: data.user.name,
+        role: data.user.role,
+      };
+
+      sessionStorage.setItem(
+        "UserRegisterInfo",
+        JSON.stringify(UserRegisterInfo)
+      );
+      setTimeout(() => {
+        router.push("/user-verify");
+      }, 500);
     } catch (error) {
-        if (error instanceof AxiosError) { 
-          console.error("Error registering user", error.response?.data.message);
-          toast.error(error.response?.data.message);
-        } else {
-          console.error("Unknown error", error);
-        }
+      if (error instanceof AxiosError) {
+        console.error("Error registering user", error.response?.data.message);
+        toast.error(error.response?.data.message);
+      } else {
+        console.error("Unknown error", error);
+      }
     }
-  }
+  };
 
   return (
     <>
-  
       <MainHeader />
       <main className="">
         <div className="max-w-6xl mx-auto min-h-screen flex justify-center items-center  pb-10   ">
-         
-        <div className=" flex gap-9 px-2">
-            <Image src={sign_up_image} alt="login"  width={350} height={350} className=""/>
-             <div>
-             <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">Create an account</h2>
+          <div className=" md:flex gap-9 px-6">
+            <Image
+              src={sign_up_image}
+              alt="login"
+              width={350}
+              height={350}
+              className=""
+            />
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-semibold mb-2 mt-4">
+                Create an account
+              </h2>
               <p className="text-sm font-normal mb-6">
-              Just One Step Away From Saving Big!
+                Just One Step Away From Saving Big!
               </p>
 
               <form className="flex flex-col gap-4">
@@ -200,7 +209,7 @@ const Signup = () => {
                   </span>
                 </div>
 
-                <div  className="lg:flex items-center mt-3 ml-4">
+                <div className="lg:flex items-center mt-3 ml-4">
                   <input
                     type="checkbox"
                     id="site_policy_conditions"
@@ -214,15 +223,34 @@ const Signup = () => {
                     }
                     className="mr-2"
                   />
-                  <label htmlFor="site_policy_conditions" className="select-none cursor-pointer text-sm">
+                  <label
+                    htmlFor="site_policy_conditions"
+                    className="select-none cursor-pointer text-sm"
+                  >
                     I agree to the site's
                   </label>
-                  <Link href="/terms_conditions" className="text-blue-400 hover:underline pl-1 inline-block text-sm">Terms & Conditions </Link> ,
-                  <Link href="/privacy_policy" className="text-blue-400 hover:underline pl-1 inline-block text-sm"> Privacy Policy</Link>
+                  <Link
+                    href="/terms_conditions"
+                    className="text-blue-400 hover:underline pl-1 inline-block text-sm"
+                  >
+                    Terms & Conditions{" "}
+                  </Link>{" "}
+                  ,
+                  <Link
+                    href="/privacy_policy"
+                    className="text-blue-400 hover:underline pl-1 inline-block text-sm"
+                  >
+                    {" "}
+                    Privacy Policy
+                  </Link>
                 </div>
               </form>
               <div className="flex flex-col gap-2 my-10 ">
-                <button type="button" onClick={SubmitData} className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-2 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl">
+                <button
+                  type="button"
+                  onClick={SubmitData}
+                  className="bg-primary text-white text-sm lg:text-base font-medium duration-200 p-2 border-[1px] border-primary rounded shadow-sm hover:shadow-2xl"
+                >
                   Create Account
                 </button>
                 <button className="bg-white text-gray-800 text-sm lg:text-base font-medium duration-200 p-2 rounded border-[1px] border-gray-600 mt-4 shadow-sm hover:shadow-2xl ">
@@ -238,8 +266,8 @@ const Signup = () => {
                   Login
                 </Link>
               </p>
-             </div>
             </div>
+          </div>
         </div>
         <BottomToTop />
       </main>

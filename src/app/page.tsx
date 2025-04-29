@@ -1,7 +1,6 @@
 import BottomToTop from "@/components/BottomToTop";
 import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
-
 import { MainHeading } from "@/components/Heading";
 import Featured from "@/components/heropage/Featured";
 import Hero from "@/components/heropage/Hero";
@@ -14,17 +13,13 @@ import HomeFlash from "@/components/homepage/HomeFlash";
 import HomePoster from "@/components/homepage/HomePoster";
 import HowToWork from "@/components/HowToWork";
 import Loginhomepopup from "@/components/Loginhomepopup";
-
 import CouponcodeCard from "@/components/small_card/CouponcodeCard";
 import StoreCard from "@/components/small_card/StoreCard";
-
 import { getServerToken } from "@/helpers/server/server_function";
 import { ICoupon } from "@/model/CouponModel";
 import { IStore } from "@/model/StoreModel";
-
 import { home_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
-import Link from "next/link";
 
 export const GetData = async (token: string) => {
   try {
@@ -51,11 +46,8 @@ export default async function Home() {
 
   // console.log("Home data log", page_data);
 
-
-
   return (
     <>
-   
       <MainHeader />
       <CallApiInHome />
 
@@ -63,7 +55,7 @@ export default async function Home() {
         home_store={page_data.data.store}
         banner={page_data.data.main_banner}
       />
-      
+
       <main>
         <Loginhomepopup />
 
@@ -78,16 +70,14 @@ export default async function Home() {
         </div>
 
         <div className="">
-        <Deals  best_product={page_data.data.offer_deal}/>
-        
+          <Deals best_product={page_data.data.offer_deal} />
         </div>
         <div className="max-w-6xl mx-auto mt-14">
           <HomePoster poster={page_data.data.long_poster} />
         </div>
         <div className="max-w-6xl m-auto bg-gradient-to-b from-[#f1f5f8] to-[#dfe8ef] py-3 px-2 rounded-xl mt-4 lg:mt-14">
-          <MainHeading title="Cashback store" link='/store' />
+          <MainHeading title="Cashback store" link="/store" />
           <div className="max-w-6xl relative  m-auto  mb-12">
-           
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 lg:gap-5 mt-3 lg:mt-5">
               {page_data.data.store.map((item: IStore, i: number) => (
                 <StoreCard item={item} key={i} />
@@ -109,9 +99,8 @@ export default async function Home() {
         )}
 
         <div className="py-7">
-          <MainHeading title="New Coupon" link='/coupons'/>
+          <MainHeading title="New Coupon" link="/coupons" />
           <div className="max-w-6xl relative px-2 m-auto mt-2 lg:mt-8 mb-16">
-         
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-5 mt-2 lg:mt-6">
               {page_data.data.coupon.map((item: ICoupon, i: number) => (
                 <CouponcodeCard item={item} key={i} />
@@ -126,12 +115,12 @@ export default async function Home() {
         </div>
 
         <div className="py-7">
-          <MainHeading title="Read Our Blog" link='/blog' />
+          <MainHeading title="Read Our Blog" link="/blog" />
           <HomeBlog blogs={page_data.data.blog} />
         </div>
         <BottomToTop />
-      
       </main>
+
       <Footer />
     </>
   );

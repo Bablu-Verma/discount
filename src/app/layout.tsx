@@ -6,7 +6,7 @@ import ReduxProvider from "@/redux-store/provider_";
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
-
+import '../crawler/crawlerCron'
 
 export const metadata: Metadata = {
   title: "Discount For You",

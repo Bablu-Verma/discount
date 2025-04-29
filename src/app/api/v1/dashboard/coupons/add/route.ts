@@ -9,6 +9,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
+    
     const { authenticated, usertype, message } = await authenticateAndValidateUser(req);
     
     if (!authenticated) {

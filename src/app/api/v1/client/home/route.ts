@@ -6,9 +6,11 @@ import BlogModel from "@/model/BlogModal";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import StoreModel from "@/model/StoreModel";
 import CouponModel from "@/model/CouponModel";
+import { getProducts } from "@/crawler/dataStore";
 
 export async function POST(req: Request) {
   await dbConnect();
+
 
   const currentDate = new Date();
 
@@ -76,6 +78,26 @@ export async function POST(req: Request) {
         const category = await CategoryModel.find({ status: "ACTIVE" }).select('-status -description').lean();
   
         const blog = await BlogModel.find({ status: "ACTIVE" }).limit(4).select('-short_desc -desc -status -meta_title -meta_description -meta_keywords -canonical_url -og_image -og_title -og_description -twitter_card -schema_markup -reading_time -tags -publish_schedule -writer_email -keywords').lean();
+
+
+const newProducts  =  getProducts()
+
+console.log('newProducts',newProducts)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
         return NextResponse.json({
           success: true,

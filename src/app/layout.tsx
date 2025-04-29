@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 import ReduxProvider from "@/redux-store/provider_";
+import '../crawler/crawlerCron'
+
 
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
-import '../crawler/crawlerCron'
+
 
 export const metadata: Metadata = {
   title: "Discount For You",

@@ -77,8 +77,10 @@ export async function scrapeAllSites(): Promise<Product[]> {
       let image = $(el).find('img.p13n-product-image').attr('src')?.trim() || '';
       const realPrice = $(el).find('.a-text-strike').text().trim() || null;
 
+
+      // console.log("title",title)
+
       let upload_ = await uploadToImgurFromUrl(image)
-      // console.log(upload_)
 
       if (upload_.success) {
         image = upload_.url
@@ -98,5 +100,6 @@ export async function scrapeAllSites(): Promise<Product[]> {
     console.error('❌ Error scraping Amazon:', error.message || error);
   }
 
+  // console.log("products",products)
   return products;
 }

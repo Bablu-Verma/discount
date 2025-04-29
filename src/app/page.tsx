@@ -70,7 +70,7 @@ export default async function Home() {
         </div>
 
         <div className="">
-          <Deals best_product={page_data.data.offer_deal} />
+          <Deals best_product={page_data.data} />
         </div>
         <div className="max-w-6xl mx-auto mt-14">
           <HomePoster poster={page_data.data.long_poster} />

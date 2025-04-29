@@ -82,6 +82,7 @@ export const bank_upi_admin_list_api = main_url + '/dashboard/upi-list'
 export const order_list_admin_api = main_url + '/dashboard/order/list'
 export const order_edit_admin_api = main_url + '/dashboard/order/edit'
 export const order_detals_admin_api = main_url + '/dashboard/order/detail'
+export const scraper_live_deal_admin_api = main_url + '/dashboard/crawler'
 
 
 

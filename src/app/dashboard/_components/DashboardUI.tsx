@@ -64,6 +64,13 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       roles: ["admin", "data_editor"],
     },
     {
+      id: 14,
+      name: "Live Deal",
+      url: "/dashboard/livedeal",
+      icon: "fas fa-tachometer-alt",
+      roles: ["admin"], 
+    },
+    {
       id: 4,
       name: "Add Category",
       url: "/dashboard/add-category",
@@ -172,6 +179,7 @@ const DashboardUI: React.FC<LayoutProps> = ({ children }) => {
       icon: "fas fa-tachometer-alt",
       roles: ["admin"], 
     },
+   
   ];
 
   

@@ -20,8 +20,8 @@ export default function OrderListPage() {
   const [sheet, setSheet] = useState({ show: false, details: {} as any });
   const token = useSelector((state: RootState) => state.user.token);
   // const user_data = useSelector((state: RootState) => state.user.user);
-  const [showOrderHistory, setShowOrderHistory] = useState(true);
-  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  
+  const [showPaymentHistory, setShowPaymentHistory] = useState(true);
   const [page, setPage] = useState(1)
   const [activeTab, setActiveTab] = useState('')
 
@@ -52,6 +52,11 @@ export default function OrderListPage() {
   }, [page]);
 
   const tab = [
+    {
+      id: 0,
+      name: 'Initialize',
+      click: 'Initialize'
+    },
     {
       id: 1,
       name: 'Pending',
@@ -103,7 +108,7 @@ export default function OrderListPage() {
                   <div className="flex justify-between pt-2 items-start">
                     <div>
                       <h3 className="text-primary text-lg capitalize">{item.store_id?.name || "-"}</h3>
-                      <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.order_status}</h3>
+                      <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.payment_status}</h3>
                       <button type="button" title="Click to Details" className="text-sm text-blue-400 hover:underline" onClick={() => setSheet({ show: true, details: item })} >More Details</button>
                     </div>
                     <div className='text-right'>
@@ -166,27 +171,12 @@ export default function OrderListPage() {
 
               <div className="flex mt-5 gap-4 ">
 
-                {sheet.details.order_history && sheet.details.order_history.length > 0 && (
-                  <button
-                    type="button"
-                    className="text-sm cursor-pointer  text-blue-800 underline  font-normal"
-                    onClick={() =>
-                    {
-                      setShowOrderHistory(true)
-                      setShowPaymentHistory(false)
-                    }
-                    }
-                  >
-                    Order History
-                  </button>
-                )}
-
                 {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
                   <button
                     type="button"
                     className="text-sm cursor-pointer  text-blue-800  font-normal"
                     onClick={() => {
-                      setShowOrderHistory(false)
+                    
                       setShowPaymentHistory(true)
                     }}
                   >
@@ -196,29 +186,7 @@ export default function OrderListPage() {
                 )}
               </div>
 
-              {showOrderHistory && (
-                <div className="overflow-x-auto mt-4">
-                  <table className="min-w-full text-sm border">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="text-left p-3 border-b">Details</th>
-                        <th className="text-left p-3 border-b">Date</th>
-                        <th className="text-left p-3 border-b">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sheet.details.order_history.map((history, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50">
-                          <td className="p-3 border-b">{history.details || "-"}</td>
-                          <td className="p-3 border-b">{formatDate(history.date)}</td>
-                          <td className="p-3 border-b">{history.status}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
+          
               {showPaymentHistory && (
                 <div className="overflow-x-auto mt-4">
                   <table className="min-w-full text-sm border">
@@ -230,7 +198,7 @@ export default function OrderListPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sheet.details.payment_history.map((payment, idx) => (
+                      {sheet.details.payment_history.map((payment:any, idx:number) => (
                         <tr key={idx} className="hover:bg-green-50">
                           <td className="p-3 border-b">{payment.details || "-"}</td>
                           <td className="p-3 border-b">{formatDate(payment.date)}</td>
@@ -250,9 +218,3 @@ export default function OrderListPage() {
   );
 }
 
-const DetailRow = ({ label, value }) => (
-  <div className="flex justify-between items-center border-b pb-3">
-    <span className="text-gray-500 font-medium capitalize">{label}</span>
-    <span className="text-gray-800 font-normal capitalize">{value}</span>
-  </div>
-);

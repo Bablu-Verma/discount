@@ -5,7 +5,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
 import Link from "next/link";
-
+import Image from "next/image";
+import logo from "../../public/rectangle-logo_white.png";
 
 const Footer = () => {
   const user_data = useSelector(
@@ -18,7 +19,14 @@ const Footer = () => {
     <footer className="bg-black text-white">
       <div className="max-w-6xl mx-auto px-2 relative grid pt-16 pb-8 gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
         <div>
-          <h1 className="text-2xl font-semibold mb-4">BachatJar</h1>
+        <Link href="/" className="mb-4 inline-block">
+          <Image
+            src={logo}
+            className="w-[140px] lg:w-[160px] h-auto"
+            alt="logo"
+          />
+          {/* <h1 className="text-secondary py-2 text-3xl font-semibold tracking-wider">Bachat<span className="text-primary">Jar</span></h1> */}
+        </Link>
           <p className="text-base font-thin mb-3">
             Get  Up to 100% off <br /> your All Orders
           </p>
@@ -146,7 +154,7 @@ const Footer = () => {
       </div>
       <div className="py-3 border-t-[0.5px] border-gray-400">
         <div className="py-10 flex justify-center items-center flex-col">
-          <h1 className="text-4xl pb-1 text-white ">#SaveOnBachatJarOn</h1>
+          <h1 className="text-4xl pb-1 text-white ">#SaveMoreWithBachatJar</h1>
           <h5>We help save your money</h5>
         </div>
         <p className="text-sm font-medium text-gray-600 text-center">

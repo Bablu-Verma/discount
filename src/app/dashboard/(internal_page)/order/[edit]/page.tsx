@@ -16,8 +16,6 @@ const EditOrder: React.FC = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    order_status: "",
-    order_details: "",
     payment_status: "",
     payment_details: "",
   });
@@ -40,8 +38,7 @@ const EditOrder: React.FC = () => {
       );
       setOrderDetails(data.order);
       setFormData({
-        order_status: data.order.order_status || "",
-        order_details: "",
+      
         payment_status: data.order.payment_status || "",
         payment_details:"",
       });
@@ -143,10 +140,6 @@ const EditOrder: React.FC = () => {
               <td className="p-2">{orderDetails.order_value}</td>
             </tr>
             <tr className="border-t">
-              <td className="p-2 font-semibold">Order Status</td>
-              <td className="p-2">{orderDetails.order_status}</td>
-            </tr>
-            <tr className="border-t">
               <td className="p-2 font-semibold">Pyment Status</td>
               <td className="p-2">{orderDetails.payment_status}</td>
             </tr>
@@ -179,6 +172,7 @@ const EditOrder: React.FC = () => {
               className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select</option>
+              <option value="Initialize">Initialize</option>
               <option value="Pending">Pending</option>
               <option value="Confirmed">Confirmed</option>
               <option value="Failed">Failed</option>
@@ -199,37 +193,8 @@ const EditOrder: React.FC = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Order Status
-            </label>
-            <select
-              name="order_status"
-              value={formData.order_status}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select</option>
-              <option value="Redirected">Redirected</option>
-              <option value="Order">Order</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Order Details
-            </label>
-            <input
-              type="text"
-              name="order_details"
-              value={formData.order_details}
-              onChange={handleInputChange}
-              placeholder="Order details"
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        
+         
 
           <div className="text-right">
             <button

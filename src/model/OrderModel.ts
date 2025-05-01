@@ -1,12 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-const ORDER_STATUSES = [
-  "Redirected",
-  "Order",
-  "Completed",
-  "Cancelled",
-] as const;
-const PAYMENT_STATUSES = ["Pending", "Confirmed", "Failed"] as const;
+
+const STATUSES = ["Initialize","Pending", "Confirmed", "Failed"] as const;
 
 interface IHistory {
   status: string;
@@ -24,9 +19,7 @@ export interface IOrder extends Document {
   cashback?: number | null;
   cashback_type: "PERCENTAGE" | "FLAT_AMOUNT";
   transaction_id: string;
-  order_status: (typeof ORDER_STATUSES)[number];
-  payment_status: (typeof PAYMENT_STATUSES)[number] | null;
-  order_history: IHistory[];
+  payment_status: (typeof STATUSES)[number];
   upto_amount?: number | null;
   payment_history: IHistory[];
   createdAt?: Date;
@@ -71,26 +64,15 @@ const OrderSchema = new Schema<IOrder>(
       enum: ["PERCENTAGE", "FLAT_AMOUNT"],
       required: true,
     },
-    order_status: {
-      type: String,
-      enum: ORDER_STATUSES,
-      default: "Redirected",
-    },
+  
     payment_status: {
       type: String,
-      enum: PAYMENT_STATUSES,
+      enum: STATUSES,
       default: null,
     },
-    order_history: [
-      {
-        status: { type: String, enum: ORDER_STATUSES, required: true },
-        date: { type: Date, default: Date.now },
-        details: { type: String, required: true },
-      },
-    ],
     payment_history: [
       {
-        status: { type: String, enum: PAYMENT_STATUSES, required: true },
+        status: { type: String, enum: STATUSES, required: true },
         date: { type: Date, default: Date.now },
         details: { type: String, required: true },
       },

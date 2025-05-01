@@ -23,7 +23,6 @@ export default function Pinback() {
           },
         }
       );
-   
      
     } catch (error) {
       if (error instanceof AxiosError) { 

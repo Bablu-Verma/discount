@@ -1,9 +1,8 @@
 
-import LiveDealModel from '@/model/LiveDeal';
-import { scrapeAllSites } from './scraper';
 import dbConnect from '@/lib/dbConnect';
 import { authenticateAndValidateUser } from '@/lib/authenticate';
 import { NextResponse } from 'next/server';
+import ScraperPartner from '@/model/ScraperPartner';
 
 export async function POST(req: Request) 
 {
@@ -36,27 +35,12 @@ export async function POST(req: Request)
              }
            );
          }
+         const partners = await ScraperPartner.find().sort({ createdAt: -1 }).lean(); 
+         return new NextResponse(
+           JSON.stringify({ success: true, data: partners }),
+           { status: 200, headers: { "Content-Type": "application/json" } }
+         );
      
-     
-
-    const products = await scrapeAllSites();
-
-    if (products.length > 0) {
-      await LiveDealModel.insertMany(products);
-      // console.log('Products saved to MongoDB ✅');
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Products saved to MongoDB. Scraping done" }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
-    } else {
-      // console.log('No products scraped.');
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "No products scraped." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    
   } catch (error) {
     console.error('Scraping failed ❌', error);
   }

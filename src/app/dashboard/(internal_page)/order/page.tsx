@@ -22,7 +22,7 @@ const OrderList = () => {
     []
   );
   const [sheet, setSheet] = useState({ show: false, details: {} as any });
-  const [showOrderHistory, setShowOrderHistory] = useState(true);
+  
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalpage, setTotalPage] = useState(1)
@@ -280,44 +280,7 @@ const OrderList = () => {
                      label="Cashback Amount"
                      value={sheet.details.cashback ? `₹ ${sheet.details.cashback}` : "-"}
                    />
-                   <DetailRow label="Order Status" value={sheet.details.order_status} />
                    <DetailRow label="Payment Status" value={sheet.details.payment_status ?? "-"} />
-     
-                   {sheet.details.order_history && sheet.details.order_history.length > 0 && (
-                     <div className="mt-10">
-                       <div
-                         className="flex justify-between items-center cursor-pointer bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200"
-                         onClick={() => setShowOrderHistory(!showOrderHistory)}
-                       >
-                         <h3 className="text-base text-secondary font-medium">Order History</h3>
-                         <span className="text-gray-500">{showOrderHistory ? "▲" : "▼"}</span>
-                       </div>
-     
-                       {showOrderHistory && (
-                         <div className="overflow-x-auto mt-4">
-                           <table className="min-w-full text-sm border">
-                             <thead className="bg-gray-100">
-                               <tr>
-                                 <th className="text-left p-3 border-b">Details</th>
-                                 <th className="text-left p-3 border-b">Date</th>
-                                 <th className="text-left p-3 border-b">Status</th>
-                               </tr>
-                             </thead>
-                             <tbody>
-                               {sheet.details.order_history.map((history:any, idx:number) => (
-                                 <tr key={idx} className="hover:bg-gray-50">
-                                   <td className="p-3 border-b">{history.details || "-"}</td>
-                                   <td className="p-3 border-b">{formatDate(history.date)}</td>
-                                   <td className="p-3 border-b">{history.status}</td>
-                                 </tr>
-                               ))}
-                             </tbody>
-                           </table>
-                         </div>
-                       )}
-                     </div>
-                   )}
-     
                    {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
                      <div className="mt-10">
                        <div
@@ -366,6 +329,7 @@ const OrderList = () => {
 };
 
 export default OrderList;
+
 const DetailRow = ({ label, value }) => (
   <div className="flex justify-between items-center border-b pb-3">
     <span className="text-gray-500 font-medium capitalize">{label}</span>

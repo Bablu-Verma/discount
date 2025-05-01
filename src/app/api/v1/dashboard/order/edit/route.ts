@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { record_id, order_status, order_details, payment_status, payment_details } = await req.json();
+    const { record_id, payment_status, payment_details } = await req.json();
 
     if (!record_id) {
       return new NextResponse(JSON.stringify({ success: false, message: "Record ID is required." }), {
@@ -43,23 +43,13 @@ export async function POST(req: Request) {
     }
 
     // ✅ Check if any updates are provided
-    if (!order_status && !payment_status) {
+    if (!payment_status) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "No updates provided." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    if (order_status) {
-      record.order_status = order_status;
-      record.order_history.push({
-        status: order_status,
-        date: new Date(),
-        details: order_details || `Order status updated to ${order_status}`,
-      });
-    }
-
-    // ✅ Update `payment_status` if provided
     if (payment_status) {
       record.payment_status = payment_status;
       record.payment_history.push({

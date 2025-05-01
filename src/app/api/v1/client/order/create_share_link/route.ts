@@ -44,16 +44,15 @@ export async function POST(req: Request) {
       cashback: null,
       cashback_rate: store_details.cashback_rate,
       cashback_type: store_details.cashback_type,
-      order_status: "Redirected",
-      payment_status: null,
-      order_history: [
+      payment_status: 'Initialize',
+      payment_history: [
         {
-          status: "Redirected",
+          status: "Initialize",
           date: new Date(),
-          details: "Order created with status Redirected",
+          details: "Order created and redirect to partner site",
         },
       ],
-      payment_history: [],
+      
     });
 
    const new_order = await  create_order.save()

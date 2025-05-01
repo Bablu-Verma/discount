@@ -83,6 +83,9 @@ export const order_list_admin_api = main_url + '/dashboard/order/list'
 export const order_edit_admin_api = main_url + '/dashboard/order/edit'
 export const order_detals_admin_api = main_url + '/dashboard/order/detail'
 export const scraper_live_deal_admin_api = main_url + '/dashboard/crawler'
+export const scraper_store_add_admin_api = main_url + '/dashboard/crawler-partner/add'
+export const scraper_store_list_admin_api = main_url + '/dashboard/crawler-partner/list'
+export const scraper_store_delate_admin_api = main_url + '/dashboard/crawler-partner/delete'
 
 
 

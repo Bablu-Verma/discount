@@ -1,8 +1,9 @@
+import dbConnect from '@/lib/dbConnect';
+import ScraperPartner from '@/model/ScraperPartner';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import UserAgent from 'user-agents';
-import sharp from 'sharp';
-import scraper_partner from './scraper_partner';
+
 
 export type Product = {
   title: string;
@@ -45,13 +46,15 @@ export const uploadToImgurFromUrl = async (imageUrl: string) => {
   }
 };
 
-
-
-
 export async function scrapeAllSites(): Promise<Product[]> {
+
+  await dbConnect();
+
+  const partners = await ScraperPartner.find()
+
   const products: Product[] = [];
 
-  const siteScrapingPromises = scraper_partner.map(async (item) => {
+  const siteScrapingPromises = partners.map(async (item) => {
     try {
       const response = await axios.get(item.url, {
         headers: {
@@ -74,29 +77,11 @@ export async function scrapeAllSites(): Promise<Product[]> {
 
       $(item.main_container).each((_, el) => {
 
-
-        console.log("EL HTML:", $.html(el));
-        console.log("EL HTML================:");
-        
         const task = (async () => {
           let title = $(el).find(item.title).text().trim();
           const price = $(el).find(item.price).text().trim();
           let image = $(el).find(item.image).attr('src')?.trim() || '';
           const realPrice = item.real_price ? $(el).find(item.real_price).text().trim() : null;
-
-          // const upload_ = await uploadToImgurFromUrl(image);
-
-          // if (upload_.success) {
-          //   image = upload_.url;
-          // }
-
-
-console.log("TITLE:", $(el).find(item.title).text().trim());
-// console.log("PRICE:", $(el).find(item.price).text().trim());
-// console.log("IMAGE SRC:", $(el).find(item.image).attr('src'));
-
-
-
 
           if (title && price && image) {
             title = `Best Deal: ${title}`;
@@ -125,7 +110,5 @@ console.log("TITLE:", $(el).find(item.title).text().trim());
 
   await Promise.all(siteScrapingPromises);
 
-
-  console.log("products", products)
   return products;
 }

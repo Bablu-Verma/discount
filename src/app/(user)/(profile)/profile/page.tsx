@@ -12,6 +12,7 @@ import React from "react";
   total_hold: number;
   total_withdrawal: number;
   withdrawal_pending: number;
+  conform_cb:number
 }
 
 const ProfileEdit = () => {
@@ -48,12 +49,10 @@ const ProfileEdit = () => {
           <h4 className="text-base font-medium tracking-wide">Total Cashback</h4>
           <p className="text-2xl font-bold mt-2">₹{summary?.total_cb ?? 0}</p>
         </div>
-
-        <div className="bg-yellow-400 text-white p-4 rounded-lg shadow min-h-[120px] flex flex-col justify-center items-center text-center">
-          <h4 className="text-base font-medium tracking-wide">Total Hold</h4>
-          <p className="text-2xl font-bold mt-2">₹{summary?.total_hold ?? 0}</p>
+        <div className="bg-yellow-300 text-white p-4 rounded-lg shadow text-center min-h-[120px] flex flex-col justify-center items-center ">
+          <h4 className="text-base font-medium tracking-wide">Conform Amount</h4>
+          <p className="text-2xl font-bold mt-2">₹{summary?.conform_cb ?? 0}</p>
         </div>
-
         <div className="bg-green-500 text-white p-4 rounded-lg shadow  min-h-[120px] flex flex-col justify-center items-center text-center">
           <h4 className="text-base font-medium tracking-wide">Total Withdrawal</h4>
           <p className="text-2xl font-bold mt-2">₹{summary?.total_withdrawal ?? 0}</p>
@@ -63,6 +62,10 @@ const ProfileEdit = () => {
           <h4 className="text-base font-medium tracking-wide">Pending Withdrawal</h4>
           <p className="text-2xl font-bold mt-2">₹{summary?.withdrawal_pending ?? 0}</p>
         </div>
+        {/* <div className="bg-yellow-400 text-white p-4 rounded-lg shadow min-h-[120px] flex flex-col justify-center items-center text-center">
+          <h4 className="text-base font-medium tracking-wide">Total Hold</h4>
+          <p className="text-2xl font-bold mt-2">₹{summary?.total_hold ?? 0}</p>
+        </div> */}
       </div>
     </div>
   );

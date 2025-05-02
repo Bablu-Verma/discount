@@ -32,8 +32,10 @@ export async function POST(req: Request) {
 
     const userId = user?._id;
     const body = await req.json();
-    const { upi_id, amount } = body;
+    const { bank_id:upi_id, amount } = body;
 
+    console.log('code yaha pr aayaya h ', body)
+  
     if (!upi_id || !amount) {
       return new NextResponse(
         JSON.stringify({
@@ -49,7 +51,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🛡️ Amount Verification
     if (typeof amount !== 'number' || isNaN(amount)) {
       return new NextResponse(
         JSON.stringify({
@@ -160,7 +161,13 @@ export async function POST(req: Request) {
       otp: create_otp,
       amount: amount,
       status: "WITHDRAWAL_CREATE",
-      requested_at: new Date(),
+      history: [
+        {
+          status: "WITHDRAWAL_CREATE",
+          details: "Withdrawal request created",
+          date: new Date(),
+        },
+      ],
     });
 
 
@@ -175,6 +182,7 @@ export async function POST(req: Request) {
         success: true,
         message: "Withdrawal request submitted successfully.",
         data: requestData,
+        otp:create_otp
       }),
       {
         status: 201,

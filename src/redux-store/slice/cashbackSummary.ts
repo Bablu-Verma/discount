@@ -11,6 +11,7 @@ interface CashbackSummaryState {
     total_hold: number;
     total_withdrawal: number;
     withdrawal_pending: number;
+    conform_cb:number
   } | null;
 }
 

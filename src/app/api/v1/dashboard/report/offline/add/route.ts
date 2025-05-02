@@ -94,42 +94,51 @@ export async function POST(req: Request) {
         // Find and update Order
         const findOrder = await OrderModel.findOne({ transaction_id: click_id }).select("-redirect_url");
     
-        if (findOrder) {
-          let applicableAmount = 0;
-          if (findOrder.upto_amount) {
-            applicableAmount = findOrder.upto_amount >= amount ? amount : findOrder.upto_amount;
-          } else {
-            applicableAmount = amount;
-          }
-    
-          let finalCashback = 0;
-          if (findOrder.cashback_type === "PERCENTAGE") {
-            finalCashback = (applicableAmount * findOrder.cashback_rate) / 100;
-          } else if (findOrder.cashback_type === "FLAT_AMOUNT") {
-            finalCashback = findOrder.cashback_rate;
-          }
-    
-          findOrder.order_value = amount;
-          findOrder.cashback = finalCashback;
-    
-          if (status && status.toLowerCase() === "pending") {
-            findOrder.payment_status = "Pending";
-            findOrder.payment_history.push({
-              status: "Pending",
-              date: new Date(),
-              details: "Payment updated to status Pending",
-            });
-          }
-    
-          findOrder.order_status = "Order";
-          findOrder.order_history.push({
-            status: "Order",
-            date: new Date(),
-            details: "Order updated to status Product Order",
-          });
-    
-          await findOrder.save();
+        if (!findOrder) {
+          console.log("No matching order found for click_id:", click_id);
+          return;
         }
+        
+        console.log("findOrder.upto_amount:", findOrder.upto_amount);
+        console.log("Order amount:", amount);
+        
+        const applicableAmount = findOrder.upto_amount
+          ? Math.min(amount, findOrder.upto_amount)
+          : amount;
+        
+        console.log("Applicable Amount for Cashback:", applicableAmount);
+        
+        // Step 2: Calculate final cashback
+        let finalCashback = 0;
+        
+        if (findOrder.cashback_type === "PERCENTAGE") {
+          finalCashback = (applicableAmount * (findOrder.cashback_rate || 0)) / 100;
+        } else if (findOrder.cashback_type === "FLAT_AMOUNT") {
+          finalCashback = findOrder.cashback_rate || 0;
+        }
+        
+        // Optional: Round cashback to 2 decimal places
+        finalCashback = Math.round(finalCashback * 100) / 100;
+        
+        // Step 3: Update order fields
+        findOrder.order_value = amount;
+        findOrder.cashback = finalCashback;
+        
+        // Step 4: Update payment status if provided
+        if (status?.toLowerCase() === "pending") {
+    
+          findOrder.payment_status = "Pending";
+          findOrder.payment_history.push({
+            status: "Pending",
+            date: new Date(),
+            details: "Payment updated to status Pending",
+          });
+        }
+
+
+        await findOrder.save();
+
+        
         successCount++;
       } catch (err) {
         console.error("Error processing record:", raw_data, err);

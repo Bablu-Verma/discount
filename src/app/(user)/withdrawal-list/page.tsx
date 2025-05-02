@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import MainHeader from "@/components/header/MainHeader";
 import { formatDate } from "@/helpers/client/client_function";
 import { RootState } from "@/redux-store/redux_store";
-import { order_list_api } from "@/utils/api_url";
+import { order_list_api, withdraw_list_api } from "@/utils/api_url";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -16,10 +16,10 @@ import { IoMdTime } from "react-icons/io";
 
 
 export default function OrderListPage() {
-  const [orderList, setOrderList] = useState<any[]>([]);
+  const [withdrawalList, setWithdrawalList] = useState<any[]>([]);
   const [sheet, setSheet] = useState({ show: false, details: {} as any });
   const token = useSelector((state: RootState) => state.user.token);
-  // const user_data = useSelector((state: RootState) => state.user.user);
+  
   
   const [showPaymentHistory, setShowPaymentHistory] = useState(true);
   const [page, setPage] = useState(1)
@@ -28,8 +28,8 @@ export default function OrderListPage() {
   const get_order = async () => {
     try {
       const { data } = await axios.post(
-        order_list_api,
-        { page: page, activetab: activeTab },
+        withdraw_list_api,
+        { page: page, status: activeTab },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ export default function OrderListPage() {
         }
       );
       // console.log(data.data)
-      setOrderList([...orderList, ...data.data]);
+      setWithdrawalList([...withdrawalList, ...data.data]);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message || "An error occurred");
@@ -52,25 +52,21 @@ export default function OrderListPage() {
   }, [page,activeTab]);
 
   const tab = [
-    {
-      id: 0,
-      name: 'Initialize',
-      click: 'Initialize'
-    },
+   
     {
       id: 1,
       name: 'Pending',
-      click: 'Pending'
+      click: 'PENDING'
     },
     {
       id: 2,
-      name: 'Confirmed',
-      click: 'Confirmed'
+      name: 'Approved',
+      click: 'APPROVED'
     },
     {
       id: 3,
-      name: 'Failed',
-      click: 'Failed'
+      name: 'Rejected',
+      click: 'REJECTED'
     }
   ]
 
@@ -79,39 +75,38 @@ export default function OrderListPage() {
       <MainHeader />
       <main>
         <div className="max-w-6xl mx-auto px-4 mt-7 md:mt-10 mb-10">
-          <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+          <h1 className="text-2xl font-bold mb-6">Withdrawal</h1>
 
           <div className=" flex justify-start items-center gap-4 mb-6">
-            <span className="text-sm text-nowrap text-secondary">Payment Status:</span>    {
+            <span className="text-sm text-nowrap text-secondary"> Status:</span>    {
               tab.map((item, i) => {
                 return (
                   <button className={`text-sm py-1 px-4 sm:px-6 transition-all duration-300 ease-in-out rounded-full border-2 ${activeTab === item.click ? "text-primary border-primary" : "text-secondary border-secondary"
                     }`} key={i} onClick={() => {
                       setActiveTab(item.click)
                       setPage(1)
-                      setOrderList([])
+                      setWithdrawalList([])
                     }}>{item.name}</button>
                 )
               })
             }
           </div>
 
-          {orderList.length === 0 ? (
-            <div className="text-center py-10 text-gray-500">No orders found.</div>
+          {withdrawalList.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">No withdrawal found.</div>
           ) : (
             <div className=" bg-white p-4 rounded-lg md:p-8">
-              {orderList.map((item, i) => (
+              {withdrawalList.map((item, i) => (
                 <div key={i} className="px-4 py-2 shadow-sm md:px-5 md:py-3 border-[1px] border-primary rounded-3xl mb-5" >
-                  <p className="text-secondary"><span className='capitalize font-medium'>id: </span>{item.transaction_id}</p>
+                  <p className="text-secondary"><span className='capitalize font-medium'>UPI: </span>{item.upi_id || "-"}</p>
                   <div className="flex justify-between pt-2 items-start">
                     <div>
-                      <h3 className="text-primary text-lg capitalize">{item.store_id?.name || "-"}</h3>
-                      <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.payment_status}</h3>
+                      <h3 className="text-base text-secondary"><span className="text-sm m">Status:</span> {item.status}</h3>
                       <button type="button" title="Click to Details" className="text-sm text-blue-400 hover:underline" onClick={() => setSheet({ show: true, details: item })} >More Details</button>
                     </div>
                     <div className='text-right'>
                       <p className="text-base text-secondary">Amount:</p>
-                      <h4 className="text-xl font-medium text-secondary ">₹{item.cashback ?? 0}</h4>
+                      <h4 className="text-xl font-medium text-secondary ">₹{item.amount ?? 0}</h4>
                       <p className="text-sm text-secondary">{formatDate(item.createdAt)}</p>
                     </div>
                   </div>
@@ -145,20 +140,20 @@ export default function OrderListPage() {
             </button>
 
             {/* Title */}
-            <h2 className="text-lg font-semibold text-secondary mb-6 text-left">Order Details</h2>
+            <h2 className="text-lg font-semibold text-secondary mb-6 text-left">Withdrawal Details</h2>
 
             <div className="border-[1px] border-dashed border-secondary p-4 rounded-lg">
-              <h4 className="text-black  text-base"><span className="font-medium text-secondary inline-block mr-2 text-sm">Id:</span> {sheet.details.transaction_id}</h4>
+              <h4 className="text-black  text-base"><span className="font-medium text-secondary inline-block mr-2 text-sm">UPI:</span> {sheet.details.upi_id}</h4>
               <div className="flex mt-3 justify-between items-start">
                 <div>
-                  <h1 className="flex gap-2 mb-1 text-lg capitalize text-primary items-center"><FaStoreAlt className="text-secondary" /> {sheet.details.store_id?.name} </h1>
                 
-                  <h2><span className="text-sm mr-3 mb-1 inline-block">Payment Status</span><span className="text-secondary">{sheet.details.payment_status ? sheet.details.payment_status : '-'}</span></h2>
-                  <h2><span className="text-sm mr-3 inline-block">Cashback Rate</span><span className="text-lg text-secondary">{`${sheet.details.cashback_type === 'PERCENTAGE' ? `${sheet.details.cashback_rate}%` : `₹${sheet.details.cashback_rate}`}`}</span></h2>
+                
+                  <h2><span className="text-sm mr-3 mb-1 inline-block">Status</span><span className="text-secondary">{sheet.details.status ? sheet.details.status : '-'}</span></h2>
+                
                 </div>
                 <div className="text-right">
-                  <p className="mb-1"><span className="block text-base text-secondary">Cashback Amount:</span> <span className="text-secondary text-lg font-medium">{sheet.details.cashback ? `₹ ${sheet.details.cashback}` : " ₹0"}</span></p>
-                  <p className="text-sm text-secondary"><span className="mr-3">Order Value: </span><span className="text-lg ">{sheet.details.order_value ? `₹ ${sheet.details.order_value}` : "₹0"}</span></p>
+                  <p className="mb-1"><span className="block text-base text-secondary">Amount:</span> <span className="text-secondary text-lg font-medium">{sheet.details.amount ? `₹ ${sheet.details.amount}` : " ₹0"}</span></p>
+                 
                   <p className="text-sm flex text-secondary items-center gap-2 mt-4"><IoMdTime className="text-base" /> <span>{formatDate(sheet.details.createdAt)}</span></p>
                 </div>
               </div>
@@ -169,7 +164,7 @@ export default function OrderListPage() {
 
               <div className="flex mt-5 gap-4 ">
 
-                {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
+                {sheet.details.status && sheet.details.history.length > 0 && (
                   <button
                     type="button"
                     className="text-sm cursor-pointer  text-blue-800  font-normal"
@@ -196,7 +191,7 @@ export default function OrderListPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sheet.details.payment_history.map((payment:any, idx:number) => (
+                      {sheet.details.history.map((payment:any, idx:number) => (
                         <tr key={idx} className="hover:bg-green-50">
                           <td className="p-3 border-b">{payment.details || "-"}</td>
                           <td className="p-3 border-b">{formatDate(payment.date)}</td>

@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
     const withdrawalRequest = await WithdrawalRequestModel.findOne({
       _id: withdrawal_request_id,
-      user_id: user._id,
+      user_id: user?._id,
     }).select('+otp');
 
     if (!withdrawalRequest) {
@@ -79,13 +79,11 @@ export async function POST(request: Request) {
     }
 
    
-    const create_otp = generateOTP();
+const create_otp = generateOTP();
 
-    withdrawalRequest.otp = create_otp;
-    withdrawalRequest.requested_at =  new Date();
-    await withdrawalRequest.save();
-
-
+withdrawalRequest.otp = create_otp;
+withdrawalRequest.requested_at =  new Date();
+await withdrawalRequest.save();
 
  withdrawal_request_verify(create_otp, user?.email);
 

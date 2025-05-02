@@ -149,11 +149,18 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
                 Wishlist
               </Link>
               <Link
-                href="/withdraw/request"
+                href="/withdrawal/request"
                 onClick={handleLinkClick} 
                 className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
               >
-                Withdraw
+                withdrawal
+              </Link>
+              <Link
+                href="/withdrawal-list"
+                onClick={handleLinkClick} 
+                className="text-sm text-gray-500 hover:pl-1 cursor-pointer duration-200 my-1 py-0.5 block"
+              >
+                withdrawal list
               </Link>
               {(user_data.role === "admin" ||
                 user_data.role === "data_editor" ||

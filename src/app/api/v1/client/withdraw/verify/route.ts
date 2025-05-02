@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
+import ConformAmountModel from "@/model/ConformAmountModel";
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -26,7 +27,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { withdrawal_request_id, otp } = await request.json();
+
+
+    const requestdata = await request.json();
+
+
+    const { withdrawal_request_id, otp } = requestdata
 
     if (!withdrawal_request_id) {
       return new NextResponse(
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
 
     const withdrawalRequest = await WithdrawalRequestModel.findOne({
       _id: withdrawal_request_id,
-      user_id: user._id,
+      user_id: user?._id,
     }).select('+otp');
 
     if (!withdrawalRequest) {
@@ -125,7 +131,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (withdrawalRequest.otp !== otp) {
+    // console.log('withdrawalRequest',withdrawalRequest)
+
+    if (withdrawalRequest.otp !== Number(otp)) {
       return new NextResponse(
         JSON.stringify({
           success: false,
@@ -141,14 +149,56 @@ export async function POST(request: Request) {
     }
 
     withdrawalRequest.status = "PENDING";
+    withdrawalRequest.history.push({
+      status: "PENDING",
+      details: "Withdrawal marked as pending by admin",
+      date: new Date(),
+    });
     withdrawalRequest.otp = undefined;
     await withdrawalRequest.save();
+
+
+    await ConformAmountModel.findOneAndUpdate(
+      { user_id: user?._id },
+      { $inc: { amount: -withdrawalRequest.amount } },
+      { new: true }
+    );
+
+
+    const conformAmount = await ConformAmountModel.findOne({ user_id: user?._id }).select('-createdAt -updatedAt');
+    const withdrawalRequests = await WithdrawalRequestModel.find({ user_id: user?._id }).select('-upi_id -requested_at -processed_at -createdAt -updatedAt');
+
+   
+    const conform_cb = conformAmount?.amount || 0;
+    const total_hold = conformAmount?.hold_amount || 0;
+
+    let withdrawal_pending = 0;
+    let total_withdrawal = 0;
+
+
+    withdrawalRequests.forEach((request) => {
+      if (request.status === "PENDING") {
+        withdrawal_pending += request.amount;
+      }
+      if (request.status === "APPROVED") {
+        total_withdrawal += request.amount;
+      }
+    });
+
+    const total_cb = conform_cb + withdrawal_pending + total_withdrawal;
+
 
     return new NextResponse(
       JSON.stringify({
         success: true,
         message: "Withdrawal request verified successfully.",
-        
+        summary: {
+          conform_cb,
+          total_cb: total_cb,
+          total_hold: total_hold,
+          withdrawal_pending: withdrawal_pending,
+          total_withdrawal: total_withdrawal
+        },
       }),
       {
         status: 200,

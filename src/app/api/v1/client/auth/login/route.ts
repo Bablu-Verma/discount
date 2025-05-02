@@ -1,5 +1,6 @@
 import { generateJwtToken, verifyHashPassword } from "@/helpers/server/server_function";
 import dbConnect from "@/lib/dbConnect";
+import ConformAmountModel from "@/model/ConformAmountModel";
 import UserModel from "@/model/UserModel";
 import UserUPIModel from "@/model/UserUPIModel";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
@@ -124,10 +125,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     delete userData.__v
 
 
-    const conformAmount = await UserUPIModel.findOne({ user_id: findUser._id }).select('-createdAt -updatedAt');
+    const conformAmount = await ConformAmountModel.findOne({ user_id: findUser._id }).select('-createdAt -updatedAt');
     const withdrawalRequests = await WithdrawalRequestModel.find({ user_id: findUser._id }).select('-upi_id -requested_at -processed_at -createdAt -updatedAt');
 
-    const total_cb = conformAmount?.amount || 0;
+   
+    const conform_cb = conformAmount?.amount || 0;
     const total_hold = conformAmount?.hold_amount || 0;
 
     let withdrawal_pending = 0;
@@ -143,6 +145,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     });
 
+    const total_cb = conform_cb + withdrawal_pending + total_withdrawal;
 
 
     return new NextResponse(
@@ -150,6 +153,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         success: true,
         message: "Login successful",
         summary: {
+          conform_cb,
           total_cb: total_cb,
           total_hold: total_hold,
           withdrawal_pending: withdrawal_pending,

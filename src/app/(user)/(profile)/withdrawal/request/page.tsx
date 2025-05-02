@@ -1,11 +1,12 @@
 "use client";
 
 import { RootState } from "@/redux-store/redux_store";
+import { setSummary } from "@/redux-store/slice/cashbackSummary";
 import { withdraw_request_data_api, withdraw_request_api,withdraw_resend_otp_api, withdraw_verify_api } from "@/utils/api_url";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IBank {
   upi_link_bank_name: string;
@@ -22,10 +23,14 @@ const WithdrawRequest: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpSent, setOtpSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [Wloading, setWLoading] = useState(false);
+  const [Vloading, setVLoading] = useState(false);
   const [withdrawVerified, setWithdrawVerified] = useState(false);
 
   const token = useSelector((state: RootState) => state.user.token);
+
+
+  const dispatch = useDispatch()
 
   const fetchWithdrawRequestData = async () => {
     try {
@@ -34,9 +39,9 @@ const WithdrawRequest: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-    console.log(data.data)
+    // console.log(data.data)
       setBankList(data.data.upiDetails);
-      setWithdrawableAmount(data.amountDetails);
+      setWithdrawableAmount(data.data.amountDetails);
     } catch (error) {
       toast.error("Failed to fetch withdraw data");
     }
@@ -47,7 +52,7 @@ const WithdrawRequest: React.FC = () => {
   }, []);
 
 
-  console.log('bankList',bankList)
+  // console.log('bankList',bankList)
 
   const sendOtp = async () => {
     if (!selectedBankId) {
@@ -63,7 +68,7 @@ const WithdrawRequest: React.FC = () => {
       return;
     }
 
-    setLoading(true);
+    setWLoading(true);
     try {
       const { data } = await axios.post(
         withdraw_request_api,
@@ -74,14 +79,16 @@ const WithdrawRequest: React.FC = () => {
         { headers: { "Authorization": `Bearer ${token}` } }
       );
       toast.success("OTP sent successfully!");
-      setDocumentId(data.id);
+      console.log(data)
+      setDocumentId(data.data._id);
       setOtpSent(true);
-      setOtpTimer(120);
+      setOtpTimer(60);
       setIsVerifying(true);
     } catch (error) {
       toast.error("Failed to send OTP");
+      console.log(error)
     } finally {
-      setLoading(false);
+      setWLoading(false);
     }
   };
 
@@ -90,23 +97,55 @@ const WithdrawRequest: React.FC = () => {
       toast.error("Enter a valid 4-digit OTP");
       return;
     }
-    setLoading(true);
+    setVLoading(true);
     try {
-      await axios.post(
+    const {data} =   await axios.post(
         withdraw_verify_api,
         {
-          document_id: documentId,
+          withdrawal_request_id: documentId,
           otp: otp,
         },
         { headers: { "Authorization": `Bearer ${token}` } }
       );
-      toast.success("Withdraw request submitted successfully!");
+      toast.success("Withdraw request submitted successfully!")
+
+      dispatch(setSummary({ summary: data.summary }));
+
       setWithdrawVerified(true);
       setIsVerifying(false);
+
+      setTimeout(()=>{
+        window.location.reload()
+      },4000)
     } catch (error) {
       toast.error("Invalid OTP, try again!");
     } finally {
-      setLoading(false);
+      setVLoading(false);
+    }
+  };
+
+
+  const resendOtp = async () => {
+   
+    
+    try {
+      const { data } = await axios.post(
+        withdraw_resend_otp_api,
+        {
+          withdrawal_request_id: documentId,
+        },
+        { headers: { "Authorization": `Bearer ${token}` } }
+      );
+      toast.success("OTP sent successfully!");
+    
+      setOtpSent(true);
+      setOtpTimer(60);
+
+    } catch (error) {
+      toast.error("Failed to send OTP");
+      console.log(error)
+    } finally {
+      setWLoading(false);
     }
   };
 
@@ -151,10 +190,10 @@ const WithdrawRequest: React.FC = () => {
         <button
           type="button"
           onClick={sendOtp}
-          disabled={loading || otpSent || withdrawVerified}
+          disabled={Wloading || otpSent || withdrawVerified}
           className="w-full p-2 bg-primary text-white rounded mb-3"
         >
-          {loading ? "Sending OTP..." : "Request Withdraw"}
+          {Wloading ? "Sending OTP..." : "Request Withdraw"}
         </button>
 
         {isVerifying && (
@@ -168,7 +207,7 @@ const WithdrawRequest: React.FC = () => {
             />
             {
               otpTimer === 0 ? (
-                <p className="text-sm text-primary cursor-pointer" onClick={sendOtp}>Resend OTP</p>
+                <p className="text-sm text-primary cursor-pointer" onClick={resendOtp}>Resend OTP</p>
               ) : (
                 <p className="text-sm text-gray-500">Time left: {otpTimer}s</p>
               )
@@ -178,7 +217,7 @@ const WithdrawRequest: React.FC = () => {
               onClick={verifyOtp}
               className="w-full p-2 bg-primary text-white rounded mt-2"
             >
-              {loading ? "Verifying..." : "Submit OTP"}
+              {Vloading ? "Verifying..." : "Submit OTP"}
             </button>
           </div>
         )}

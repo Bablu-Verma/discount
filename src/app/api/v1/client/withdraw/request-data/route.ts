@@ -9,11 +9,7 @@ export async function POST(req: Request) {
 
   try {
 
-
-
     const { authenticated, user, message } = await authenticateAndValidateUser(req);
-
-
    
     if (!authenticated) {
       return new NextResponse(
@@ -33,6 +29,8 @@ export async function POST(req: Request) {
     const userId = user?._id;
     
     const amountDetails = await ConformAmountModel.findOne({ user_id: userId });
+
+    console.log(amountDetails)
 
     const upiDetails = await UserUPIModel.find({
       user_id: userId,

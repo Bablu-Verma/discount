@@ -6,7 +6,7 @@ export interface IConformAmount extends Document {
   amount: Number | null;
   createdAt?: Date;
   updatedAt?: Date;
-  hold_amount:Number
+  hold_amount?: Number
 }
 
 const ConformAmountSchema = new Schema<IConformAmount>(

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import OrderModel from "@/model/OrderModel";
+import ConformAmountModel from "@/model/ConformAmountModel";
 
 
 export async function POST(req: Request) {
@@ -57,8 +58,16 @@ export async function POST(req: Request) {
         date: new Date(),
         details: payment_details || `Payment status updated to ${payment_status}`,
       });
-    
     }
+
+
+    if (payment_status === 'Confirmed') {
+      ConformAmountModel.create({
+        amount:record.cashback,
+        user_id:record.user_id
+      })
+    }
+ 
 
     await record.save();
 

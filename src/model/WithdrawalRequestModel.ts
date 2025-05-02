@@ -1,13 +1,18 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+const STATUSES = [ "WITHDRAWAL_CREATE", "PENDING" ,  "APPROVED" , "REJECTED"] as const
+
 export interface IWithdrawalRequest extends Document {
   user_id: mongoose.Types.ObjectId;
   amount: number;
   upi_id: string;
-  status: "WITHDRAWAL_CREATE"|"PENDING" | "APPROVED" | "REJECTED";
-  requested_at: Date;
-  processed_at: Date | null;
-  otp?:number
+  status:(typeof STATUSES)[number];
+  otp?:number,
+  history: {
+    status: (typeof STATUSES)[number];
+    date: Date;
+    details: string;
+  }[];
 }
 
 const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
@@ -29,17 +34,16 @@ const WithdrawalRequestSchema = new Schema<IWithdrawalRequest>(
     },
     status: {
       type: String,
-      enum: ["WITHDRAWAL_CREATE","PENDING", "APPROVED", "REJECTED"],
-      default: "PENDING",
+      enum: STATUSES,
+      default: "WITHDRAWAL_CREATE",
     },
-    requested_at: {
-      type: Date,
-      default: Date.now,
-    },
-    processed_at: {
-      type: Date,
-      default: null,
-    },
+    history: [
+      {
+        status: { type: String, enum: STATUSES, required: true },
+        date: { type: Date, default: Date.now },
+        details: { type: String, required: true },
+      },
+    ],
     otp:{
       type:Number,
       select: false,

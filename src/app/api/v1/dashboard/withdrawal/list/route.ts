@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       WithdrawalRequestModel.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(Number(limit)),
+        .limit(Number(limit)).populate("user_id",'name email'),
       WithdrawalRequestModel.countDocuments(query),
     ]);
 

@@ -1,6 +1,4 @@
-
 import LiveDealModel from '@/model/LiveDeal';
-
 import dbConnect from '@/lib/dbConnect';
 import { authenticateAndValidateUser } from '@/lib/authenticate';
 import { NextResponse } from 'next/server';
@@ -26,36 +24,32 @@ export async function DELETE(req: Request) {
     }
 
     const body = await req.json();
-    const { _id } = body;
+    const { skipCount = 0 } = body;
 
-    if (!_id) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Missing _id in request body" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    // Sort by create_date in ascending order to get the oldest (last added) items
+    const dealsToDelete = await LiveDealModel.find({})
+      .sort({ create_date: 1 })  // Ascending: oldest first
+      .skip(skipCount)
+      .limit(10);
 
-    const deleted = await LiveDealModel.findByIdAndDelete(_id);
+    const idsToDelete = dealsToDelete.map(deal => deal._id);
 
-    if (!deleted) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Deal not found or already deleted" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    const deleteResult = await LiveDealModel.deleteMany({ _id: { $in: idsToDelete } });
 
     return new NextResponse(
-      JSON.stringify({ success: true, message: "Deal deleted successfully", data: deleted }),
+      JSON.stringify({
+        success: true,
+        message: `Deleted ${deleteResult.deletedCount} deals`,
+        deletedIds: idsToDelete
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 
   } catch (error) {
-    console.error("Delete failed ❌", error);
+    console.error("Bulk delete failed ❌", error);
     return new NextResponse(
       JSON.stringify({ success: false, message: "Internal Server Error" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
-
-

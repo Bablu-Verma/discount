@@ -5,7 +5,7 @@ import dbConnect from '@/lib/dbConnect';
 import { authenticateAndValidateUser } from '@/lib/authenticate';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req: Request) {
+export async function POST(req: Request) {
   try {
     await dbConnect();
 
@@ -26,34 +26,36 @@ export async function DELETE(req: Request) {
     }
 
     const body = await req.json();
-    const { skipCount = 0 } = body;
+    const { _id } = body;
 
-    const dealsToDelete = await LiveDealModel.find({})
-      .sort({ create_date: -1 }) 
-      .skip(skipCount)
-      .limit(10);
+    if (!_id) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Missing _id in request body" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-    const idsToDelete = dealsToDelete.map(deal => deal._id);
+    const deleted = await LiveDealModel.findByIdAndDelete(_id);
 
-    const deleteResult = await LiveDealModel.deleteMany({ _id: { $in: idsToDelete } });
+    if (!deleted) {
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Deal not found or already deleted" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     return new NextResponse(
-      JSON.stringify({
-        success: true,
-        message: `Deleted ${deleteResult.deletedCount} deals`,
-        deletedIds: idsToDelete
-      }),
+      JSON.stringify({ success: true, message: "Deal deleted successfully", data: deleted }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 
   } catch (error) {
-    console.error("Bulk delete failed ❌", error);
+    console.error("Delete failed ❌", error);
     return new NextResponse(
       JSON.stringify({ success: false, message: "Internal Server Error" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
-
 
 

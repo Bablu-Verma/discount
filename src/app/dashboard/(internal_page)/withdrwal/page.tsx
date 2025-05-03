@@ -6,37 +6,35 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux-store/redux_store";
-import { list_store_dashboard_api, order_list_admin_api } from "@/utils/api_url";
+import { order_list_admin_api, withdrwal_list_admin_api } from "@/utils/api_url";
 import { IOrder } from "@/model/OrderModel";
 import PaginationControls from "../../_components/PaginationControls";
 import { formatDate } from "@/helpers/client/client_function";
 import { IoClose } from "react-icons/io5";
 import Link from "next/link";
+import { IWithdrawalRequest } from "@/model/WithdrawalRequestModel";
 
 
 const OrderList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [OrderList, setOrderList] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
-  const [storeList, setStoreList] = useState<{ name: string; _id: string }[]>(
-    []
-  );
+
   const [sheet, setSheet] = useState({ show: false, details: {} as any });
-  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalpage, setTotalPage] = useState(1)
+
   const [filters, setFilters] = useState({
-    payment_status: "",
+    status: "",
     user_id: "",
-    store_id: "",
-    transaction_id: "",
-    startDate: "",
-    endDate: "",
+    startdate: "",
+    enddate: "",
   });
 
   const getOrders = async () => {
     try {
-      const { data } = await axios.post(order_list_admin_api, { ...filters, page: currentPage }, {
+      const { data } = await axios.post(withdrwal_list_admin_api, { ...filters, page: currentPage }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -57,6 +55,8 @@ const OrderList = () => {
     getOrders();
   }, [currentPage]);
 
+  console.log(OrderList)
+
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -68,31 +68,10 @@ const OrderList = () => {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [storeRes] = await Promise.all([
-          axios.post(
-            list_store_dashboard_api,
-            {},
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
-        ]);
-
-        setStoreList(storeRes.data.data || []);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (showFilter) {
-      fetchData();
-    }
-  }, [token, showFilter]);
-
   return (
     <>
       <h1 className="text-2xl py-2 font-medium text-secondary_color">
-        All Order
+        All withdrwal request
       </h1>
 
       <button
@@ -105,30 +84,7 @@ const OrderList = () => {
 
       {showFilter && (
         <div className="flex mt-3 flex-wrap gap-4 p-4 bg-gray-100 rounded-md">
-          <input
-            type="text"
-            name="transaction_id"
-            placeholder="transaction_id"
-            value={filters.transaction_id}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          />
-
-          <select
-            name="store_id"
-            value={filters.store_id}
-            onChange={handleFilterChange}
-            className="border p-2 rounded-md h-9 text-sm outline-none "
-          >
-            <option disabled>store_id</option>
-
-            {storeList.map((product: { name: string; _id: string }) => (
-              <option key={product._id} value={product._id}>
-                {product.name}
-              </option>
-            ))}
-          </select>
-
+         
           <input
             type="text"
             name="user_id"
@@ -138,32 +94,30 @@ const OrderList = () => {
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
           <select
-            name="payment_status"
-            value={filters.payment_status}
+            name="status"
+            value={filters.status}
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           >
-            <option disabled>payment_status</option>
+            <option disabled>status</option>
             <option value="ALL">ALL</option>
-            <option value="Pending">Pending</option>
-            <option value="confirm">confirm</option>
-            <option value="Paid">Paid</option>
-            <option value="Failed">Failed</option>
+            <option value="PENDING">PENDING</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="REJECTED">REJECTED</option>
           </select>
-
 
           <input
             type="date"
-            name="startDate"
-            value={filters.startDate}
+            name="startdate"
+            value={filters.startdate}
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
 
           <input
             type="date"
-            name="endDate"
-            value={filters.endDate}
+            name="enddate"
+            value={filters.enddate}
             onChange={handleFilterChange}
             className="border p-2 rounded-md h-9 text-sm outline-none "
           />
@@ -186,16 +140,18 @@ const OrderList = () => {
                   S.No.
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  transaction_id
+                  user_id
+                </th>
+               
+                <th className="px-6 py-3 text-left font-medium text-gray-700">
+                  upi_id / Email
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  Order Value
+                  Amount
                 </th>
+               
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  cashback
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-700">
-                  payment_status
+                  status
                 </th>
 
                 <th className="px-6 py-3 text-left font-medium text-gray-700">
@@ -207,27 +163,31 @@ const OrderList = () => {
               </tr>
             </thead>
             <tbody>
-              {OrderList.map((item: IOrder, i) => (
+              {OrderList.map((item:IWithdrawalRequest, i) => (
                 <tr key={i} className="bg-white hover:bg-gray-100">
                   <td className="px-6 py-4  ">{i + 1}</td>
-                  <td className="px-6 py-4  ">{item.transaction_id}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {item.order_value}
+                  <td className="px-6 py-4  ">
+                  {item.user_id._id}  <br />
+                  {item.user_id.email}
                   </td>
-                  <td className="px-6 py-4">{item.cashback}</td>
-                  <td className="px-6 py-4">{item.payment_status}</td>
+                 
+                  <td className="px-6 py-4  ">{item.upi_id}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {item.amount}
+                  </td>
+                  
+                  <td className="px-6 py-4">{item.status}</td>
                   <td className="px-6 py-4">
-                    <button onClick={() => setSheet({ show: true, details: item })} className="">View details</button>
+                    <button onClick={() => setSheet({ show: true, details: item })} className="">details</button>
                   </td>
                   <td className="px-6 py-4">
                     <Link
-                      href={`/dashboard/order/${item._id}`}
+                      href={`/dashboard/withdrwal/${item._id}`}
                       className="px-2 py-1 text-sm inline-block text-blue-500 hover:underline"
                     >
-                      Edit order
+                      Edit withdrawal
                     </Link>
                   </td>
-
                 </tr>
               ))}
             </tbody>
@@ -254,34 +214,31 @@ const OrderList = () => {
             </button>
 
             {/* Title */}
-            <h2 className="text-2xl font-semibold text-primary mb-6 text-center">Order Details</h2>
+            <h2 className="text-2xl font-semibold text-primary mb-6 text-center">withdrwal Details</h2>
 
             {/* Divider */}
             <div className="border-b mb-6"></div>
 
             {/* Details */}
             <div className="space-y-5">
-              <DetailRow label="Store" value={sheet.details.store_id?.name || "-"} />
-              <DetailRow label="Order Date" value={formatDate(sheet.details.createdAt)} />
-              <DetailRow label="Transaction ID" value={sheet.details.transaction_id} />
+              <DetailRow label="UPI" value={sheet.details.upi_id || "-"} />
+              <DetailRow label="request Date" value={formatDate(sheet.details.createdAt)} />
+              <DetailRow label="user id" value={sheet.details.user_id._id} />
+              <DetailRow label="user email" value={sheet.details.user_id.email} />
               <DetailRow
-                label="Order Value"
-                value={sheet.details.order_value ? `₹ ${sheet.details.order_value}` : "-"}
+                label="Amount"
+                value={sheet.details.amount ? `₹ ${sheet.details.amount}` : "-"}
               />
-              <DetailRow label="Cashback Rate" value={`${sheet.details.cashback_rate}%`} />
-              <DetailRow label="Cashback Type" value={sheet.details.cashback_type} />
-              <DetailRow
-                label="Cashback Amount"
-                value={sheet.details.cashback ? `₹ ${sheet.details.cashback}` : "-"}
-              />
-              <DetailRow label="Payment Status" value={sheet.details.payment_status ?? "-"} />
-              {sheet.details.payment_history && sheet.details.payment_history.length > 0 && (
+            
+            
+              <DetailRow label=" Status" value={sheet.details.status ?? "-"} />
+              {sheet.details.history && sheet.details.history.length > 0 && (
                 <div className="mt-10">
                   <div
                     className="flex justify-between items-center cursor-pointer bg-green-100 px-3 py-2 rounded-lg hover:bg-green-200"
                     onClick={() => setShowPaymentHistory(!showPaymentHistory)}
                   >
-                    <h3 className="text-secondary text-base font-medium">Payment History</h3>
+                    <h3 className="text-secondary text-base font-medium"> History</h3>
                     <span className="text-gray-600">{showPaymentHistory ? "▲" : "▼"}</span>
                   </div>
 
@@ -296,7 +253,7 @@ const OrderList = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {sheet.details.payment_history.map((payment, idx) => (
+                          {sheet.details.history.map((payment, idx) => (
                             <tr key={idx} className="hover:bg-green-50">
                               <td className="p-3 border-b">{payment.details || "-"}</td>
                               <td className="p-3 border-b">{formatDate(payment.date)}</td>
@@ -315,9 +272,6 @@ const OrderList = () => {
         </div>
       )}
 
-      <div>
-
-      </div>
     </>
   );
 };

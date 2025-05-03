@@ -41,7 +41,6 @@ export async function POST(request: Request) {
   try {
     const {
       upi_id,
-      email,
       startDate,
       endDate,
       page = 1,
@@ -52,9 +51,6 @@ export async function POST(request: Request) {
 
     if (upi_id) {
       filters.upi_id = upi_id;
-    }
-    if (email) {
-      filters.email = email;
     }
 
     if (startDate && endDate) {

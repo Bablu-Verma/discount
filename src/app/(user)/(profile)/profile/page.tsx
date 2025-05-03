@@ -1,11 +1,15 @@
 "use client";
 
 import { RootState } from "@/redux-store/redux_store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IUser } from "@/common_type";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { user_profile_api } from "@/utils/api_url";
+import { setSummary } from "@/redux-store/slice/cashbackSummary";
 
  interface ICashbackSummary {
   total_cb: number;
@@ -19,6 +23,36 @@ const ProfileEdit = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const user = useSelector((state: RootState) => state.user.user) as IUser | null;
   const summary = useSelector((state: RootState) => state.cashbackSummary.summary) as ICashbackSummary | null;
+
+  const dispatch = useDispatch()
+
+
+    const getCBsummary = async () => {
+      try {
+        const { data } = await axios.post(
+          user_profile_api,
+          { },
+          {
+            headers: {
+              "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+       dispatch(setSummary({ summary: data.summary }));
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data?.message || "Error fetching order details");
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
+    };
+  
+    useEffect(() => {
+      getCBsummary();
+    }, []);
 
   return (
     <div className="p-4">

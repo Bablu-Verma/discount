@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import { authenticateAndValidateUser } from "@/lib/authenticate";
 import ClaimFormModel from "@/model/ClaimForm";
 
+
 export async function POST(req: Request) {
   await dbConnect();
 
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
       transaction_id,
       start_date,
       end_date,
+      CLAIM_STATUSES,
       partner_site_orderid,
       page = 1,
       limit = 10,
@@ -63,21 +65,8 @@ export async function POST(req: Request) {
     // Fetch claim forms from the database
     const claimForms = await ClaimFormModel.find(filters)
       .sort({ createdAt: -1 })
-      .populate({
-        path: 'order_id',
-        select: 'calculated_cashback calculation_mode user_id product_id',
-        populate: [
-          { path: 'user_id', select: 'name email' }, 
-          { 
-            path: 'product_id', 
-            select: 'title store',
-            populate: {
-              path: 'store',
-              select: 'name slug'  
-            }
-          }
-        ]
-      })
+      .populate('store_id','name')
+      .populate('user_id', 'name email')
       .skip(skip)
       .lean()
       .limit(limitNumber)

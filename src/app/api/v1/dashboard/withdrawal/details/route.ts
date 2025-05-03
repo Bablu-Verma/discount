@@ -3,9 +3,8 @@ import dbConnect from "@/lib/dbConnect";
 import WithdrawalRequestModel from "@/model/WithdrawalRequestModel";
 import { NextResponse } from "next/server";
 
-const STATUSES = ["WITHDRAWAL_CREATE", "PENDING", "APPROVED", "REJECTED"] as const;
-
-export async function PATCH(req: Request) {
+// GET withdrawal request details
+export async function POST(req: Request) {
   await dbConnect();
 
   try {
@@ -19,23 +18,25 @@ export async function PATCH(req: Request) {
       );
     }
 
-    if (usertype !== "admin") {
+     
+     if (usertype !== "admin") {
       return NextResponse.json(
-        { success: false, message: "Access denied: Admins only" },
+        { success: false, message: "Access denied" },
         { status: 403 }
       );
     }
 
-    const { withdrawal_id, new_status, details } = await req.json();
 
-    if (!withdrawal_id || !new_status || !STATUSES.includes(new_status)) {
+    const { withdrawal_id } = await req.json();
+
+    if (!withdrawal_id) {
       return NextResponse.json(
-        { success: false, message: "Invalid withdrawal ID or status" },
+        { success: false, message: "withdrawal_id is required" },
         { status: 400 }
       );
     }
 
-    const withdrawalRequest = await WithdrawalRequestModel.findById(withdrawal_id);
+    const withdrawalRequest = await WithdrawalRequestModel.findById(withdrawal_id).populate("user_id");
 
     if (!withdrawalRequest) {
       return NextResponse.json(
@@ -44,30 +45,22 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // Update status and add to history
-    withdrawalRequest.status = new_status;
-    withdrawalRequest.history.push({
-      status: new_status,
-      details: details || `Status changed to ${new_status} by admin`,
-      date: new Date(),
-    });
-
-    await withdrawalRequest.save();
+   
 
     return NextResponse.json(
       {
         success: true,
-        message: "Withdrawal request status updated successfully.",
+        message: "Withdrawal request fetched successfully",
         data: withdrawalRequest,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating withdrawal status:", error);
+    console.error("Error fetching withdrawal request:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Error updating withdrawal request",
+        message: "Internal server error",
         error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }

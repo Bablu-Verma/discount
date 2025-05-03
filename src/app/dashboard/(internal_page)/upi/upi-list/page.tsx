@@ -10,11 +10,15 @@ import { RootState } from "@/redux-store/redux_store";
 import { bank_upi_admin_list_api, category_list_api } from "@/utils/api_url";
 import { ICategory } from "@/common_type";
 import { IUserUPI } from "@/model/UserUPIModel";
+import PaginationControls from "@/app/dashboard/_components/PaginationControls";
 
 const UPIAdminList = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [UPIList, setUPIList] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalpage, setTotalPage] = useState(1)
+
 
   const [filters, setFilters] = useState({
     user_email: "",
@@ -27,11 +31,12 @@ const UPIAdminList = () => {
 
   const getupilist = async () => {
     try {
-      const { data } = await axios.post(bank_upi_admin_list_api, filters, {
+      const { data } = await axios.post(bank_upi_admin_list_api, {...filters, page:currentPage}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      setTotalPage(data.pagination.totalPages)
       setUPIList(data.data);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -45,7 +50,7 @@ const UPIAdminList = () => {
 
   useEffect(() => {
     getupilist();
-  }, []);
+  }, [currentPage]);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -53,7 +58,7 @@ const UPIAdminList = () => {
     const { name, value } = e.target;
     setFilters((prev) => {
       const updatedFilters = { ...prev, [name]: value };
-      // console.log("Updated Filters:", updatedFilters); // Debugging
+    
       return updatedFilters;
     });
   };
@@ -175,6 +180,11 @@ const UPIAdminList = () => {
           </table>
         </div>
       </div>
+        <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalpage}
+                onPageChange={setCurrentPage}
+              />
     </>
   );
 };
